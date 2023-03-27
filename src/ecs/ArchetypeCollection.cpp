@@ -98,6 +98,10 @@ void ag::ArchetypeCollection::DeregisterArchetype(ArchetypeID id)
 ag::ArchetypeCollection* ag::ArchetypeCollection::GetArchetypeFromEntityID(EntityID id)
 {
 	ArchetypeID archID = id >> EPARTSIZE;
+
+	if (archetypes.find(archID) == archetypes.end())
+		return nullptr;
+		
 	return archetypes[archID];
 }
 

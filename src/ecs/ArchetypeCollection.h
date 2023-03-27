@@ -15,24 +15,45 @@ namespace ag
 		EntityID ParentID;
 	};
 
+	/**
+	 * A collection that stores entities of a specific archetype, determined by the collection's ComponentTypes.
+	*/
 	class ArchetypeCollection
 	{
 	public:
+		/**
+		 * Adds an entity to the spawn buffer.
+		 * @param component The list of components that comprise the entity. This should be sorted by Component IDs.
+		 * @return The ID of the newly created entity.
+		*/
 		template <typename... Cs>
 		EntityID SpawnEntity(Cs... component)
 		{
 			return InstantiateEntity(0, component...);
 		}
 
+		/**
+		 * Adds an entity to the spawn buffer.
+		 * @param parent The ID of the entity the new entity should become a child of.
+		 * @param component The list of components that comprise the entity. This should be sorted by Component IDs.
+		 * @return The ID of the newly created entity.
+		*/
 		template <typename... Cs>
 		EntityID SpawnChild(EntityID parent, Cs... component)
 		{
 			return InstantiateEntity(parent, component...);
 		}
 
+		/**
+		 * Gets a pointer to a component from the collection.
+		 * @param i The index of the entity in the collection.
+		 * @tparam C The type of component to fetch.
+		 * @return A pointer to the fetched component, or nullptr if the search was invalid.
+		*/
 		template <typename C>
 		C* GetComponent(size_t i)
 		{
+			/// TODO: Checks for values < 0, and component types not included in the collection?
 			if (i >= entities.size())
 			{
 				return nullptr;
@@ -51,20 +72,40 @@ namespace ag
 			return ID;
 		}
 
-		size_t GetIndexByID(EntityID id);
-
 		size_t GetEntityCount() { return entities.size(); }
 
+		/**
+		 * Searches for the index of an entity in the collection by its ID.
+		 * @param id The id of the entity to search for.
+		 * @return The index of the found entity, or -1 if no entity was found.
+		*/
+		size_t GetIndexByID(EntityID id);
+
+		/**
+		 * Resolves the spawn and destroy buffers of the collection.
+		*/
 		void ResolveBuffers();
 
+		/**
+		 * Marks an entity to be destroyed.
+		 * @param index The index of the entity to destroy.
+		*/
 		void DestroyEntity(size_t index);
+
+		/**
+		 * Marks an entity to be destroyed.
+		 * @param id The ID of the entity to destroy.
+		*/
 		void DestroyEntityByID(EntityID id);
 
 		ArchetypeCollection(ComponentSet components);
 		~ArchetypeCollection();
 
-		static void RegisterArchetype(ArchetypeCollection* archetype);
-		static void DeregisterArchetype(ArchetypeID id);
+		/**
+		 * Finds the collection an entity belongs to by its ID.
+		 * @param id The ID of the entity to find.
+		 * @return A pointer to the collection the entity belongs to, or nullptr if a collection could not be found.
+		*/
 		static ArchetypeCollection* GetArchetypeFromEntityID(EntityID id);
 
 
@@ -107,6 +148,9 @@ namespace ag
 		std::vector<EntityInfo> entities;
 
 		void AddComponent(byte* bytes, int i, int n, ComponentArray* target);
+
+		static void RegisterArchetype(ArchetypeCollection* archetype);
+		static void DeregisterArchetype(ArchetypeID id);
 
 		static std::unordered_map<ArchetypeID, ArchetypeCollection*> archetypes;
 		static std::atomic<ArchetypeID> nextArchetypeID;
