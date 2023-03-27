@@ -40,7 +40,7 @@ TestSuite(archetype, .init=Setup, .fini=Cleanup);
 /// TODO: Test entity parenting
 Test(archetype, create_destroy)
 {
-    collection1->SpawnEntity(ComponentA(100));
+    collection1->SpawnEntity("e1", ComponentA(100));
 
     cr_expect(collection1->GetEntityCount() == 0, "SpawnEntity error: Entity creation should have been buffered");
     collection1->ResolveBuffers();
@@ -48,7 +48,7 @@ Test(archetype, create_destroy)
 
     for (int i = 0; i < 5; i++)
     {
-        collection1->SpawnEntity(ComponentA(i));
+        collection1->SpawnEntity("e2", ComponentA(i));
     }
 
     cr_expect(collection1->GetEntityCount() == 1, "SpawnEntityError: Expected 1 entity before resolving spawn buffer, instead found %d", collection1->GetEntityCount());
@@ -71,7 +71,7 @@ Test(archetype, data_access)
     EntityID lastEntity;
     for (int i = 0; i < 5; i++)
     {
-        lastEntity = collection2->SpawnEntity(ComponentA(100 + i), ComponentB(i));
+        lastEntity = collection2->SpawnEntity("entity", ComponentA(100 + i), ComponentB(i));
     }
 
     cr_expect(collection2->GetComponent<ComponentA>(0) == nullptr, "GetComponent error: Expected nullptr as entity should be in buffer");

@@ -6,13 +6,15 @@
 #include <unordered_map>
 #include <algorithm>
 #include <atomic>
+#include <string>
 
 namespace ag
 {
 	struct EntityInfo
 	{
+		/// TODO: Entity names should be stored in a map elsewhere so repeated names don't take up more memory
+		std::string name;
 		EntityID ID;
-		EntityID ParentID;
 	};
 
 	/**
@@ -24,25 +26,15 @@ namespace ag
 		/**
 		 * Adds an entity to the spawn buffer.
 		 * @param component The list of components that comprise the entity. This should be sorted by Component IDs.
+		 * @param name A name for the entity to spawn. This does not have to be unique.
 		 * @return The ID of the newly created entity.
 		*/
 		template <typename... Cs>
-		EntityID SpawnEntity(Cs... component)
+		EntityID SpawnEntity(std::string name, Cs... component)
 		{
-			return InstantiateEntity(0, component...);
+			return InstantiateEntity(name, component...);
 		}
 
-		/**
-		 * Adds an entity to the spawn buffer.
-		 * @param parent The ID of the entity the new entity should become a child of.
-		 * @param component The list of components that comprise the entity. This should be sorted by Component IDs.
-		 * @return The ID of the newly created entity.
-		*/
-		template <typename... Cs>
-		EntityID SpawnChild(EntityID parent, Cs... component)
-		{
-			return InstantiateEntity(parent, component...);
-		}
 
 		/**
 		 * Gets a pointer to a component from the collection.
@@ -112,12 +104,12 @@ namespace ag
 	private:
 
 		template <typename... Cs>
-		EntityID InstantiateEntity(EntityID parentID, Cs... component)
+		EntityID InstantiateEntity(std::string name, Cs... component)
 		{
 			EntityID newEntityID = GetNextID();
 			EntityInfo entityData;
 			entityData.ID = newEntityID;
-			entityData.ParentID = parentID;
+			entityData.name = name;
 			entitiesToSpawn.push_back(entityData);
 
 			int i = 0;
