@@ -1,3 +1,5 @@
+#pragma once
+
 #define GLM_FORCE_RADIANS
 #include <glm/vec3.hpp>
 #include <glm/gtx/quaternion.hpp>

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "ECSTypes.h"
 #include "ArchetypeCollection.h"
 
