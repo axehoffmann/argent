@@ -36,6 +36,7 @@ void ag::ArchetypeCollection::ResolveBuffers()
 void ag::ArchetypeCollection::ResolveDestroyBuffer()
 {
 	/// TODO: Would probably be more cache-friendly if u swapped these loop orders
+	/// TODO: Can we do this more efficiently?
 	for (size_t i = 0; i < entitiesToDestroy.size(); i++)
 	{
 		entities.erase(std::next(entities.begin(), entitiesToDestroy.at(i)));
