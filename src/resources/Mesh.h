@@ -6,13 +6,22 @@
 #include <glm/gtx/hash.hpp>
 
 #include <string>
+#include <unordered_map>
+#include <vector>
+
+#pragma warning(push, 0)
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
+#pragma warning(pop)
+
+#define AG_INDEXED_LOAD 0
 
 namespace ag
 {
     struct Vertex
     {
         glm::vec3 position;
-        glm::vec3 uv;
+        glm::vec2 uv;
         glm::vec3 normal;
         glm::vec3 tangent;
         glm::vec3 bitangent;
@@ -23,7 +32,7 @@ namespace ag
         }
     };
 
-    struct Model
+    struct Mesh
     {
         std::vector<Vertex> vertices;
         std::vector<uint32_t> indices;
@@ -31,7 +40,7 @@ namespace ag
         uint32_t ID;
         std::string path;
 
-        Model(std::string filePath);
+        Mesh(std::string filePath);
 
         void Load();
         void Unload();
