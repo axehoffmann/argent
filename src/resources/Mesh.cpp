@@ -28,7 +28,7 @@ void ag::Mesh::Load()
         {
             Vertex vertex{};
 
-            vertex.positionition = {
+            vertex.position = {
                 attributes.vertices[3 * index.vertex_index + 0],
                 attributes.vertices[3 * index.vertex_index + 1],
                 attributes.vertices[3 * index.vertex_index + 2]

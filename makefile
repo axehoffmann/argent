@@ -6,12 +6,13 @@ OBJ = obj
 BIN_DIR = bin
 BIN = $(BIN_DIR)/main
 
-INC := $(shell tr '\n' ' ' < includes.txt)
+INC := $(shell tr '\n' ' -I/' < includes.txt)
 
-ECS = $(SRC)/ecs
-ECS_SRCS = $(wildcard $(ECS)/**.cpp)
+rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 
-OBJS = $(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(ECS_SRCS))
+SRCS = $(call rwildcard, $(SRC), *.cpp)
+
+OBJS = $(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(SRCS))
 
 TEST = tests
 TESTS = $(wildcard $(TEST)/**.cpp)
@@ -27,24 +28,23 @@ release: $(BIN)
 
 
 $(BIN): $(OBJS)
+	mkdir -p $@
 	$(CMP) $(CMP_FLAGS) $(OBJS) -o $@
 
 $(OBJ)/%.o: $(SRC)/%.cpp
-	$(CMP) $(CMP_FLAGS) $(INC) -c $< -o $@
+	$(CMP) $(CMP_FLAGS) -I$(INC) -c $< -o $@
 
 
 $(TEST)/bin/%: $(TEST)/%.cpp
-	$(CMP) $(CMP_FLAGS) $< $(OBJS) -o $@ -lcriterion
+	$(CMP) $(CMP_FLAGS) -o $@ -I$(INC) $< $(OBJS) -lcriterion 
 
-$(BIN):
-	mkdir $@
 $(TEST)/bin:
-	mkdir $@
+	mkdir -p $@
 $(OBJ):
-	mkdir $@
+	mkdir -p $@
 
 test: $(TEST)/bin $(TEST_BINS)
 	for test in $(TEST_BINS) ; do ./$$test ; done
 
 clean:
-	$(RM) -r $(OBJ)/* $(BIN_DIR)/*
+	$(RM) -r $(OBJ)/**.o $(BIN_DIR)/main/*
