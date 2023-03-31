@@ -55,11 +55,12 @@ namespace ag
         glm::vec3 Front();
 
     private:
-        std::vector<EntityID> children;
         bool hasChanged;
 
         glm::vec3 position;
         glm::quat rotation;
         glm::vec3 scale;
+
+        // std::vector<EntityID> children;
     };
 }

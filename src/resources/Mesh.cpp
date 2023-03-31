@@ -10,6 +10,7 @@ ag::Mesh::Mesh(std::string filePath)
 
 void ag::Mesh::Load()
 {
+    // Based on vulkan-tutorial.com model loader
     tinyobj::attrib_t attributes;
     std::vector<tinyobj::shape_t> primitives;
     std::vector<tinyobj::material_t> materials;
@@ -28,21 +29,24 @@ void ag::Mesh::Load()
         {
             Vertex vertex{};
 
+            int positionIndex = 3 * index.vertex_index;
             vertex.position = {
-                attributes.vertices[3 * index.vertex_index + 0],
-                attributes.vertices[3 * index.vertex_index + 1],
-                attributes.vertices[3 * index.vertex_index + 2]
+                attributes.vertices[positionIndex + 0],
+                attributes.vertices[positionIndex + 1],
+                attributes.vertices[positionIndex + 2]
             };
 
+            int uvIndex = 2 * index.texcoord_index;
             vertex.uv = {
-                attributes.texcoords[2 * index.texcoord_index + 0],
-                1.0f - attributes.texcoords[2 * index.texcoord_index + 1]
+                attributes.texcoords[uvIndex + 0],
+                1.0f - attributes.texcoords[uvIndex + 1]
             };
             
+            int normalIndex = 3 * index.normal_index;
             vertex.normal = {
-                attributes.normals[3 * index.normal_index + 0],
-                attributes.normals[3 * index.normal_index + 1],
-                attributes.normals[3 * index.normal_index + 2]
+                attributes.normals[normalIndex + 0],
+                attributes.normals[normalIndex + 1],
+                attributes.normals[normalIndex + 2]
             };
 
 #if AG_INDEXED_LOAD
