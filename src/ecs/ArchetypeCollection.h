@@ -101,6 +101,7 @@ namespace ag
 		*/
 		static ArchetypeCollection* GetArchetypeFromEntityID(EntityID id);
 
+		ComponentSet GetComponentSet();
 
 	private:
 

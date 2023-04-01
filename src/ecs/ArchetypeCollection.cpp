@@ -86,6 +86,11 @@ EntityID ag::ArchetypeCollection::GetNextID()
 	return NextEntityID++;
 }
 
+ComponentSet ag::ArchetypeCollection::GetComponentSet()
+{
+	return ComponentTypes;
+}
+
 void ag::ArchetypeCollection::RegisterArchetype(ArchetypeCollection* archetype)
 {
 	archetypes.insert(std::pair<ArchetypeID, ArchetypeCollection*>(archetype->GetID(), archetype));
