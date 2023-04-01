@@ -32,6 +32,7 @@ namespace ag
 		template <typename... Cs>
 		EntityID SpawnEntity(std::string name, Cs... component)
 		{
+			/// TODO: This may need to be mutexed
 			return InstantiateEntity(name, component...);
 		}
 

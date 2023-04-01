@@ -3,7 +3,6 @@
 #define GLM_FORCE_RADIANS
 #include <glm/vec3.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include <glm/mat4x4.hpp>
 
 #include "../ecs/ECSTypes.h"
 #include <vector>
