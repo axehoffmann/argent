@@ -3,6 +3,8 @@ CMP_FLAGS = -g -Wall
 SRC = src
 OBJ = obj
 
+SUBDIRS = (/src/*/)
+
 BIN_DIR = bin
 BIN = $(BIN_DIR)/main
 
@@ -43,8 +45,10 @@ $(TEST)/bin:
 $(OBJ):
 	mkdir -p $@
 
-test: $(TEST)/bin $(TEST_BINS)
+test: clean
+test: $(OBJS) $(TEST)/bin $(TEST_BINS)
 	for test in $(TEST_BINS) ; do ./$$test ; done
 
 clean:
-	$(RM) -r $(OBJ)/**.o $(BIN_DIR)/main/*
+	$(RM) $(BIN_DIR)/main/*
+	find $(OBJ) -name '*.o' -delete

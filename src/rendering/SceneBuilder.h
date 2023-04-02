@@ -1,7 +1,10 @@
 #pragma once
 
 #include "SceneGraph.h"
+#include "../ecs/ECS.h"
+#include "StaticRenderable.h"
 #include <atomic>
+#include <array>
 
 #define GRAPH_BUFFER_SIZE 3
 
@@ -13,7 +16,7 @@ namespace ag
     class SceneBuilder
     {
     public:
-        SceneBuilder();
+        SceneBuilder(ag::World* w);
 
         /**
          * Generates a new graph at the end of each gametick
@@ -23,10 +26,15 @@ namespace ag
         /**
          * Called by the Renderer to get the most recent completed scene graph
         */
-        ag::SceneGraph* GetRecentGraph();        
+        ag::SceneGraph* StartGraphRead();
+        /**
+         * Called by the Renderer to stop locking the graph
+        */
+        void EndGraphRead();        
 
     private:
-
+        // Chooses the location of the next graph to construct and updates atomic indices
+        int ChooseGraph();
         // Graph currently owned by the SceneBuilder
         std::atomic<int> graphUnderConstruction;
         // Graph currently owned by the Renderer
@@ -35,7 +43,6 @@ namespace ag
         std::atomic<int> graphReady;
         std::array<ag::SceneGraph, GRAPH_BUFFER_SIZE> graphs;
 
-
-        // ecs world reference
+        ag::World* world;
     };
 }

@@ -9,8 +9,6 @@ ag::ArchetypeCollection* cAC;
 
 ag::World* world;
 
-
-
 struct ComponentA 
 {
     int value;
@@ -47,26 +45,25 @@ void Cleanup(void)
 
 TestSuite(world, .init=Setup, .fini=Cleanup);
 
-bool qEmpty = true;
-std::vector<int> qIter;
 Test(world, empty_query)
 {
-    qEmpty = true;
-    world->Query(+[](ag::QueryResult<ComponentC> c) {
+    bool qEmpty = true;
+    std::function<void(ag::QueryResult<ComponentC>)> lm = [&qEmpty](ag::QueryResult<ComponentC> c) {
         qEmpty = false;
-    });
+    };
+    world->Query(lm);
 
     cr_expect(qEmpty, "Query error: expected empty query to not execute callback function");
 }
 
-int qCount = 0;
 Test(world, success_empty_query)
 {
     // Test valid query with empty archetypes
-    qCount = 0;
-    world->Query(+[](ag::QueryResult<ComponentA> a) {
+    int qCount = 0;
+    std::function<void(ag::QueryResult<ComponentA>)> lm = [&qCount](ag::QueryResult<ComponentA> a) {
         qCount = a.Length();
-    });
+    };
+    world->Query(lm);
     cr_expect(qCount == 0, "Query error: expected query to have length 0, instead found %d", qCount);
 }
 
@@ -77,10 +74,11 @@ Test(world, one_populated)
         cA->SpawnEntity("", ComponentA(i));
     cA->ResolveBuffers();
 
-    qCount = 0;
-    world->Query(+[](ag::QueryResult<ComponentA> a) {
+    int qCount = 0;
+    std::function<void(ag::QueryResult<ComponentA>)> lm = [&qCount](ag::QueryResult<ComponentA> a) {
         qCount = a.Length();
-    });
+    };
+    world->Query(lm);
     cr_expect(qCount == 5, "Query error: expected query to have length 5, instead found %d", qCount);
 }
 
@@ -96,19 +94,23 @@ Test(world, two_populated)
     cAB->ResolveBuffers();
 
     std::vector<int> expected { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    std::vector<int> qIter;
+
     qIter.clear();
-    world->Query(+[](ag::QueryResult<ComponentA> a) {
+    std::function<void(ag::QueryResult<ComponentA>)> lm = [&qIter](ag::QueryResult<ComponentA> a) {
         for (size_t i = 0; i < a.Length(); i++)
             qIter.push_back(a[i]->value);
-    });
+    };
+    world->Query(lm);
     cr_expect(qIter == expected, "Query error: expected query to iterate all 10 entities");
 
     // Test valid query on a set of Components
     expected = std::vector<int> { 5, 6, 7, 8, 9 };
     qIter.clear();
-    world->Query(+[](ag::QueryResult<ComponentA> a, ag::QueryResult<ComponentB> b) {
+    std::function<void(ag::QueryResult<ComponentA>, ag::QueryResult<ComponentB>)> lm2 = [&qIter](ag::QueryResult<ComponentA> a, ag::QueryResult<ComponentB> b) {
         for (size_t i = 0; i < a.Length(); i++)
             qIter.push_back(a[i]->value);
-    });
+    };
+    world->Query(lm2);
     cr_expect(qIter == expected, "Query error: expected query to iterate 5 AB entities");
 }

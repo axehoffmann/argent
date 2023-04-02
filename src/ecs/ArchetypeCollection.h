@@ -36,6 +36,22 @@ namespace ag
 			return InstantiateEntity(name, component...);
 		}
 
+		/**
+		 * Returns an EntityInfo struct from an index.
+		 * @param i The index of the entity in the collection.
+		 * @return A copy of the EntityInfo struct of the entity
+		*/
+		EntityInfo GetEntityInfo(size_t i)
+		{
+			/// TODO: return an optional?
+			if (i >= entities.size() || i < 0)
+			{
+				return EntityInfo();
+			}
+
+			return entities[i];
+		}
+
 
 		/**
 		 * Gets a pointer to a component from the collection.

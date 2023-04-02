@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <unordered_map>
 #include "../core/Transform.h"
 #include "../ecs/ECSTypes.h"
@@ -9,7 +10,7 @@ namespace ag
     /**
      * Static Renderables do not need to be extrapolated, or have their transform updated each tick
     */
-    struct StaticRenderable
+    struct StaticRenderInstance
     {
         EntityID entityID;
 
@@ -17,6 +18,8 @@ namespace ag
         uint32_t materialID;
 
         ag::Transform transform;
+
+        StaticRenderInstance(EntityID id, uint32_t mesh, uint32_t mat, ag::Transform tr) : entityID(id), meshID(mesh), materialID(mat), transform(tr) {}
     };
     
     /**
@@ -24,8 +27,8 @@ namespace ag
     */
     struct SceneGraph
     {
-        std::unordered_map<EntityID, StaticRenderable> statics;
-        // std::unordered_map<EntityID, DynamicRenderable> dynamics;
+        std::vector<StaticRenderInstance> statics;
+        // std::unordered_map<EntityID, DynamicRenderInstance> dynamics;
 
     };
 }

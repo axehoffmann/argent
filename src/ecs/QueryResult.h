@@ -29,6 +29,19 @@ namespace ag
             return length;
         }
 
+        ag::EntityInfo GetInfo(size_t index)
+        {
+            if (index >= length)
+                return ag::EntityInfo();
+
+            std::tuple<ag::ArchetypeCollection*, size_t> find = FindArchetypeAndLocalIndex(index);
+            
+            if (std::get<ag::ArchetypeCollection*>(find) == nullptr || std::get<size_t>(find) < 0)
+                return ag::EntityInfo();
+            
+            return std::get<ag::ArchetypeCollection*>(find)->GetEntityInfo(std::get<size_t>(find));
+        }
+
         ComponentType* operator[](size_t index)
         {
             if (index >= length)

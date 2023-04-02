@@ -13,14 +13,16 @@ namespace ag
     class World
     {
     public:
+        /// TODO: check for issues with the way the callback is passed
         template <typename... Q>
-        void Query(void(*callback)(QueryResult<Q>...))
+        void Query(std::function<void(QueryResult<Q>...)>& callback)
         {
             std::vector<ComponentTypeID> search;
             (search.push_back(ag::Component::GetID<Q>()), ...);
 
             std::vector<ag::ArchetypeCollection*> matches;
 
+            /// TODO: benchmark... maybe could use a search tree
             for (size_t i = 0; i < archetypes.size(); i++)
             {
                 std::vector<ComponentTypeID> currentSet = archetypes[i]->GetComponentSet();
