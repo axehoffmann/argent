@@ -8,9 +8,9 @@ namespace ag
     class RenderEngine
     {
     public:
-        RenderEngine(ag::SceneBuilder* scene);
+        RenderEngine();
         
-        virtual void Render() = 0;
+        virtual void Render(ag::SceneGraph* scene) = 0;
 
         virtual void LoadMesh(uint32_t meshID) = 0;
         virtual void UnloadMesh(uint32_t meshID) = 0;
@@ -20,6 +20,5 @@ namespace ag
 
 
     private:
-        ag::SceneBuilder* renderScene;
     };
 }

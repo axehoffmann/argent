@@ -1,11 +1,16 @@
 #include "Mesh.h"
 
-uint32_t ag::Mesh::nextID(0);
+std::atomic<uint32_t> ag::Mesh::nextID(0);
 
 ag::Mesh::Mesh(std::string filePath)
 {
     path = filePath;
     ID = ++nextID;
+}
+
+bool ag::Mesh::IsReady()
+{
+    return vertices.size() > 0;
 }
 
 void ag::Mesh::Load()
@@ -21,7 +26,10 @@ void ag::Mesh::Load()
     bool success = tinyobj::LoadObj(&attributes, &primitives, &materials, &warning, &error, path.c_str());
 
     if (!success)
+    {
         throw std::runtime_error(warning + error);
+        return;
+    }
 
     for (const tinyobj::shape_t& triangle : primitives)
     {

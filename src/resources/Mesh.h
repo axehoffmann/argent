@@ -8,6 +8,8 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <atomic>
+#include <stdexcept>
 
 #pragma warning(push, 0)
 #define TINYOBJLOADER_IMPLEMENTATION
@@ -42,11 +44,12 @@ namespace ag
 
         Mesh(std::string filePath);
 
+        bool IsReady();
         void Load();
         void Unload();
 
     private:
-        static uint32_t nextID;
+        static std::atomic<uint32_t> nextID;
     };
 }
 

@@ -10,7 +10,7 @@ namespace ag
     class Renderer
     {
     public:
-        Renderer(ag::RenderEngine* engine);
+        Renderer(ag::RenderEngine* engine, ag::SceneBuilder* scene);
         
         bool Initialise();
 
@@ -18,5 +18,6 @@ namespace ag
     
     private:
         ag::RenderEngine* renderEngine;
+        ag::SceneBuilder* sceneBuilder;
     };
 }
