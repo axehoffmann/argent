@@ -1,12 +1,5 @@
 #include "Mesh.h"
 
-std::atomic<uint32_t> ag::Mesh::nextID(0);
-
-ag::Mesh::Mesh(std::string filePath)
-{
-    path = filePath;
-    ID = ++nextID;
-}
 
 bool ag::Mesh::IsReady()
 {
@@ -23,7 +16,7 @@ void ag::Mesh::Load()
 
     std::unordered_map<Vertex, uint32_t> uniqueVertices;
 
-    bool success = tinyobj::LoadObj(&attributes, &primitives, &materials, &warning, &error, path.c_str());
+    bool success = tinyobj::LoadObj(&attributes, &primitives, &materials, &warning, &error, filePath.c_str());
 
     if (!success)
     {

@@ -5,11 +5,10 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
 
-#include <string>
+#include "Resource.h"
+
 #include <unordered_map>
 #include <vector>
-#include <atomic>
-#include <stdexcept>
 
 #pragma warning(push, 0)
 #define TINYOBJLOADER_IMPLEMENTATION
@@ -34,22 +33,14 @@ namespace ag
         }
     };
 
-    struct Mesh
-    {
+    struct Mesh : public Resource
+    { 
         std::vector<Vertex> vertices;
         std::vector<uint32_t> indices;
 
-        uint32_t ID;
-        std::string path;
-
-        Mesh(std::string filePath);
-
-        bool IsReady();
-        void Load();
-        void Unload();
-
-    private:
-        static std::atomic<uint32_t> nextID;
+        bool IsReady()=0;
+        void Load()=0;
+        void Unload()=0;
     };
 }
 

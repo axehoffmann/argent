@@ -1,8 +1,7 @@
 #pragma once
 
-#include <string>
-#include <atomic>
-#include <stdexcept>
+#include "Resource.h"
+
 
 #pragma warning(push, 0)
 #define STB_IMAGE_IMPLEMENTATION
@@ -11,7 +10,7 @@
 
 namespace ag
 {
-    struct Texture
+    struct Texture : public Resource
     {
     public:
         u_char* data;
@@ -19,16 +18,10 @@ namespace ag
         int height;
         int channels;
 
-        uint32_t ID;
-        std::string path;
-
-        Texture(std::string filePath);
-
         bool IsReady();
         void Load();
         void Unload();
 
-    private:
-        static std::atomic<uint32_t> nextID;
+
     };
 }
