@@ -1,4 +1,4 @@
-#include <criterion/criterion.h>
+#include "TestFramework.h"
 #include "../src/ecs/ECS.h"
 
 #include <vector>
@@ -22,7 +22,7 @@ struct ComponentB { };
 
 struct ComponentC { };
 
-void Setup(void)
+void Setup()
 {
     cA = new ag::ArchetypeCollection({ ag::Component::GetID<ComponentA>() });
     cAB = new ag::ArchetypeCollection({ ag::Component::GetID<ComponentA>(), ag::Component::GetID<ComponentB>() });
@@ -34,7 +34,7 @@ void Setup(void)
     world->AddArchetype(cAB);
 }
 
-void Cleanup(void)
+void Cleanup()
 {
     delete world;
 
@@ -43,9 +43,7 @@ void Cleanup(void)
     delete cAC;
 }
 
-TestSuite(world, .init=Setup, .fini=Cleanup);
-
-Test(world, empty_query)
+void empty_query()
 {
     bool qEmpty = true;
     std::function<void(ag::QueryResult<ComponentC>)> lm = [&qEmpty](ag::QueryResult<ComponentC> c) {
@@ -53,10 +51,10 @@ Test(world, empty_query)
     };
     world->Query(lm);
 
-    cr_expect(qEmpty, "Query error: expected empty query to not execute callback function");
+    Test::Expect(qEmpty, "Expected empty query to not execute callback function");
 }
 
-Test(world, success_empty_query)
+void success_empty_query()
 {
     // Test valid query with empty archetypes
     int qCount = 0;
@@ -64,10 +62,10 @@ Test(world, success_empty_query)
         qCount = a.Length();
     };
     world->Query(lm);
-    cr_expect(qCount == 0, "Query error: expected query to have length 0, instead found %d", qCount);
+    Test::Expect(qCount == 0, "Expected query to have length 0, instead found {}", qCount);
 }
 
-Test(world, one_populated)
+void one_populated()
 {
     // Test valid query with 1 populated archetype
     for (size_t i = 0; i < 5; i++)
@@ -79,10 +77,10 @@ Test(world, one_populated)
         qCount = a.Length();
     };
     world->Query(lm);
-    cr_expect(qCount == 5, "Query error: expected query to have length 5, instead found %d", qCount);
+    Test::Expect(qCount == 5, "Expected query to have length 5, instead found {}", qCount);
 }
 
-Test(world, two_populated)
+void two_populated()
 {
     // Test valid query with 2 populated archetypes
     for (size_t i = 0; i < 5; i++)
@@ -102,7 +100,7 @@ Test(world, two_populated)
             qIter.push_back(a[i]->value);
     };
     world->Query(lm);
-    cr_expect(qIter == expected, "Query error: expected query to iterate all 10 entities");
+    Test::Expect(qIter == expected, "Expected query to iterate all 10 entities");
 
     // Test valid query on a set of Components
     expected = std::vector<int> { 5, 6, 7, 8, 9 };
@@ -112,5 +110,21 @@ Test(world, two_populated)
             qIter.push_back(a[i]->value);
     };
     world->Query(lm2);
-    cr_expect(qIter == expected, "Query error: expected query to iterate 5 AB entities");
+    Test::Expect(qIter == expected, "Expected query to iterate 5 AB entities");
+}
+
+
+int main()
+{
+    Test::Name("Worlds");
+    Test::init = Setup;
+    Test::clean = Cleanup;
+   
+    Test::Case("Empty Query", empty_query);
+    Test::Case("Empty Query 2", success_empty_query);
+    Test::Case("One Populated", one_populated);
+    Test::Case("Two Populated", two_populated);
+
+
+    Test::Run();
 }

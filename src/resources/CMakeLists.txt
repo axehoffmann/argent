@@ -1,0 +1,1 @@
+add_library(resources Resource.cpp Mesh.cpp Texture.cpp)

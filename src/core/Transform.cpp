@@ -5,6 +5,7 @@ ag::Transform::Transform(glm::vec3 pos)
     position = pos;
     rotation = glm::quat();
     scale = glm::vec3(1.0f);
+    hasChanged = false;
 }
 
 ag::Transform::Transform(glm::vec3 pos, glm::vec3 rot)
@@ -12,6 +13,7 @@ ag::Transform::Transform(glm::vec3 pos, glm::vec3 rot)
     position = pos;
     rotation = glm::quat(rot);
     scale = glm::vec3(1.0f);
+    hasChanged = false;
 }
 
 ag::Transform::Transform(glm::vec3 pos, glm::vec3 rot, glm::vec3 sc)
@@ -19,6 +21,7 @@ ag::Transform::Transform(glm::vec3 pos, glm::vec3 rot, glm::vec3 sc)
     position = pos;
     rotation = glm::quat(rot);
     scale = sc;
+    hasChanged = false;
 }
 
 void ag::Transform::Translate(glm::vec3 delta)
