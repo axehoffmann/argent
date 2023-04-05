@@ -40,27 +40,27 @@ void create_destroy()
 {
     collection1->SpawnEntity("e1", ComponentA(100));
 
-    Test::Expect(collection1->GetEntityCount() == 0, "Entity creation should have been buffered");
+    ag_expect(collection1->GetEntityCount() == 0, "Entity creation should have been buffered");
     collection1->ResolveBuffers();
-    Test::Expect(collection1->GetEntityCount() == 1, "Expected 1 entity, instead found {}", collection1->GetEntityCount());
+    ag_expect(collection1->GetEntityCount() == 1, "Expected 1 entity, instead found {}", collection1->GetEntityCount());
 
     for (int i = 0; i < 5; i++)
     {
         collection1->SpawnEntity("e2", ComponentA(i));
     }
 
-    Test::Expect(collection1->GetEntityCount() == 1, "Expected 1 entity before resolving spawn buffer, instead found {}", collection1->GetEntityCount());
+    ag_expect(collection1->GetEntityCount() == 1, "Expected 1 entity before resolving spawn buffer, instead found {}", collection1->GetEntityCount());
     collection1->ResolveBuffers();
-    Test::Expect(collection1->GetEntityCount() == 6, "Expected 6 entities after resolving spawn buffer, instead found {}", collection1->GetEntityCount());
+    ag_expect(collection1->GetEntityCount() == 6, "Expected 6 entities after resolving spawn buffer, instead found {}", collection1->GetEntityCount());
 
     for (int i = 0; i < 6; i++)
     {
         collection1->DestroyEntity(0);
     }
 
-    Test::Expect(collection1->GetEntityCount() == 6, "Expected 6 entities before resolving destroy buffer, instead found {}", collection1->GetEntityCount());
+    ag_expect(collection1->GetEntityCount() == 6, "Expected 6 entities before resolving destroy buffer, instead found {}", collection1->GetEntityCount());
     collection1->ResolveBuffers();
-    Test::Expect(collection1->GetEntityCount() == 0, "Expected 6 entities after resolving destroy buffer, instead found {}", collection1->GetEntityCount());
+    ag_expect(collection1->GetEntityCount() == 0, "Expected 6 entities after resolving destroy buffer, instead found {}", collection1->GetEntityCount());
 }
 
 // Data access and modification
@@ -72,26 +72,26 @@ void data_access()
         lastEntity = collection2->SpawnEntity("entity", ComponentA(100 + i), ComponentB(i));
     }
 
-    Test::Expect(collection2->GetComponent<ComponentA>(0) == nullptr, "Expected nullptr as entity should be in buffer");
+    ag_expect(collection2->GetComponent<ComponentA>(0) == nullptr, "Expected nullptr as entity should be in buffer");
 
     collection2->ResolveBuffers();
 
     ComponentA* componentA = collection2->GetComponent<ComponentA>(0);
-    Test::Expect(componentA != nullptr, "Expected pointer to ComponentA, instead found nullptr");
-    Test::Expect(componentA->value == 100, "Expected initial ComponentA.value of 100, instead found {}", componentA->value);
+    ag_expect(componentA != nullptr, "Expected pointer to ComponentA, instead found nullptr");
+    ag_expect(componentA->value == 100, "Expected initial ComponentA.value of 100, instead found {}", componentA->value);
     componentA->value = 10;
-    Test::Expect(collection2->GetComponent<ComponentA>(0)->value == 10, "GetComponent error: Expected updated ComponentA.value of 10, instead found {}", collection2->GetComponent<ComponentA>(0)->value);
+    ag_expect(collection2->GetComponent<ComponentA>(0)->value == 10, "GetComponent error: Expected updated ComponentA.value of 10, instead found {}", collection2->GetComponent<ComponentA>(0)->value);
 
     ComponentB* componentB = collection2->GetComponent<ComponentB>(2);
-    Test::Expect(componentB != nullptr, "Expected pointer to ComponentB, instead found nullptr");
-    Test::Expect(componentB->partner == 2, "Expected initial ComponentB.partner of 2, instead found {}", componentB->partner);
+    ag_expect(componentB != nullptr, "Expected pointer to ComponentB, instead found nullptr");
+    ag_expect(componentB->partner == 2, "Expected initial ComponentB.partner of 2, instead found {}", componentB->partner);
     componentB->partner = lastEntity;
-    Test::Expect(collection2->GetComponent<ComponentB>(2)->partner == lastEntity, "Expected updated ComponentB.partner of {}, instead found {}", lastEntity, collection2->GetComponent<ComponentB>(2)->partner);
+    ag_expect(collection2->GetComponent<ComponentB>(2)->partner == lastEntity, "Expected updated ComponentB.partner of {}, instead found {}", lastEntity, collection2->GetComponent<ComponentB>(2)->partner);
 
     size_t partnerIndex = collection2->GetIndexByID(componentB->partner);
-    Test::Expect(partnerIndex == 4, "Expected last entity at index 4, instead found {}", partnerIndex);
+    ag_expect(partnerIndex == 4, "Expected last entity at index 4, instead found {}", partnerIndex);
     ComponentA* partnerComponentA = collection2->GetComponent<ComponentA>(partnerIndex);
-    Test::Expect(partnerComponentA->value == 104, "Expected last entity to have ComponentA.value of 104, instead found {}", partnerComponentA->value);
+    ag_expect(partnerComponentA->value == 104, "Expected last entity to have ComponentA.value of 104, instead found {}", partnerComponentA->value);
 }
 
 int main()

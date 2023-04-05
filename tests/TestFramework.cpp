@@ -45,7 +45,7 @@ void Test::Run()
 	SetConsoleTextAttribute(c, 15 + 0 * 16);
 	std::cout << "[ ";
 	SetConsoleTextAttribute(c, 7 + 0 * 16);
-	std::cout << name;
+	std::cout << name.insert(name.length(), 12 - name.length(), ' ');
 	SetConsoleTextAttribute(c, 15 + 0 * 16);
 	std::cout << " | Passed: ";
 	SetConsoleTextAttribute(c, successes > 0 ? 10 : 12);

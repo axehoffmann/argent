@@ -8,6 +8,8 @@
 #include <stb_image.h>
 #pragma warning(pop)
 
+typedef unsigned char u_char;
+
 namespace ag
 {
     struct Texture : public Resource

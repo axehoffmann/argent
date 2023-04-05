@@ -51,7 +51,7 @@ void empty_query()
     };
     world->Query(lm);
 
-    Test::Expect(qEmpty, "Expected empty query to not execute callback function");
+    ag_expect(qEmpty, "Expected empty query to not execute callback function");
 }
 
 void success_empty_query()
@@ -62,7 +62,7 @@ void success_empty_query()
         qCount = a.Length();
     };
     world->Query(lm);
-    Test::Expect(qCount == 0, "Expected query to have length 0, instead found {}", qCount);
+    ag_expect(qCount == 0, "Expected query to have length 0, instead found {}", qCount);
 }
 
 void one_populated()
@@ -77,7 +77,7 @@ void one_populated()
         qCount = a.Length();
     };
     world->Query(lm);
-    Test::Expect(qCount == 5, "Expected query to have length 5, instead found {}", qCount);
+    ag_expect(qCount == 5, "Expected query to have length 5, instead found {}", qCount);
 }
 
 void two_populated()
@@ -100,7 +100,7 @@ void two_populated()
             qIter.push_back(a[i]->value);
     };
     world->Query(lm);
-    Test::Expect(qIter == expected, "Expected query to iterate all 10 entities");
+    ag_expect(qIter == expected, "Expected query to iterate all 10 entities");
 
     // Test valid query on a set of Components
     expected = std::vector<int> { 5, 6, 7, 8, 9 };
@@ -110,7 +110,7 @@ void two_populated()
             qIter.push_back(a[i]->value);
     };
     world->Query(lm2);
-    Test::Expect(qIter == expected, "Expected query to iterate 5 AB entities");
+    ag_expect(qIter == expected, "Expected query to iterate 5 AB entities");
 }
 
 

@@ -21,18 +21,18 @@ struct ComponentB
 
 void id_allocation()
 {
-    Test::Expect(ag::Component::GetID<ComponentA>() == 1, "Expected first ID of 1, found {}", ag::Component::GetID<ComponentA>());
-    Test::Expect(ag::Component::GetID<ComponentB>() == 2, "Expected second ID of 2, found {}", ag::Component::GetID<ComponentB>());
-    Test::Expect(ag::Component::GetID<ComponentA>() == 1, "Expected first ID to remember 1, found {}", ag::Component::GetID<ComponentA>());
+    ag_expect(ag::Component::GetID<ComponentA>() == 1, "Expected first ID of 1, found {}", ag::Component::GetID<ComponentA>());
+    ag_expect(ag::Component::GetID<ComponentB>() == 2, "Expected second ID of 2, found {}", ag::Component::GetID<ComponentB>());
+    ag_expect(ag::Component::GetID<ComponentA>() == 1, "Expected first ID to remember 1, found {}", ag::Component::GetID<ComponentA>());
 }
 
 void component_size()
 {
     // Getting size by component ID (important for strides in archetype storage)
     ComponentTypeID compA = ag::Component::GetID<ComponentA>();
-    Test::Expect(ag::Component::GetSize(compA) == sizeof(ComponentA), "Expected size of {}, found {}", sizeof(ComponentA), ag::Component::GetSize(compA));
+    ag_expect(ag::Component::GetSize(compA) == sizeof(ComponentA), "Expected size of {}, found {}", sizeof(ComponentA), ag::Component::GetSize(compA));
     ComponentTypeID compB = ag::Component::GetID<ComponentB>();
-    Test::Expect(ag::Component::GetSize(compB) == sizeof(ComponentB), "Expected size of {}, found {}", sizeof(ComponentB), ag::Component::GetSize(compB));
+    ag_expect(ag::Component::GetSize(compB) == sizeof(ComponentB), "Expected size of {}, found {}", sizeof(ComponentB), ag::Component::GetSize(compB));
 }
 
 int main()

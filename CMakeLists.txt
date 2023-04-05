@@ -2,6 +2,8 @@
 
 project ("argent")
 
+include(CTest)
+
 file(STRINGS includes.txt INCLUDE_DIRS)
 
 set(CXX_STANDARD_REQUIRED ON)
