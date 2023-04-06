@@ -38,9 +38,9 @@ namespace ag
         std::vector<Vertex> vertices;
         std::vector<uint32_t> indices;
 
-        bool IsReady()=0;
-        void Load()=0;
-        void Unload()=0;
+        bool IsReady() override;
+        void Load() override;
+        void Unload() override;
     };
 }
 
