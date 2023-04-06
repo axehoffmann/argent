@@ -4,6 +4,7 @@ ag::BoundingBox::BoundingBox(glm::vec3 pos, glm::vec3 ext)
 {
     origin = pos;
     extents = ext;
+    center = origin + 0.5f * extents;
 }
 
 glm::vec3 ag::BoundingBox::GetOrigin()
