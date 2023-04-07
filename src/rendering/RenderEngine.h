@@ -13,13 +13,15 @@ namespace ag
 
         virtual void Render(ag::SceneGraph* scene) = 0;
 
-        virtual void LoadMesh(uint32_t meshID) = 0;
-        virtual void UnloadMesh(uint32_t meshID) = 0;
+    protected:
 
-        virtual void LoadMaterial(uint32_t materialID) = 0;
-        virtual void UnloadMaterial(uint32_t materialID) = 0;
+        virtual void InitMesh(uint32_t meshID) = 0;
+        virtual void InitMaterial(uint32_t materialID) = 0;
+        virtual void InitTexture(uint32_t textureID) = 0;
 
+        virtual void UseMesh(uint32_t meshID) = 0;
+        virtual void UseMaterial(uint32_t materialID) = 0;
+        virtual void UseTexture(uint32_t textureID) = 0;
 
-    private:
     };
 }

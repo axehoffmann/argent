@@ -18,6 +18,8 @@ namespace ag
 		void Initialise();
 		void SetInfo(std::string info);
 
+		~GLScreen();
+
 	private:
 		GLFWwindow* window;
 	};

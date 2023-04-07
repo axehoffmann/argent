@@ -22,3 +22,8 @@ void ag::GLScreen::SetInfo(std::string info)
 	title = SCREEN_TITLE + title;
 	glfwSetWindowTitle(window, title.c_str());
 }
+
+ag::GLScreen::~GLScreen()
+{
+	glfwTerminate();
+}
