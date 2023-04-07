@@ -8,6 +8,10 @@
 #include <unordered_map>
 
 #include "../../resources/AssetManager.h"
+#include "../../resources/Material.h"
+#include "../../resources/Texture.h"
+
+
 
 typedef unsigned int GLHandle;
 
@@ -38,7 +42,7 @@ namespace ag
 
 		void InitMesh(uint32_t meshID) override;
 		void InitMaterial(uint32_t materialID) override;
-		void InitTexture(uint32_t textureID) override;
+		GLHandle InitTexture(uint32_t textureID);
 
 		void UseMesh(uint32_t meshID) override;
 		void UseMaterial(uint32_t materialID) override;
@@ -46,6 +50,7 @@ namespace ag
 
 		std::unordered_map<uint32_t, GLMesh> meshes;
 		std::unordered_map<uint32_t, GLMaterial> materials;
+		std::unordered_map<uint32_t, GLHandle> textures;
 
 		ag::GLScreen* screen;
 	};

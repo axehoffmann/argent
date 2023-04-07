@@ -19,6 +19,7 @@ void ag::GLRenderEngine::Render(ag::SceneGraph* graph)
 
 void ag::GLRenderEngine::InitMesh(uint32_t meshID)
 {
+	/// TODO: note that data is not unloaded from RAM
 	if (meshes.find(meshID) != meshes.end())
 		return;
 
@@ -38,11 +39,49 @@ void ag::GLRenderEngine::InitMesh(uint32_t meshID)
 
 void ag::GLRenderEngine::InitMaterial(uint32_t materialID)
 {
+	if (materials.find(materialID) != materials.end())
+		return;
 
+	std::shared_ptr<ag::Material> material = ag::AssetManager::Fetch<ag::Material>(materialID);
+
+	ag::GLMaterial glMat;
+	glMat.textures.resize(material->textures.size());
+
+	/// TODO: Copy parameters too
+
+	for (size_t i = 0; i < material->textures.size(); i++)
+	{
+		glMat.textures[i] = InitTexture(material->textures[i]);
+	}
+
+	materials[materialID] = glMat;
 }
 
-void ag::GLRenderEngine::InitTexture(uint32_t textureID)
+GLHandle ag::GLRenderEngine::InitTexture(uint32_t textureID)
 {
+	/// TODO: note that data is not unloaded from RAM
+	if (textures.find(textureID) != textures.end())
+		return textures[textureID];
+
+	GLHandle texHandle;
+
+	std::shared_ptr<ag::Texture> texture = ag::AssetManager::Fetch<ag::Texture>(textureID);
+
+	glGenTextures(1, &texHandle);
+	glBindTexture(GL_TEXTURE_2D, texHandle);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->width, texture->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture->data);
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	textures[textureID] = texHandle;
+
+	return texHandle;
 }
 
 void ag::GLRenderEngine::UseMesh(uint32_t meshID)
