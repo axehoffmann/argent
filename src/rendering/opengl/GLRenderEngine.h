@@ -46,7 +46,7 @@ namespace ag
 
 		void UseMesh(uint32_t meshID) override;
 		void UseMaterial(uint32_t materialID) override;
-		void UseTexture(uint32_t textureID) override;
+		void UseTexture(uint32_t textureID, int slot);
 
 		std::unordered_map<uint32_t, GLMesh> meshes;
 		std::unordered_map<uint32_t, GLMaterial> materials;

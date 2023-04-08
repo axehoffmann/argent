@@ -20,7 +20,6 @@ namespace ag
 
         virtual void UseMesh(uint32_t meshID) = 0;
         virtual void UseMaterial(uint32_t materialID) = 0;
-        virtual void UseTexture(uint32_t textureID) = 0;
 
     };
 }

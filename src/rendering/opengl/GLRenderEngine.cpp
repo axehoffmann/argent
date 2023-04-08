@@ -86,13 +86,21 @@ GLHandle ag::GLRenderEngine::InitTexture(uint32_t textureID)
 
 void ag::GLRenderEngine::UseMesh(uint32_t meshID)
 {
+	glBindBuffer(GL_ARRAY_BUFFER, meshes[meshID].vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[meshID].ebo);
 }
 
 
 void ag::GLRenderEngine::UseMaterial(uint32_t materialID)
 {
+	for (size_t i = 0; i < materials[materialID].textures.size(); i++)
+	{
+		UseTexture(materials[materialID].textures[i], i);
+	}
 }
 
-void ag::GLRenderEngine::UseTexture(uint32_t textureID)
+void ag::GLRenderEngine::UseTexture(uint32_t textureID, int slot)
 {
+	glActiveTexture(GL_TEXTURE0 + slot);
+	glBindTexture(GL_TEXTURE_2D, textures[textureID]);
 }
