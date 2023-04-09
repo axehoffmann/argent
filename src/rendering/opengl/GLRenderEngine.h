@@ -11,9 +11,8 @@
 #include "../../resources/Material.h"
 #include "../../resources/Texture.h"
 
+#include "GL.h"
 
-
-typedef unsigned int GLHandle;
 
 namespace ag
 {
@@ -44,8 +43,8 @@ namespace ag
 		void InitMaterial(uint32_t materialID) override;
 		GLHandle InitTexture(uint32_t textureID);
 
-		void UseMesh(uint32_t meshID) override;
-		void UseMaterial(uint32_t materialID) override;
+		void UseMesh(uint32_t meshID);
+		void UseMaterial(uint32_t materialID);
 		void UseTexture(uint32_t textureID, int slot);
 
 		std::unordered_map<uint32_t, GLMesh> meshes;

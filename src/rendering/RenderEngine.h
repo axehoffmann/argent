@@ -18,8 +18,5 @@ namespace ag
         virtual void InitMesh(uint32_t meshID) = 0;
         virtual void InitMaterial(uint32_t materialID) = 0;
 
-        virtual void UseMesh(uint32_t meshID) = 0;
-        virtual void UseMaterial(uint32_t materialID) = 0;
-
     };
 }

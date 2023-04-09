@@ -24,15 +24,9 @@ void ag::GLRenderEngine::InitMesh(uint32_t meshID)
 		return;
 
 	std::shared_ptr<ag::Mesh> mesh = ag::AssetManager::Fetch<ag::Mesh>(meshID);
-	GLHandle vbo, ebo;
-	glGenBuffers(1, &vbo);
-	glGenBuffers(1, &ebo);
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, mesh->vertices.size() * sizeof(Vertex), mesh->vertices.data(), GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->vertices.size() * sizeof(Vertex), mesh->indices.data(), GL_STATIC_DRAW);
+	GLHandle vbo = ag::GL::MakeBuffer(GL_ARRAY_BUFFER, mesh->vertices.size() * sizeof(Vertex), mesh->vertices.data(), GL_STATIC_DRAW);
+	GLHandle ebo = ag::GL::MakeBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indices.size() * sizeof(size_t), mesh->indices.data(), GL_STATIC_DRAW);
 
 	meshes.emplace(meshID, GLMesh(vbo, ebo));
 }
