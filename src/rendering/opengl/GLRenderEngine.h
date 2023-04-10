@@ -21,6 +21,7 @@ namespace ag
 		GLHandle vbo;
 		GLHandle ebo;
 
+		GLMesh() { vbo = ebo = -1; }
 		GLMesh(GLHandle v, GLHandle e) : vbo(v), ebo(e) { }
 	};
 

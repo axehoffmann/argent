@@ -8,8 +8,6 @@ void ag::GLRenderEngine::Initialise()
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.3f, 0.3f, 0.4f, 1.0f);
-
-
 }
 
 void ag::GLRenderEngine::Render(ag::SceneGraph* graph)
@@ -28,7 +26,7 @@ void ag::GLRenderEngine::InitMesh(uint32_t meshID)
 	GLHandle vbo = ag::GL::MakeBuffer(GL_ARRAY_BUFFER, mesh->vertices.size() * sizeof(Vertex), mesh->vertices.data(), GL_STATIC_DRAW);
 	GLHandle ebo = ag::GL::MakeBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indices.size() * sizeof(size_t), mesh->indices.data(), GL_STATIC_DRAW);
 
-	meshes.emplace(meshID, GLMesh(vbo, ebo));
+	meshes[meshID] = GLMesh(vbo, ebo);
 }
 
 void ag::GLRenderEngine::InitMaterial(uint32_t materialID)
@@ -39,7 +37,7 @@ void ag::GLRenderEngine::InitMaterial(uint32_t materialID)
 	std::shared_ptr<ag::Material> material = ag::AssetManager::Fetch<ag::Material>(materialID);
 
 	ag::GLMaterial glMat;
-	glMat.textures.resize(material->textures.size());
+	glMat.textures.reserve(material->textures.size());
 
 	/// TODO: Copy parameters too
 
@@ -57,21 +55,10 @@ GLHandle ag::GLRenderEngine::InitTexture(uint32_t textureID)
 	if (textures.find(textureID) != textures.end())
 		return textures[textureID];
 
-	GLHandle texHandle;
 
 	std::shared_ptr<ag::Texture> texture = ag::AssetManager::Fetch<ag::Texture>(textureID);
 
-	glGenTextures(1, &texHandle);
-	glBindTexture(GL_TEXTURE_2D, texHandle);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->width, texture->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture->data);
-
-	glGenerateMipmap(GL_TEXTURE_2D);
+	GLHandle texHandle = ag::GL::MakeTexture(GL_TEXTURE_2D, GL_RGBA, texture->width, texture->height, texture->data);
 
 	textures[textureID] = texHandle;
 

@@ -21,7 +21,9 @@ namespace ag
 			// Ensure we are fetching a resource type
 			static_assert(std::is_base_of<ag::Resource, T>::value);
 
-			std::shared_ptr<T> resource = std::dynamic_pointer_cast<T>();
+			std::shared_ptr<T> resource = std::dynamic_pointer_cast<T>(resources[id]);
+
+			return resource;
 		}
 
 		template <class T>
