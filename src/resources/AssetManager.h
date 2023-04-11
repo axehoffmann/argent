@@ -16,12 +16,12 @@ namespace ag
 		///		see: https://vkguide.dev/docs/extra-chapter/asset_system/
 	public:
 		template <class T>
-		static std::shared_ptr<T> Fetch(uint32_t id)
+		static std::weak_ptr<T> Fetch(uint32_t id)
 		{
 			// Ensure we are fetching a resource type
 			static_assert(std::is_base_of<ag::Resource, T>::value);
 
-			std::shared_ptr<T> resource = std::dynamic_pointer_cast<T>(resources[id]);
+			std::weak_ptr<T> resource = std::dynamic_pointer_cast<T>(resources[id]);
 
 			return resource;
 		}
@@ -44,7 +44,17 @@ namespace ag
 			ptr->Load();
 
 			resources.push_back(ptr);
-			pathToID.insert(path, idx);
+			pathToID[path] = idx;
+		}
+
+		static void UnloadAll()
+		{
+			for (size_t i = 0; i < resources.size(); i++)
+			{
+				resources[i]->Unload();
+			}
+			std::vector<std::shared_ptr<ag::Resource>>().swap(resources);
+			pathToID.clear();
 		}
 
 	private:

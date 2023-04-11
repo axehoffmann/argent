@@ -1,5 +1,10 @@
 #include "Mesh.h"
 
+#pragma warning(push, 0)
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
+#pragma warning(pop)
+
 
 bool ag::Mesh::IsReady()
 {
@@ -93,6 +98,9 @@ void ag::Mesh::Load()
 
 void ag::Mesh::Unload()
 {
+    if (vertices.size() == 0 && indices.size() == 0)
+        return;
+
     // Free mesh memory
     std::vector<Vertex>().swap(vertices);
     std::vector<uint32_t>().swap(indices);

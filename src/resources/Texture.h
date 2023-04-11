@@ -15,6 +15,13 @@ namespace ag
     struct Texture : public Resource
     {
     public:
+        Texture(std::string path) : Resource(path) 
+        {
+            data = nullptr;
+            width = height = channels = 0;
+        }
+        ~Texture() { Unload(); }
+
         u_char* data;
         int width;
         int height;

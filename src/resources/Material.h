@@ -15,6 +15,9 @@ namespace ag
     struct Material : public Resource
     {
     public:
+        Material(std::string path) : Resource(path) {}
+        ~Material() { Unload(); }
+
         std::vector<uint32_t> textures;
         std::vector<float> parameters;
 

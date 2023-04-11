@@ -10,11 +10,6 @@
 #include <unordered_map>
 #include <vector>
 
-#pragma warning(push, 0)
-#define TINYOBJLOADER_IMPLEMENTATION
-#include <tiny_obj_loader.h>
-#pragma warning(pop)
-
 #define AG_INDEXED_LOAD 0
 
 namespace ag
@@ -35,6 +30,10 @@ namespace ag
 
     struct Mesh : public Resource
     { 
+        Mesh(std::string path) : Resource(path) {}
+        ~Mesh() { Unload(); }
+
+
         std::vector<Vertex> vertices;
         std::vector<uint32_t> indices;
 

@@ -18,5 +18,9 @@ void ag::Texture::Load()
 
 void ag::Texture::Unload()
 {
+    if (data == nullptr)
+        return;
+
     stbi_image_free(data);
+    data = nullptr;
 }
