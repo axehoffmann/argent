@@ -32,6 +32,10 @@ namespace ag
 			// Ensure we are loading a resource type
 			static_assert(std::is_base_of<ag::Resource, T>::value);
 
+			// Don't load the same file again, return already loaded asset id
+			if (pathToID.find(path) != pathToID.end())
+				return pathToID[path];
+
 			uint32_t idx = resources.size();
 
 			std::shared_ptr<ag::Resource> ptr = std::make_shared<T>(path);
