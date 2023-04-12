@@ -8,6 +8,8 @@
 
 #include "Resource.h"
 
+#include <iostream>
+
 namespace ag
 {
 	class AssetManager 
@@ -21,7 +23,7 @@ namespace ag
 			// Ensure we are fetching a resource type
 			static_assert(std::is_base_of<ag::Resource, T>::value);
 
-			std::weak_ptr<T> resource = std::dynamic_pointer_cast<T>(resources[id]);
+			std::weak_ptr<T> resource = std::dynamic_pointer_cast<T>(resources.at(id));
 
 			return resource;
 		}
@@ -45,6 +47,8 @@ namespace ag
 
 			resources.push_back(ptr);
 			pathToID[path] = idx;
+
+			return idx;
 		}
 
 		static void UnloadAll()

@@ -28,12 +28,11 @@ void mesh_loading()
 
     ag_expect(mesh->IsReady(), "Expected Mesh to be ready");
 
-    ag_expect(mesh->vertices.size() == 8, "Expected Mesh to have 8 vertices, instead found {}", mesh->vertices.size());
+    ag_expect(mesh->vertices.size() == 36, "Expected Mesh to have 36 vertices, instead found {}", mesh->vertices.size());
 
     mesh->Unload();
 
     ag_expect(!mesh->IsReady(), "Expected Mesh to no longer be ready after unload");
-
 }
 
 
