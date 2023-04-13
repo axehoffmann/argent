@@ -5,6 +5,8 @@
 #include <windows.h>
 
 #define ag_expect(val, msg) Test::Expect(val, "line " + std::to_string(__LINE__) + ": " + msg)
+#define ag_expect(val, msg, ...) Test::Expect(val, "line " + std::to_string(__LINE__) + ": " + msg, __VA_ARGS__)
+
 
 class Test
 {
