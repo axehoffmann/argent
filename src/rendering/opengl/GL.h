@@ -5,6 +5,7 @@
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
+#include <glm/ext.hpp>
 
 typedef unsigned int GLHandle;
 typedef unsigned int GLEnum;
@@ -43,6 +44,43 @@ namespace ag
 				glGenerateMipmap(GL_TEXTURE_2D);
 			
 			return tex;
+		}
+
+		/// TODO: check if the variable is valid in shader metadata maybe?
+		static void SetInt(std::string name, int value, GLHandle shader)
+		{
+			int location = glGetUniformLocation(shader, name.c_str());
+			glUniform1i(location, value);
+		}
+
+		static void SetFloat(std::string name, float value, GLHandle shader)
+		{
+			int location = glGetUniformLocation(shader, name.c_str());
+			glUniform1f(location, value);
+		}
+
+		static void SetMat3(std::string name, const glm::mat3& value, GLHandle shader, bool transpose = false)
+		{
+			int location = glGetUniformLocation(shader, name.c_str());
+			glUniformMatrix3fv(location, 1, transpose, glm::value_ptr(value));
+		}
+
+		static void SetMat4(std::string name, const glm::mat4& value, GLHandle shader, bool transpose = false)
+		{
+			int location = glGetUniformLocation(shader, name.c_str());
+			glUniformMatrix4fv(location, 1, transpose, glm::value_ptr(value));
+		}
+
+		static void SetVec3(std::string name, const glm::vec3& value, GLHandle shader)
+		{
+			int location = glGetUniformLocation(shader, name.c_str());
+			glUniform3f(location, value.x, value.y, value.z);
+		}
+
+		static void SetVec4(std::string name, const glm::vec4& value, GLHandle shader)
+		{
+			int location = glGetUniformLocation(shader, name.c_str());
+			glUniform4f(location, value.x, value.y, value.z, value.w);
 		}
 	};
 }

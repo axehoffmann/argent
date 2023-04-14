@@ -10,6 +10,9 @@
 #include "../../resources/AssetManager.h"
 #include "../../resources/Material.h"
 #include "../../resources/Texture.h"
+#include "../../core/Camera.h"
+#include "../../core/Utility.h"
+
 
 #include "GL.h"
 
@@ -48,10 +51,14 @@ namespace ag
 		void UseMaterial(uint32_t materialID);
 		void UseTexture(uint32_t textureID, int slot);
 
+		void UseTransform(ag::Transform* tr, ag::Transform* camTr, ag::Camera* cam);
+
 		std::unordered_map<uint32_t, GLMesh> meshes;
 		std::unordered_map<uint32_t, GLMaterial> materials;
 		std::unordered_map<uint32_t, GLHandle> textures;
 
 		ag::GLScreen* screen;
+
+		GLHandle currentShader;
 	};
 }

@@ -110,3 +110,11 @@ void ag::GLRenderEngine::UseTexture(uint32_t textureID, int slot)
 	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindTexture(GL_TEXTURE_2D, textures[textureID]);
 }
+
+void ag::GLRenderEngine::UseTransform(ag::Transform* tr, ag::Transform* camTr, ag::Camera* cam)
+{
+	glm::mat4 modelView = ag::Utility::ViewMatrix(camTr) * ag::Utility::ModelMatrix(tr);
+
+	ag::GL::SetMat4("modelView", modelView, currentShader);
+	ag::GL::SetMat4("mvp", ag::Utility::ProjectionMatrix(cam) * modelView, currentShader);
+}
