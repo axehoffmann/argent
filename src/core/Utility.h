@@ -12,10 +12,10 @@ namespace ag
     {
         static glm::mat4 ModelMatrix(ag::Transform* tr)
         {
-            glm::vec4 rot = tr->GetRotation();
+            glm::quat rot = tr->GetRotation();
 
-            out = glm::scale(out, tr->GetScale());
-            out = glm::rotate(out, rot.w, rot.xyz);
+            glm::mat4 out = glm::scale(out, tr->GetScale());
+            out = glm::rotate(out, rot.w, glm::vec3(rot.x, rot.y, rot.z));
             out = glm::translate(glm::mat4(), tr->GetPosition());
 
             return out;

@@ -59,7 +59,12 @@ glm::vec3 ag::Transform::GetPosition()
     return position;
 }
 
-glm::vec3 ag::Transform::GetRotation()
+glm::quat ag::Transform::GetRotation()
+{
+    return rotation;
+}
+
+glm::vec3 ag::Transform::GetEulerRotation()
 {
     return glm::eulerAngles(rotation);
 }

@@ -37,7 +37,8 @@ namespace ag
         void SetScale(glm::vec3 sc);
 
         glm::vec3 GetPosition();
-        glm::vec3 GetRotation();
+        glm::quat GetRotation();
+        glm::vec3 GetEulerRotation();
         glm::vec3 GetScale();
 
         /**
