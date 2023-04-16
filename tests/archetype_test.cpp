@@ -94,6 +94,27 @@ void data_access()
     ag_expect(partnerComponentA->value == 104, "Expected last entity to have ComponentA.value of 104, instead found {}", partnerComponentA->value);
 }
 
+void entity_class()
+{
+    EntityID lastEntity;
+    for (int i = 0; i < 5; i++)
+    {
+        lastEntity = collection2->SpawnEntity("entity", ComponentA(100 + i), ComponentB(i));
+    }
+    collection2->ResolveBuffers();
+
+    ag::Entity entityA(lastEntity);
+
+    ag_expect(entityA.GetID() == lastEntity, "Expected entity ID to be {}, instead found {}", lastEntity, entityA.GetID());
+
+    ag_expect(entityA.Get<ComponentA>()->value == 104, "Expected entity's A value to be 104, instead found {}", entityA.Get<ComponentA>()->value);
+    ag_expect(entityA.Get<ComponentB>()->partner == 4, "Expected entity's B value to be 4, instead found {}", entityA.Get<ComponentB>()->partner);
+
+    entityA.Get<ComponentA>()->value = -10;
+
+    ag_expect(entityA.Get<ComponentA>()->value == -10, "Expected entity's A value to be -10, instead found {}", entityA.Get<ComponentA>()->value);
+}
+
 int main()
 {
     Test::Name("Archetypes");
@@ -102,6 +123,7 @@ int main()
 
     Test::Case("Create/Destroy", create_destroy);
     Test::Case("Data Access", data_access);
+    Test::Case("Entity Class", entity_class);
 
     Test::Run();
 }
