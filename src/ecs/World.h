@@ -39,6 +39,8 @@ namespace ag
 
         void AddArchetype(ag::ArchetypeCollection* arch);
 
+        ~World();
+
     private:
         std::vector<ag::ArchetypeCollection*> archetypes;
     };

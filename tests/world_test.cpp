@@ -37,10 +37,6 @@ void Setup()
 void Cleanup()
 {
     delete world;
-
-    delete cA;
-    delete cAB;
-    delete cAC;
 }
 
 void empty_query()
