@@ -1,16 +1,36 @@
 #include "TestFramework.h"
 #include "../src/core/Transform.h"
 
+
+void data_access()
+{
+    ag::Transform t({ 0, 1, 0 });
+    glm::vec3 pos = t.GetPosition();
+    ag_expect(pos == glm::vec3(0, 1, 0), "Expected a position of (0, 1, 0), instead found ({}, {}, {})", pos.x, pos.y, pos.z);
+
+    t.SetPosition({ 1000, 10, -2000 });
+    pos = t.GetPosition();
+    ag_expect(pos == glm::vec3(1000, 10, -2000), "Expected a position of (1000, 10, -2000), instead found ({}, {}, {})", pos.x, pos.y, pos.z);
+
+    glm::vec3 rot = t.GetEulerRotation();
+    ag_expect(rot == glm::vec3(0, 0, 0), "Expected a rotation of (0, 0, 0), instead found ({}, {}, {})", rot.x, rot.y, rot.z);
+
+    t.SetRotation({ glm::half_pi<float>(), 0, 0});
+    rot = t.GetEulerRotation();
+    ag_expect(rot == glm::vec3(glm::half_pi<float>(), 0, 0), "Expected a rotation of (0, 0, 0), instead found ({}, {}, {})", rot.x, rot.y, rot.z);
+}
+
 void translation()
 {
     ag::Transform t({0, 1, 0});
 
-    glm::vec3 pos = t.GetPosition();
-    ag_expect(pos == glm::vec3(0, 1, 0), "Expected a position of (0, 1, 0), instead found ({}, {}, {})", pos.x, pos.y, pos.z);
-
     t.Translate(glm::vec3(1.5f, 2, -1));
+    glm::vec3 pos = t.GetPosition();
+    ag_expect(pos == glm::vec3(1.5f, 3, -1), "Expected a position of (1.5, 3, -1), instead found ({}, {}, {})", pos.x, pos.y, pos.z);
+
+    t.Translate(glm::vec3(-0.5f, 197, -1));
     pos = t.GetPosition();
-    ag_expect(pos == glm::vec3(1.5f, 3, -1), "Expected a position of (1, 3, -1), instead found ({}, {}, {})", pos.x, pos.y, pos.z);
+    ag_expect(pos == glm::vec3(1, 200, -2), "Expected a position of (1, 200, -2), instead found ({}, {}, {})", pos.x, pos.y, pos.z);
 }
 
 void dirty_flag()
@@ -28,6 +48,7 @@ int main()
 {
     Test::Name("Transforms");
 
+    Test::Case("Data Access", data_access);
     Test::Case("Translation", translation);
     Test::Case("Dirty Flag", dirty_flag);
 
