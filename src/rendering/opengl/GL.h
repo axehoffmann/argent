@@ -82,5 +82,10 @@ namespace ag
 			int location = glGetUniformLocation(shader, name.c_str());
 			glUniform4f(location, value.x, value.y, value.z, value.w);
 		}
+
+		static void DrawIndexed(GLEnum primitiveType, size_t count, GLEnum indexType, size_t offset)
+		{
+			glDrawElements(primitiveType, count, indexType, (void*)offset);
+		}
 	};
 }

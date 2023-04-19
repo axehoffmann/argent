@@ -12,7 +12,14 @@ void ag::GLRenderEngine::Initialise()
 
 void ag::GLRenderEngine::Render(ag::SceneGraph* graph)
 {
+	/// TODO: instanced rendering
 
+	for (size_t i = 0; i < graph->statics.size(); i++)
+	{
+		UseMaterial(graph->statics[i].materialID);
+		UseMesh(graph->statics[i].meshID);
+		UseTransform(&graph->statics[i].transform, new Transform({0, 0, -10}), new Camera(90, 1920.0f/1080.0f, 0.01f, 100.0f));
+	}
 }
 
 void ag::GLRenderEngine::InitMesh(uint32_t meshID)
