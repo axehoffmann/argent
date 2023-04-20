@@ -16,6 +16,18 @@ namespace ag
 	{
 	public:
 
+		/// TODO: Error checking with invalid buffers etc?
+		static void BindBuffer(GLEnum type, GLHandle handle)
+		{
+			glBindBuffer(type, handle);
+		}
+
+		static void BindTexture(GLEnum type, int slot, GLHandle handle)
+		{
+			glActiveTexture(GL_TEXTURE0 + slot);
+			glBindTexture(type, handle);
+		}
+
 		static GLHandle MakeBuffer(GLEnum type, size_t size, void* data, GLEnum hint)
 		{
 			GLHandle buf;
