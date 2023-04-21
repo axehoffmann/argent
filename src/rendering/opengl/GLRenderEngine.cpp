@@ -8,6 +8,14 @@ void ag::GLRenderEngine::Initialise()
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.3f, 0.3f, 0.4f, 1.0f);
+
+	vao = ag::GL::MakeVAO();
+	ag::GL::InitialiseAttribute("aPos", 3, GL_FLOAT, false, 14 * sizeof(float), 0, currentShader);
+	ag::GL::InitialiseAttribute("aTexCoord", 2, GL_FLOAT, false, 14 * sizeof(float), 3 * sizeof(float), currentShader);
+	ag::GL::InitialiseAttribute("aNormal", 3, GL_FLOAT, false, 14 * sizeof(float), 5 * sizeof(float), currentShader);
+	ag::GL::InitialiseAttribute("aTangent", 3, GL_FLOAT, false, 14 * sizeof(float), 8 * sizeof(float), currentShader);
+	ag::GL::InitialiseAttribute("aBitangent", 3, GL_FLOAT, false, 14 * sizeof(float), 11 * sizeof(float), currentShader);
+
 }
 
 void ag::GLRenderEngine::Render(ag::SceneGraph* graph)

@@ -28,6 +28,19 @@ namespace ag
 			glBindTexture(type, handle);
 		}
 
+		static GLHandle MakeVAO()
+		{
+			GLHandle vao;
+			glGenVertexArrays(1, &vao);
+		}
+
+		static GLHandle InitialiseAttribute(std::string attribName, int size, GLEnum type, bool normalized, int stride, int offset, GLHandle shader)
+		{
+			int loc = glGetAttribLocation(shader, attribName.c_str());
+			glVertexAttribPointer(loc, size, type, normalized, stride, (void*)offset);
+			glEnableVertexAttribArray(loc);
+		}
+
 		static GLHandle MakeBuffer(GLEnum type, size_t size, void* data, GLEnum hint)
 		{
 			GLHandle buf;

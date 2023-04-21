@@ -57,6 +57,8 @@ namespace ag
 		std::unordered_map<uint32_t, GLMaterial> materials;
 		std::unordered_map<uint32_t, GLHandle> textures;
 
+		GLHandle vao;
+
 		ag::GLScreen* screen;
 
 		GLHandle currentShader;
