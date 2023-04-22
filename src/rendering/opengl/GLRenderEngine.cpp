@@ -24,9 +24,11 @@ void ag::GLRenderEngine::Render(ag::SceneGraph* graph)
 
 	for (size_t i = 0; i < graph->statics.size(); i++)
 	{
-		UseMaterial(graph->statics[i].materialID);
-		UseMesh(graph->statics[i].meshID);
-		UseTransform(&graph->statics[i].transform, new Transform({0, 0, -10}), new Camera(90, 1920.0f/1080.0f, 0.01f, 100.0f));
+		StaticRenderInstance instance = graph->statics[i];
+
+		UseMaterial(instance.materialID);
+		UseMesh(instance.meshID);
+		UseTransform(&instance.transform, new Transform({0, 0, -10}), new Camera(90, 1920.0f/1080.0f, 0.01f, 100.0f));
 	}
 }
 
@@ -118,6 +120,14 @@ void ag::GLRenderEngine::UseMaterial(uint32_t materialID)
 	{
 		UseTexture(materials[materialID].textures[i], i);
 	}
+
+	/// TODO: make this agnostic to material format
+	ag::GL::SetInt("material.albedo", 0, currentShader);
+	ag::GL::SetInt("material.metallic", 1, currentShader);
+	ag::GL::SetInt("material.roughness", 2, currentShader);
+	ag::GL::SetInt("material.ao", 3, currentShader);
+	ag::GL::SetInt("material.normal", 4, currentShader);
+
 }
 
 void ag::GLRenderEngine::UseTexture(uint32_t textureID, int slot)
