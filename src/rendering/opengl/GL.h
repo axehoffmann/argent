@@ -32,9 +32,11 @@ namespace ag
 		{
 			GLHandle vao;
 			glGenVertexArrays(1, &vao);
+
+			return vao;
 		}
 
-		static GLHandle InitialiseAttribute(std::string attribName, int size, GLEnum type, bool normalized, int stride, int offset, GLHandle shader)
+		static void InitialiseAttribute(std::string attribName, int size, GLEnum type, bool normalized, int stride, int offset, GLHandle shader)
 		{
 			int loc = glGetAttribLocation(shader, attribName.c_str());
 			glVertexAttribPointer(loc, size, type, normalized, stride, (void*)offset);

@@ -2,9 +2,11 @@
 #include "../src/resources/AssetManager.h"
 #include "../src/resources/Mesh.h"
 #include "../src/resources/Texture.h"
+#include "../src/resources/Material.h"
 
 std::string meshPath = "assets/cube.obj";
 std::string texPath = "assets/frog.png";
+std::string matPath = "assets/test.mat";
 
 void Setup()
 {
@@ -55,6 +57,25 @@ void texture_loading()
     ag_expect(!tex->IsReady(), "Expected Texture to no longer be ready after unload");
 }
 
+void material_loading()
+{
+    uint32_t matID = ag::AssetManager::Load<ag::Material>(matPath);
+
+    std::weak_ptr<ag::Material> wMat = ag::AssetManager::Fetch<ag::Material>(matID);
+
+    ag_expect(!wMat.expired(), "Expected pointer to Material resource to be valid");
+
+    std::shared_ptr<ag::Material> mat = wMat.lock();
+
+    ag_expect(mat->IsReady(), "Expected Material to be ready");
+
+    ag_expect(mat->parameters[0] == 0.4f, "Expected Material parameter[0] to be 0.4, instead found {}", mat->parameters[0]);
+
+    mat->Unload();
+    
+    ag_expect(!mat->IsReady(), "Expected Material to no longer be ready after unload");
+}
+
 int main()
 {
     Test::Name("Assets");
@@ -63,6 +84,7 @@ int main()
 
     Test::Case("Mesh Loading", mesh_loading);
     Test::Case("Texture Loading", texture_loading);
+    Test::Case("Material Loading", material_loading);
 
     Test::Run();
 }
