@@ -24,8 +24,10 @@ namespace ag
 		GLHandle vbo;
 		GLHandle ebo;
 
-		GLMesh() { vbo = ebo = -1; }
-		GLMesh(GLHandle v, GLHandle e) : vbo(v), ebo(e) { }
+		size_t indexCount;
+
+		GLMesh() { vbo = ebo = indexCount = 0; }
+		GLMesh(GLHandle v, GLHandle e, size_t c) : vbo(v), ebo(e), indexCount(c) { }
 	};
 
 	struct GLMaterial

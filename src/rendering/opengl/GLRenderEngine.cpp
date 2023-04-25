@@ -29,6 +29,8 @@ void ag::GLRenderEngine::Render(ag::SceneGraph* graph)
 		UseMaterial(instance.materialID);
 		UseMesh(instance.meshID);
 		UseTransform(&instance.transform, new Transform({0, 0, -10}), new Camera(90, 1920.0f/1080.0f, 0.01f, 100.0f));
+
+		ag::GL::DrawIndexed(GL_TRIANGLES, meshes[instance.meshID].indexCount, GL_UNSIGNED_INT, 0);
 	}
 }
 
@@ -52,7 +54,7 @@ void ag::GLRenderEngine::InitMesh(uint32_t meshID)
 	GLHandle vbo = ag::GL::MakeBuffer(GL_ARRAY_BUFFER, mesh->vertices.size() * sizeof(Vertex), mesh->vertices.data(), GL_STATIC_DRAW);
 	GLHandle ebo = ag::GL::MakeBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indices.size() * sizeof(size_t), mesh->indices.data(), GL_STATIC_DRAW);
 
-	meshes[meshID] = GLMesh(vbo, ebo);
+	meshes[meshID] = GLMesh(vbo, ebo, mesh->indices.size());
 }
 
 void ag::GLRenderEngine::InitMaterial(uint32_t materialID)
