@@ -24,13 +24,36 @@ ag::Engine::~Engine()
 
 void ag::Engine::Run()
 {
+	/// TODO: may want to research MT loops in future, don't block frames behind physics etc
+
+	// Based on Fix your Timestep! by Glenn Fiedler
+	std::chrono::nanoseconds t(0);
+	// TODO: proper 1/60? research better chrono stuff
+	std::chrono::nanoseconds dt = std::chrono::milliseconds(167);
+
+	auto currentTime = std::chrono::steady_clock::now();
+	std::chrono::nanoseconds accumulator(0);
 
 	while (active)
 	{
-		/// TODO: multithreaded loop &| unblocking loop
-		/// TODO: dt
-		Update(0.1);
-		FrameUpdate(0.1);
+		auto newTime = std::chrono::steady_clock::now();
+		auto frameTime = newTime - currentTime;
+
+		if (frameTime > std::chrono::milliseconds(250))
+			frameTime = std::chrono::milliseconds(250);
+		currentTime = newTime;
+
+		accumulator += frameTime;
+
+		while (accumulator >= dt)
+		{
+			Update(std::chrono::duration<double>(dt).count());
+			accumulator -= dt;
+			t += dt;
+		}
+
+		/// TODO: is frame time correct step here? unsure
+		FrameUpdate(std::chrono::duration<double>(frameTime).count());
 	}
 }
 
