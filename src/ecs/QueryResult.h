@@ -29,6 +29,10 @@ namespace ag
             return length;
         }
 
+        /**
+        * Returns the EntityInfo block from the specified entity
+        * @param index The index of the entity within this query to fetch
+        */
         ag::EntityInfo GetInfo(size_t index)
         {
             if (index >= length)
@@ -55,6 +59,10 @@ namespace ag
             return std::get<ag::ArchetypeCollection*>(find)->GetComponent<ComponentType>(std::get<size_t>(find));
         }
 
+        /**
+        * Returns the component from the specified entity
+        * @param id The ID of the entity to fetch the component from
+        */
         ComponentType* ByID(EntityID id)
         {
             ag::ArchetypeCollection* match = ag::ArchetypeCollection::GetArchetypeFromEntityID(id);

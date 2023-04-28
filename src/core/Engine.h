@@ -17,8 +17,14 @@ namespace ag
 		Engine();
 		~Engine();
 
+		/**
+		* Begin the engine loop.
+		*/
 		void Run();
 
+		/**
+		* Registers a system to the ECS world.
+		*/
 		void RegisterSystem(ag::System* s);
 
 		void End();

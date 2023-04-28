@@ -14,6 +14,10 @@ namespace ag
     {
     public:
         /// TODO: check for issues with the way the callback is passed
+        /**
+        * Queries the world for all entities with the specified Component types
+        * @param callback A callback function where the arguments QueryResult<A>, QueryResult<B>... specify the Components A, B... to search for.
+        */
         template <typename... Q>
         void Query(std::function<void(QueryResult<Q>...)>& callback)
         {

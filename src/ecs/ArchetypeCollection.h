@@ -25,8 +25,8 @@ namespace ag
 	public:
 		/**
 		 * Adds an entity to the spawn buffer.
-		 * @param component The list of components that comprise the entity. This should be sorted by Component IDs.
 		 * @param name A name for the entity to spawn. This does not have to be unique.
+		 * @param component The list of components that comprise the entity. This should be sorted by Component IDs.
 		 * @return The ID of the newly created entity.
 		*/
 		template <typename... Cs>
