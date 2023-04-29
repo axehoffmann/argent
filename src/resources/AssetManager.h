@@ -17,6 +17,11 @@ namespace ag
 		/// TODO: have all assets use a raw binary format for fast loading
 		///		see: https://vkguide.dev/docs/extra-chapter/asset_system/
 	public:
+		/**
+		* Fetches a resource's data by ID.
+		* @param id The ID of the resource to fetch
+		* @return A pointer to the resource's data
+		*/
 		template <class T>
 		static std::weak_ptr<T> Fetch(uint32_t id)
 		{
@@ -26,8 +31,14 @@ namespace ag
 			std::weak_ptr<T> resource = std::dynamic_pointer_cast<T>(resources.at(id));
 
 			return resource;
-		}
+		}	
 
+		/**
+		* Loads a resource into memory.
+		* @param path The path to the resource.
+		* @tparam T The type of resource to load.
+		* @return The ID of the loaded resource
+		*/
 		template <class T>
 		static uint32_t Load(std::string path)
 		{
