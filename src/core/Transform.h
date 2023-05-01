@@ -50,8 +50,17 @@ namespace ag
         */
         void Clean();
 
+        /**
+        * Returns the up vector relative to the transform's rotation
+        */
         glm::vec3 Up();
+        /**
+        * Returns the right vector relative to the transform's rotation
+        */
         glm::vec3 Right();
+        /**
+        * Returns the forward vector relative to the transform's rotation
+        */
         glm::vec3 Front();
 
     private:

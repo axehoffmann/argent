@@ -18,7 +18,11 @@ namespace ag
         Material(std::string path) : Resource(path) {}
         ~Material() { Unload(); }
 
+        /**
+        * The IDs of the textures that comprise the material
+        */
         std::vector<uint32_t> textures;
+        /// TODO: change parameters to accept different types
         std::vector<float> parameters;
 
         bool IsReady();
