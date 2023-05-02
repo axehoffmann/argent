@@ -3,6 +3,8 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
+#include <string>
+
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>

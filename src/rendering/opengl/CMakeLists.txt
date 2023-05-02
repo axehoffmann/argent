@@ -1,2 +1,2 @@
-add_library(ogl "GLRenderEngine.h" "GLScreen.h" "GLScreen.cpp" "GLRenderEngine.cpp" "GL.h")
+add_library(ogl "GLRenderEngine.h" "GLScreen.h" "GLScreen.cpp" "GLRenderEngine.cpp" "GL.h" "Buffer.h" "Buffer.cpp")
 target_link_libraries(ogl PRIVATE rendering resources ${glfw} ${glew} ${ogl32lib})
