@@ -1,6 +1,6 @@
-#include "Buffer.h"
+#include "GLBuffer.h"
 
-ag::Buffer::Buffer(BufferType bufferType, BufferAccessType access, size_t bufferSize)
+ag::GLBuffer::GLBuffer(BufferType bufferType, BufferAccessType access, size_t bufferSize)
 {
 	glGenBuffers(1, &handle);
 	type = bufferType;
@@ -14,7 +14,7 @@ ag::Buffer::Buffer(BufferType bufferType, BufferAccessType access, size_t buffer
 		
 }
 
-ag::Buffer::~Buffer()
+ag::GLBuffer::~GLBuffer()
 {
 	glDeleteBuffers(1, &handle);
 }

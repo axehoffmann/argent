@@ -36,11 +36,11 @@ namespace ag
 		DynamicCopy = GL_DYNAMIC_COPY
 	};
 
-	class Buffer
+	class GLBuffer
 	{
 	public:
-		Buffer(BufferType bufferType, BufferAccessType access, size_t bufferSize);
-		~Buffer();
+		GLBuffer(BufferType bufferType, BufferAccessType access, size_t bufferSize);
+		~GLBuffer();
 
 		template <typename T>
 		void SetData(std::vector<T>& data)
