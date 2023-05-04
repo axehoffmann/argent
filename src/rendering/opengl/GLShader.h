@@ -21,6 +21,13 @@ namespace ag
 		GLShader();
 		~GLShader();
 
+		void InitialiseAttribute(std::string attribName, int size, GLEnum type, bool normalized, int stride, int offset)
+		{
+			int loc = glGetAttribLocation(handle, attribName.c_str());
+			glVertexAttribPointer(loc, size, type, normalized, stride, (void*)offset);
+			glEnableVertexAttribArray(loc);
+		}
+
 		template <typename T>
 		void Uniform(std::string name, T val)
 		{
