@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 
 #include <vector>
+#include <unordered_map>
 
 namespace ag
 {
@@ -20,7 +21,7 @@ namespace ag
 		}
 	};
 
-	template <typename T>
+	template <typename T, typename IDType>
 	class Grid
 	{
 		Grid(size_t x, size_t y, float size)
@@ -61,10 +62,50 @@ namespace ag
 			return out;
 		}
 
+		/**
+		* Adds an object to the grid
+		*/
+		void Insert(IDType id, T val, glm::vec3 pos)
+		{
+			nodes.insert({ id, Node(pos, val) });
+
+			size_t x = pos.x / cellSize;
+			size_t y = pos.y / cellSize;
+
+			grid[x][y].push_back(id);
+		}
+
+		/**
+		* Adjusts an object's position in the grid
+		*/
+		void Move(IDType id, glm::vec3 newPos)
+		{
+			size_t newX = newPos.x / cellSize;
+			size_t newY = newPos.y / cellSize;
+
+			auto f = nodes.find(id);
+			if (f == nodes.end())
+			{
+				/// TODO: throw err
+				return;
+			}
+
+			size_t oldX = f->pos.X / cellSize;
+			size_t oldY = f->pos.Y / cellSize;
+			// Node moved to new cell
+			if (newX != oldX || newY != oldY)
+			{
+				grid[oldX][oldY].erase(grid[oldX][oldY].find(id));
+				grid[newX][newY].push_back(id);
+			}
+
+			f->pos = newPos;
+		}
+
 	private:
 		
-		std::vector<std::vector<std::vector<size_t>>> grid;
-		std::vector<Node> nodes;
+		std::vector<std::vector<std::vector<IDType>>> grid;
+		std::unordered_map<IDType, Node> nodes;
 
 		size_t x_size;
 		size_t y_size;
