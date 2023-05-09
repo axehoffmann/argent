@@ -5,18 +5,23 @@
 
 #include <vector>
 #include <unordered_map>
-
+#include <algorithm>
 namespace ag
 {
 	template <typename T>
 	struct Node
 	{
-		glm::vec3 position;
+		glm::vec3 pos;
 		T data;
 
-		Node(glm::vec3 pos, T val)
+		Node()
 		{
-			position = pos;
+			pos = glm::vec3();
+			data = T();
+		}
+		Node(glm::vec3 position, T val)
+		{
+			pos = position;
 			data = val;
 		}
 	};
@@ -24,6 +29,7 @@ namespace ag
 	template <typename T, typename IDType>
 	class Grid
 	{
+	public:
 		Grid(size_t x, size_t y, float size)
 		{
 			x_size = x;
@@ -50,11 +56,17 @@ namespace ag
 
 			for (size_t i = x - 1; i <= x + 1; i++)
 			{
+				if (i < 0 || i >= grid.size())
+					continue;
+
 				for (size_t j = y - 1; j <= y + 1; j++)
 				{
-					for (size_t k = 0; k < grid[i][j]; k++)
+					if (j < 0 || j >= grid[0].size())
+						continue;
+
+					for (size_t k = 0; k < grid[i][j].size(); k++)
 					{
-						out.push_back(nodes[grid[i][j][k].data);
+						out.push_back(nodes[grid[i][j][k]].data);
 					}
 				}
 			}
@@ -83,29 +95,31 @@ namespace ag
 			size_t newX = newPos.x / cellSize;
 			size_t newY = newPos.y / cellSize;
 
-			auto f = nodes.find(id);
-			if (f == nodes.end())
+			auto it = nodes.find(id);
+			if (it == nodes.end())
 			{
 				/// TODO: throw err
 				return;
 			}
 
-			size_t oldX = f->pos.X / cellSize;
-			size_t oldY = f->pos.Y / cellSize;
+			Node<T> f = it->second;
+			size_t oldX = f.pos.x / cellSize;
+			size_t oldY = f.pos.y / cellSize;
 			// Node moved to new cell
 			if (newX != oldX || newY != oldY)
 			{
-				grid[oldX][oldY].erase(grid[oldX][oldY].find(id));
+				std::vector<IDType>& target = grid[oldX][oldY];
+				target.erase(std::find(target.begin(), target.end(), id));
 				grid[newX][newY].push_back(id);
 			}
 
-			f->pos = newPos;
+			f.pos = newPos;
 		}
 
 	private:
 		
 		std::vector<std::vector<std::vector<IDType>>> grid;
-		std::unordered_map<IDType, Node> nodes;
+		std::unordered_map<IDType, Node<T>> nodes;
 
 		size_t x_size;
 		size_t y_size;
