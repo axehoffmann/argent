@@ -12,6 +12,7 @@
 typedef unsigned int GLHandle;
 typedef unsigned int GLEnum;
 
+typedef unsigned char u_char;
 namespace ag
 {
 	class GL

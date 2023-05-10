@@ -6,6 +6,8 @@
 #include <atomic>
 #include <array>
 
+#include <iostream>
+
 #define GRAPH_BUFFER_SIZE 3
 
 namespace ag

@@ -42,6 +42,10 @@ namespace ag
 		GLBuffer(BufferType bufferType, BufferAccessType access, size_t bufferSize);
 		~GLBuffer();
 
+		/**
+		* Populates the buffer with the data vector.
+		* @param data The vector of input data.
+		*/
 		template <typename T>
 		void SetData(std::vector<T>& data)
 		{
@@ -64,6 +68,11 @@ namespace ag
 			glBufferData(type, newSize, (void*)data.data(), accessType);
 		}
 
+		/**
+		* Assigns a subset of the buffer's data.
+		* @param data The new subset of data.
+		* @param offset The index into the buffer that the subset begins at.
+		*/
 		template <typename T>
 		void SetSubData(std::vector<T>& data, size_t offset)
 		{
@@ -79,7 +88,7 @@ namespace ag
 			}
 
 			glBindBuffer(type, handle);
-			glBufferSubData(type, offset, size, data.data());
+			glBufferSubData(type, sizeof(T) * offset, size, data.data());
 		}
 
 		GLHandle handle;
