@@ -1,0 +1,1 @@
+add_library(cvars "CVAR.h" "CVAR.cpp" "CVARs.h" "CVARs.cpp")
