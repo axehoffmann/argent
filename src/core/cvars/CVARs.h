@@ -9,6 +9,7 @@ namespace ag
 
 	class CVARs
 	{
+	public:
 		template <typename T>
 		static void Create(std::string name, std::string desc, T defaultVal)
 		{
@@ -17,7 +18,7 @@ namespace ag
 		}
 
 		template <typename T>
-		static std::weak_ptr<T> Get(std::string name)
+		static T Get(std::string name)
 		{
 			size_t id = cvars::ICVAR::GetID<T>();
 			for (size_t i = 0; i < vars.size(); i++)
@@ -25,9 +26,11 @@ namespace ag
 				if (id == vars.at(i)->type && name == vars.at(i)->name)
 				{
 					cvars::CVAR<T>* var = dynamic_cast<cvars::CVAR<T>*>(vars.at(i));
-					return std::weak_ptr(var);
+					return var->data;
 				}
 			}
+
+			return T();
 		}
 
 		template <typename T>

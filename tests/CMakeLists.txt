@@ -17,3 +17,6 @@ target_link_libraries(grid_test PRIVATE ecs test_framework)
 
 add_executable(asset_test  "asset_test.cpp")
 target_link_libraries(asset_test PRIVATE resources test_framework)
+
+add_executable(cvar_test  "cvar_test.cpp")
+target_link_libraries(cvar_test PRIVATE core test_framework)
