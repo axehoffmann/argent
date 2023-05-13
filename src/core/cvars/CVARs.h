@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 
+
 #include "CVAR.h"
 
 namespace ag
@@ -43,6 +44,17 @@ namespace ag
 				{
 					cvars::CVAR<T>* var = dynamic_cast<cvars::CVAR<T>*>(vars.at(i));
 					var->data = val;
+				}
+			}
+		}
+
+		static void Reset(std::string name)
+		{
+			for (size_t i = 0; i < vars.size(); i++)
+			{
+				if (name == vars.at(i)->name)
+				{
+					vars.at(i)->Reset();
 				}
 			}
 		}
