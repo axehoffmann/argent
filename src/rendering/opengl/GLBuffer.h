@@ -39,6 +39,7 @@ namespace ag
 	class GLBuffer
 	{
 	public:
+		GLBuffer(BufferType bufferType, BufferAccessType access);
 		GLBuffer(BufferType bufferType, BufferAccessType access, size_t bufferSize);
 		~GLBuffer();
 
@@ -50,7 +51,7 @@ namespace ag
 		void SetData(std::vector<T>& data)
 		{
 			size_t newSize = sizeof(T) * data.size();
-			if (newSize > size)
+			if (newSize > size && firstAlloc)
 			{
 				/// TODO: throw warning about reallocating buffer memory
 			}
@@ -89,6 +90,11 @@ namespace ag
 
 			glBindBuffer(type, handle);
 			glBufferSubData(type, sizeof(T) * offset, size, data.data());
+		}
+
+		void Bind()
+		{
+			glBindBuffer(type, handle);
 		}
 
 		GLHandle handle;

@@ -18,6 +18,11 @@ void ag::GLRenderEngine::Initialise()
 
 }
 
+ag::GLRenderEngine::~GLRenderEngine()
+{
+
+}
+
 void ag::GLRenderEngine::Render(ag::SceneGraph* graph)
 {
 	/// TODO: instanced rendering
@@ -51,8 +56,10 @@ void ag::GLRenderEngine::InitMesh(uint32_t meshID)
 
 	std::shared_ptr<ag::Mesh> mesh = wMesh.lock();
 
-	GLHandle vbo = ag::GL::MakeBuffer(GL_ARRAY_BUFFER, mesh->vertices.size() * sizeof(Vertex), mesh->vertices.data(), GL_STATIC_DRAW);
-	GLHandle ebo = ag::GL::MakeBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indices.size() * sizeof(size_t), mesh->indices.data(), GL_STATIC_DRAW);
+	ag::GLBuffer* vbo = new ag::GLBuffer(ag::BufferType::VertexArray, ag::BufferAccessType::StaticDraw);
+	vbo->SetData(mesh->vertices);
+	ag::GLBuffer* ebo = new ag::GLBuffer(ag::BufferType::IndexArray, ag::BufferAccessType::StaticDraw);
+	ebo->SetData(mesh->indices);
 
 	meshes[meshID] = GLMesh(vbo, ebo, mesh->indices.size());
 }
@@ -111,8 +118,8 @@ GLHandle ag::GLRenderEngine::InitTexture(uint32_t textureID)
 
 void ag::GLRenderEngine::UseMesh(uint32_t meshID)
 {
-	ag::GL::BindBuffer(GL_ARRAY_BUFFER, meshes[meshID].vbo);
-	ag::GL::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[meshID].ebo);
+	meshes[meshID].vbo->Bind();
+	meshes[meshID].ebo->Bind();
 }
 
 

@@ -1,5 +1,20 @@
 #include "GLBuffer.h"
 
+
+ag::GLBuffer::GLBuffer(BufferType bufferType, BufferAccessType access)
+{
+	glGenBuffers(1, &handle);
+	type = bufferType;
+	size = 0;
+	accessType = access;
+	firstAlloc = false;
+
+	staticBuffer = (accessType == BufferAccessType::StaticCopy
+		|| accessType == BufferAccessType::StaticDraw
+		|| accessType == BufferAccessType::StaticRead);
+
+}
+
 ag::GLBuffer::GLBuffer(BufferType bufferType, BufferAccessType access, size_t bufferSize)
 {
 	glGenBuffers(1, &handle);

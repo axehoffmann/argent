@@ -5,6 +5,7 @@
 
 #include "../RenderEngine.h"
 #include "GLScreen.h"
+#include "GLBuffer.h"
 #include <unordered_map>
 
 #include "../../resources/AssetManager.h"
@@ -21,13 +22,13 @@ namespace ag
 {
 	struct GLMesh
 	{
-		GLHandle vbo;
-		GLHandle ebo;
+		ag::GLBuffer* vbo;
+		ag::GLBuffer* ebo;
 
 		size_t indexCount;
 
-		GLMesh() { vbo = ebo = indexCount = 0; }
-		GLMesh(GLHandle v, GLHandle e, size_t c) : vbo(v), ebo(e), indexCount(c) { }
+		GLMesh() { vbo = ebo = nullptr; indexCount = 0; }
+		GLMesh(ag::GLBuffer* v, ag::GLBuffer* e, size_t c) : vbo(v), ebo(e), indexCount(c) { }
 	};
 
 	struct GLMaterial
@@ -43,6 +44,7 @@ namespace ag
 
 		void Render(ag::SceneGraph* graph) override;
 
+		~GLRenderEngine();
 	private:
 
 		void InitMesh(uint32_t meshID) override;
