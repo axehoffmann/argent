@@ -8,6 +8,7 @@ ag::Renderer::Renderer(ag::RenderEngine* engine, ag::SceneBuilder* scene)
 
 bool ag::Renderer::Initialise()
 {
+    renderEngine->Initialise();
     return true;
 }
 

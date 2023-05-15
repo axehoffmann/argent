@@ -17,9 +17,9 @@ namespace ag
 	public:
 		void Initialise();
 		void SetInfo(std::string info);
+		void SwapBuffers();
 
 		~GLScreen();
-
 	private:
 		GLFWwindow* window;
 	};

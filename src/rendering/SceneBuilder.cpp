@@ -13,6 +13,7 @@ void ag::SceneBuilder::Update()
 {
     // Choose which graph to use
     int lockedGraph = ChooseGraph();
+
     ag::SceneGraph* graph = &graphs[lockedGraph];
     
     /// TODO: static renderable graph should not be rebuilt every update. It should only be edited based on spawned and destroyed entities this update.
@@ -40,10 +41,12 @@ ag::SceneGraph* ag::SceneBuilder::StartGraphRead()
         if (i == graphReady && i != graphUnderConstruction && i != graphReadByRenderer)
         {
             graphReadByRenderer = i;
-            graphReady = -1;
+
             return &graphs[i];
         }
     }
+    std::cout << "reading no graph" << std::endl;
+
     return nullptr;
 }
 

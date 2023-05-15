@@ -4,6 +4,7 @@ void ag::GLRenderEngine::Initialise()
 {
 	screen = new GLScreen();
 	screen->Initialise();
+	glewInit();
 
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	glEnable(GL_DEPTH_TEST);
@@ -20,7 +21,13 @@ void ag::GLRenderEngine::Initialise()
 
 ag::GLRenderEngine::~GLRenderEngine()
 {
+	for (auto& [id, mesh] : meshes)
+	{
+		delete mesh.vbo;
+		delete mesh.ebo;
+	}
 
+	delete screen;
 }
 
 void ag::GLRenderEngine::Render(ag::SceneGraph* graph)
@@ -37,6 +44,8 @@ void ag::GLRenderEngine::Render(ag::SceneGraph* graph)
 
 		ag::GL::DrawIndexed(GL_TRIANGLES, meshes[instance.meshID].indexCount, GL_UNSIGNED_INT, 0);
 	}
+
+	screen->SwapBuffers();
 }
 
 void ag::GLRenderEngine::InitMesh(uint32_t meshID)

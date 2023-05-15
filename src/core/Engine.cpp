@@ -26,6 +26,8 @@ void ag::Engine::Run()
 {
 	/// TODO: may want to research MT loops in future, don't block frames behind physics etc
 
+	Update(0);
+
 	// Based on Fix your Timestep! by Glenn Fiedler
 	std::chrono::nanoseconds t(0);
 	// TODO: proper 1/60? research better chrono stuff

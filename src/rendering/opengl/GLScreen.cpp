@@ -23,6 +23,11 @@ void ag::GLScreen::SetInfo(std::string info)
 	glfwSetWindowTitle(window, title.c_str());
 }
 
+void ag::GLScreen::SwapBuffers()
+{
+	glfwSwapBuffers(window);
+}
+
 ag::GLScreen::~GLScreen()
 {
 	glfwTerminate();

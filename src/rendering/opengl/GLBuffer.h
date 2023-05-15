@@ -65,8 +65,8 @@ namespace ag
 
 			size = newSize;
 
-			glBindBuffer(type, handle);
-			glBufferData(type, newSize, (void*)data.data(), accessType);
+			glBindBuffer((GLenum)type, handle);
+			glBufferData((GLenum)type, newSize, (void*)data.data(), (GLenum)accessType);
 		}
 
 		/**
@@ -88,13 +88,13 @@ namespace ag
 				/// TODO: throw error about modifying static buffer data
 			}
 
-			glBindBuffer(type, handle);
-			glBufferSubData(type, sizeof(T) * offset, size, data.data());
+			glBindBuffer((GLenum)type, handle);
+			glBufferSubData((GLenum)type, sizeof(T) * offset, size, data.data());
 		}
 
 		void Bind()
 		{
-			glBindBuffer(type, handle);
+			glBindBuffer((GLenum)type, handle);
 		}
 
 		GLHandle handle;
