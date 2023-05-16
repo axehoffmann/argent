@@ -13,7 +13,7 @@
 #include "../../resources/Texture.h"
 #include "../../core/Camera.h"
 #include "../../core/Utility.h"
-
+#include "../../core/Stats.h"
 
 #include "GL.h"
 

@@ -5,6 +5,7 @@
 #include "../rendering/opengl/GLRenderEngine.h"
 #include "../ecs/World.h"
 #include "../ecs/System.h"
+#include "Stats.h"
 
 #include <chrono>
 #include <vector>

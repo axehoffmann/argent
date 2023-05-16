@@ -87,5 +87,6 @@ void ag::Engine::FrameUpdate(double dt)
 		systems[i]->FrameUpdate(dt);
 	}
 
+	ag::Stats::RegisterFrameTime(dt);
 	renderer->Render();
 }

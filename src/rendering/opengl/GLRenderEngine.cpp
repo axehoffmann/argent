@@ -45,6 +45,7 @@ void ag::GLRenderEngine::Render(ag::SceneGraph* graph)
 		ag::GL::DrawIndexed(GL_TRIANGLES, meshes[instance.meshID].indexCount, GL_UNSIGNED_INT, 0);
 	}
 
+	screen->SetInfo(std::to_string(ag::Stats::GetAverageFrameTime()));
 	screen->SwapBuffers();
 }
 
