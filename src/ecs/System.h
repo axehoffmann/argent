@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 #include "World.h"
 
 namespace ag
@@ -25,8 +26,17 @@ namespace ag
 		*/
 		virtual void FrameUpdate(double dt) = 0;
 
-
+		static std::vector<ag::System*> systems;
 	protected:
 		std::shared_ptr<ag::World> world;
+	};
+
+	template <class T>
+	class SystemRegister
+	{
+		SystemRegister()
+		{
+			ag::System::systems.push_back(new T());
+		}
 	};
 }

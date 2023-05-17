@@ -41,6 +41,10 @@ namespace ag
             callback( QueryResult<Q>(matches)... );
         }
 
+        /**
+        * Adds an archetype to the world collection.
+        * @param arch The archetype to add. 
+        */
         void AddArchetype(ag::ArchetypeCollection* arch);
 
         ~World();
