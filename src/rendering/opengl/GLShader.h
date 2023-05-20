@@ -50,6 +50,26 @@ namespace ag
 		}
 
 		template <>
+		void Uniform(std::string name, const glm::vec3& val)
+		{
+			int location = UniformLocation(name);
+			glUniform3f(location, val.x, val.y, val.z);
+		}
+
+		template <>
+		void Uniform(std::string name, const glm::vec4& val)
+		{
+			int location = UniformLocation(name);
+			glUniform4f(location, val.x, val.y, val.z, val.w);
+		}
+
+		template <typename T>
+		void Uniform(std::string name, T val, bool transpose = false)
+		{
+			/// TODO: throw error
+		}
+
+		template <>
 		void Uniform(std::string name, const glm::mat3& val, bool transpose = false)
 		{
 			int location = UniformLocation(name);
@@ -63,19 +83,7 @@ namespace ag
 			glUniformMatrix4fv(location, 1, transpose, glm::value_ptr(val));
 		}
 
-		template <>
-		void Uniform(std::string name, const glm::vec3& val, bool transpose = false)
-		{
-			int location = UniformLocation(name);
-			glUniform3f(location, val.x, val.y, val.z);
-		}
 
-		template <>
-		void Uniform(std::string name, const glm::vec4& val, bool transpose = false)
-		{
-			int location = UniformLocation(name);
-			glUniform4f(location, val.x, val.y, val.z, val.w);
-		}
 
 
 
