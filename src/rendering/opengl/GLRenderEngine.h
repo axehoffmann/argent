@@ -6,6 +6,7 @@
 #include "../RenderEngine.h"
 #include "GLScreen.h"
 #include "GLBuffer.h"
+#include "GLTexture.h"
 #include <unordered_map>
 
 #include "../../resources/AssetManager.h"
@@ -33,7 +34,7 @@ namespace ag
 
 	struct GLMaterial
 	{
-		std::vector<GLHandle> textures;
+		std::vector<std::shared_ptr<ag::GLTexture>> textures;
 		std::vector<float> parameters;
 	};
 
@@ -49,7 +50,7 @@ namespace ag
 
 		void InitMesh(uint32_t meshID) override;
 		void InitMaterial(uint32_t materialID) override;
-		GLHandle InitTexture(uint32_t textureID);
+		std::shared_ptr<ag::GLTexture> InitTexture(uint32_t textureID);
 
 		/**
 		* Binds the VBO of the specified mesh
@@ -66,7 +67,7 @@ namespace ag
 		* @param material The ID of the Texture resource to bind
 		* @param slot The texture slot to bind to
 		*/
-		void UseTexture(uint32_t textureID, int slot);
+		void UseTexture(std::shared_ptr<ag::GLTexture> textureID, int slot);
 		/**
 		* Sets the uniforms for an object's transform
 		* @param tr A pointer to the object's transform
@@ -77,7 +78,7 @@ namespace ag
 
 		std::unordered_map<uint32_t, GLMesh> meshes;
 		std::unordered_map<uint32_t, GLMaterial> materials;
-		std::unordered_map<uint32_t, GLHandle> textures;
+		std::unordered_map<uint32_t, std::shared_ptr<ag::GLTexture>> textures;
 
 		GLHandle vao;
 

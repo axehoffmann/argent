@@ -102,7 +102,7 @@ void ag::GLRenderEngine::InitMaterial(uint32_t materialID)
 	materials[materialID] = glMat;
 }
 
-GLHandle ag::GLRenderEngine::InitTexture(uint32_t textureID)
+std::shared_ptr<ag::GLTexture> ag::GLRenderEngine::InitTexture(uint32_t textureID)
 {
 	/// TODO: note that data is not unloaded from RAM
 	if (textures.find(textureID) != textures.end())
@@ -114,16 +114,15 @@ GLHandle ag::GLRenderEngine::InitTexture(uint32_t textureID)
 	if (wTexture.expired())
 	{
 		/// TODO: throw error
-		return GLHandle();
+		return nullptr;
 	}
 
 	std::shared_ptr<ag::Texture> texture = wTexture.lock();
 
-	GLHandle texHandle = ag::GL::MakeTexture(GL_TEXTURE_2D, GL_RGBA, texture->width, texture->height, texture->data);
 
-	textures[textureID] = texHandle;
+	textures[textureID] = std::make_shared<ag::GLTexture>(texture, ag::TextureType::Tex2D, ag::TextureFormat::RGBA);
 
-	return texHandle;
+	return textures[textureID];
 }
 
 void ag::GLRenderEngine::UseMesh(uint32_t meshID)
@@ -149,9 +148,9 @@ void ag::GLRenderEngine::UseMaterial(uint32_t materialID)
 
 }
 
-void ag::GLRenderEngine::UseTexture(uint32_t textureID, int slot)
+void ag::GLRenderEngine::UseTexture(std::shared_ptr<ag::GLTexture> tex, int slot)
 {
-	ag::GL::BindTexture(GL_TEXTURE_2D, slot, textures[textureID]);
+	tex->Bind(slot);
 }
 
 void ag::GLRenderEngine::UseTransform(ag::Transform* tr, ag::Transform* camTr, ag::Camera* cam)

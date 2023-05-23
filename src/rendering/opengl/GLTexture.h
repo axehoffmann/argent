@@ -6,6 +6,7 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
+#include <memory>
 #include <string>
 
 namespace ag
@@ -23,9 +24,12 @@ namespace ag
 	{
 	public:
 
-		GLTexture(ag::Texture* tex, ag::TextureType type, ag::TextureFormat format, bool mipmap = false);
+		GLTexture(std::shared_ptr<ag::Texture> tex, ag::TextureType type, ag::TextureFormat format, bool mipmap = false);
 		~GLTexture();
 
+		void Bind(int slot);
+
 		GLHandle handle;
+		ag::TextureType texType;
 	};
 }
