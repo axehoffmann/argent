@@ -3,6 +3,9 @@ add_library(test_framework "TestFramework.h" "TestFramework.cpp")
 add_executable(world_test  "world_test.cpp")
 target_link_libraries(world_test PRIVATE ecs test_framework)
 
+add_executable(system_test  "system_test.cpp")
+target_link_libraries(system_test PRIVATE ecs test_framework)
+
 add_executable(archetype_test  "archetype_test.cpp")
 target_link_libraries(archetype_test PRIVATE ecs test_framework)
 

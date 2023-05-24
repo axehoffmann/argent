@@ -26,17 +26,27 @@ namespace ag
 		*/
 		virtual void FrameUpdate(double dt) = 0;
 
-		static std::vector<ag::System*> systems;
+		using factory_func = std::unique_ptr<ag::System>();
+		static std::vector<factory_func*> systems;
+
+		template <class T>
+		class SystemRegister
+		{
+		public:
+			SystemRegister()
+			{
+				ag::System::systems.push_back(Create);
+			}
+
+			static std::unique_ptr<ag::System> Create()
+			{
+				return std::make_unique<T>();
+			}
+		};
+
 	protected:
 		std::shared_ptr<ag::World> world;
 	};
 
-	template <class T>
-	class SystemRegister
-	{
-		SystemRegister()
-		{
-			ag::System::systems.push_back(new T());
-		}
-	};
+	
 }
