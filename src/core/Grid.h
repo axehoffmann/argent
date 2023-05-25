@@ -26,10 +26,20 @@ namespace ag
 		}
 	};
 
+	/**
+	* A 2D static spatial index.
+	* @tparam T The type of data to store.
+	* @tparam IDType The type used to index and access objects.
+	*/
 	template <typename T, typename IDType>
 	class Grid
 	{
 	public:
+		/**
+		* @param x The amount of cells along the x axis.
+		* @param y The amount of cells along the y axis.
+		* @param size The raw size each cell covers.
+		*/
 		Grid(size_t x, size_t y, float size)
 		{
 			x_size = x;
@@ -46,6 +56,7 @@ namespace ag
 
 		/**
 		* Gets all elements in adjacent cells.
+		* @param pos The location of the query. z coordinate is ignored.
 		*/
 		std::vector<T> Query(glm::vec3 pos)
 		{
@@ -75,7 +86,10 @@ namespace ag
 		}
 
 		/**
-		* Adds an object to the grid
+		* Adds an object to the grid.
+		* @param id The id of the inserted object.
+		* @param val The object data.
+		* @param pos The position of the object.
 		*/
 		void Insert(IDType id, T val, glm::vec3 pos)
 		{
@@ -88,7 +102,9 @@ namespace ag
 		}
 
 		/**
-		* Adjusts an object's position in the grid
+		* Adjusts an object's position in the grid.
+		* @param id The id of the object to move.
+		* @param newPos The new position of the object
 		*/
 		void Move(IDType id, glm::vec3 newPos)
 		{
