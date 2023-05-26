@@ -27,11 +27,12 @@ public:
     {
 
     }
+    void FrameUpdate(double dt) override {}
 private:
     static ag::System::SystemRegister<TestSystem> reg;
 };
 
-ag::System::SystemRegister<TestSystem> TestSystem::reg;
+ag::System::SystemRegister<TestSystem> TestSystem::reg = ag::System::SystemRegister<TestSystem>();
 
 
 void initialisation()
@@ -39,7 +40,7 @@ void initialisation()
     size_t systemCount = ag::System::systems.size();
     ag_expect(systemCount == 1, "Expected 1 registered system, instead found {}", systemCount);
 
-    std::unique_ptr<ag::System> sys = ag::System::systems[0]();
+    std::unique_ptr<ag::System> sys = ag::System::systems.at(0)();
 }
 
 int main()
