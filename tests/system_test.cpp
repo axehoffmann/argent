@@ -37,10 +37,10 @@ ag::System::SystemRegister<TestSystem> TestSystem::reg = ag::System::SystemRegis
 
 void initialisation()
 {
-    size_t systemCount = ag::System::systems.size();
+    size_t systemCount = ag::System::Systems().size();
     ag_expect(systemCount == 1, "Expected 1 registered system, instead found {}", systemCount);
 
-    std::unique_ptr<ag::System> sys = ag::System::systems.at(0)();
+    std::unique_ptr<ag::System> sys = ag::System::Systems().at(0)();
 }
 
 int main()

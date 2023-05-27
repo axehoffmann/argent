@@ -26,8 +26,20 @@ namespace ag
 		*/
 		virtual void FrameUpdate(double dt) = 0;
 
+
+
+
 		using factory_func = std::unique_ptr<ag::System>();
-		static std::vector<factory_func*> systems;
+		static std::vector<factory_func*>& Systems()
+		{
+			static std::vector<factory_func*> sysvec;
+			return sysvec;
+		}
+
+		static void Register(factory_func* func)
+		{
+			Systems().push_back(func);
+		}
 
 		template <class T>
 		class SystemRegister
@@ -35,7 +47,7 @@ namespace ag
 		public:
 			SystemRegister()
 			{
-				ag::System::systems.push_back(Create);
+				ag::System::Register(Create);
 			}
 
 			static std::unique_ptr<ag::System> Create()
