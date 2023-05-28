@@ -19,6 +19,8 @@ struct ComponentB { };
 class TestSystem : public ag::System
 {
 public:
+    int testVal {10};
+
     void Init() override
     {
 
@@ -41,6 +43,9 @@ void initialisation()
     ag_expect(systemCount == 1, "Expected 1 registered system, instead found {}", systemCount);
 
     std::unique_ptr<ag::System> sys = ag::System::Systems().at(0)();
+    TestSystem* pt = static_cast<TestSystem*>(sys.get());
+
+    ag_expect(pt->testVal == 10, "Expected initial testVal of 10, instead found {}", pt->testVal);
 }
 
 int main()
