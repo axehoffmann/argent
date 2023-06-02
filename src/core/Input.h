@@ -21,19 +21,37 @@ namespace ag
 	class Input
 	{
 	public:
-		void RegisterAction(T key, std::string& name, std::vector<int>& keys)
+		/**
+		* Register a boolean input action
+		* @param action The identifying value of the action
+		* @param name The name of the action
+		* @param keys The keys that trigger this action
+		*/
+		void RegisterAction(T action, std::string& name, std::vector<int>& keys)
 		{
-			boolActions[key] = BoolAction(name, keys);
+			boolActions[action] = BoolAction(name, keys);
 		}
 
-		void RegisterAction(T key, std::string& name, std::vector<int>& posKeys, std::vector<int>& negKeys)
+		/**
+		* Register a linear input action, value of -1 to 1
+		* @param action The identifying value of the action
+		* @param name The name of the action
+		* @param posKeys The keys that map to a positive value of this action
+		* @param negKeys The keys that map to a negative value of this action
+		*/
+		void RegisterAction(T action, std::string& name, std::vector<int>& posKeys, std::vector<int>& negKeys)
 		{
-			axisActions[key] = AxisAction(name, posKeys, negKeys);
+			axisActions[action] = AxisAction(name, posKeys, negKeys);
 		}
 
-		bool GetB(T key, ActionType type)
+		/**
+		* Get the value of a boolean input action
+		* @param action The identifying value of the action
+		* @param type The type of action eg. Press, Release
+		*/
+		bool GetB(T action, ActionType type)
 		{
-			BoolAction* action = &boolActions[key];
+			BoolAction* action = &boolActions[action];
 			for (size_t i = 0; i < action->keys.size(); i++)
 			{
 				if (PollFunc(action->keys[i], type))
@@ -43,12 +61,16 @@ namespace ag
 			return false;
 		}
 
-		float GetF(T key)
+		/**
+		* Get the value of a linear input action
+		* @param action The identifying value of the action
+		*/
+		float GetF(T action)
 		{
 			float negative = 0.0f;
 			float positive = 0.0f;
 
-			AxisAction* action = &axisActions[key];
+			AxisAction* action = &axisActions[action];
 
 			for (size_t i = 0; i < action->positive.size(); i++)
 			{
