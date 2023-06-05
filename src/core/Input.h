@@ -45,6 +45,28 @@ namespace ag
 		}
 
 		/**
+		* Modify the keys of a boolean action
+		* @param action The action to modify
+		* @param newKeys The new keys that map to the action
+		*/
+		void ModifyAction(T action, std::vector<int>& newKeys)
+		{
+			boolActions.at(action).keys = newKeys;
+		}
+
+		/**
+		* Modify the keys of a linear input action
+		* @param action The action to modify
+		* @param posKeys The new keys that map to the positive value of the action
+		* @param negKeys The new keys that map to the negative value of the action
+		*/
+		void ModifyAction(T action, std::vector<int>& posKeys, std::vector<int>& negKeys)
+		{
+			axisActions.at(action).positive = posKeys;
+			axisActions.at(action).negative = negKeys;
+		}
+
+		/**
 		* Get the value of a boolean input action
 		* @param action The identifying value of the action
 		* @param type The type of action eg. Press, Release
