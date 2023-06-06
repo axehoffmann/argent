@@ -21,6 +21,8 @@ namespace ag
 	class Input
 	{
 	public:
+		struct BoolAction;
+		struct AxisAction;
 		/**
 		* Register a boolean input action
 		* @param action The identifying value of the action
@@ -64,6 +66,24 @@ namespace ag
 		{
 			axisActions.at(action).positive = posKeys;
 			axisActions.at(action).negative = negKeys;
+		}
+
+		/**
+		* Gets a copy of a boolean action's info
+		* @param action The key of the action to fetch
+		*/
+		BoolAction GetBInfo(T action)
+		{
+			return boolActions.at(action);
+		}
+		
+		/**
+		* Gets a copy of a linear action's info
+		* @param action The key of the action to fetch
+		*/
+		AxisAction GetBInfo(T action)
+		{
+			return axisActions.at(action);
 		}
 
 		/**
@@ -115,7 +135,7 @@ namespace ag
 			return positive - negative;
 		}
 
-	private:
+
 		struct BoolAction
 		{
 			std::string name;
@@ -133,6 +153,7 @@ namespace ag
 			AxisAction(std::string n, std::vector<int>& p, std::vector<int>& ne) { name = n; positive = p; negative = ne; }
 		};
 
+	private:
 		bool PollFunc(int key, ActionType type);
 
 		std::unordered_map<T, BoolAction> boolActions;
