@@ -81,7 +81,7 @@ namespace ag
 		* Gets a copy of a linear action's info
 		* @param action The key of the action to fetch
 		*/
-		AxisAction GetBInfo(T action)
+		AxisAction GetFInfo(T action)
 		{
 			return axisActions.at(action);
 		}
