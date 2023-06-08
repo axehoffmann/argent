@@ -17,8 +17,8 @@ void ag::SceneBuilder::Update()
     ag::SceneGraph* graph = &graphs[lockedGraph];
     
     /// TODO: static renderable graph should not be rebuilt every update. It should only be edited based on spawned and destroyed entities this update.
-    std::function<void(ag::QueryResult<ag::Transform>, ag::QueryResult<ag::StaticRenderable>)> lambda = [this, graph](ag::QueryResult<ag::Transform> tr, ag::QueryResult<ag::StaticRenderable> re){
-
+    std::function<void(ag::QueryResult<ag::Transform>, ag::QueryResult<ag::StaticRenderable>)> lambda = [this, graph](ag::QueryResult<ag::Transform> tr, ag::QueryResult<ag::StaticRenderable> re)
+    {
         graph->statics.clear();
         graph->statics.reserve(tr.Length());
         for (size_t i = 0; i < tr.Length(); i++)
@@ -28,6 +28,7 @@ void ag::SceneBuilder::Update()
             graph->statics.emplace_back(id, renderable->materialID, renderable->meshID, *tr[i]);
         }
     };
+
     world->Query(lambda);
 
     graphReady = lockedGraph;

@@ -12,6 +12,9 @@
 
 namespace ag
 {
+
+    /// TODO: gather buffer of deleted and created objects, update scene graph with new objects that way, rather than clearing and rebuilding it each frame?
+
     /**
      * Runs every fixed gametick, building a structure of all the objects to render.
     */
@@ -29,6 +32,7 @@ namespace ag
          * Called by the Renderer to get the most recent completed scene graph
         */
         ag::SceneGraph* StartGraphRead();
+
         /**
          * Called by the Renderer to stop locking the graph
         */
