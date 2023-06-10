@@ -7,10 +7,12 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
-#include "GL.h"
-
 #include <vector>
 #include <string>
+
+#include "GL.h"
+
+
 
 namespace ag
 {
@@ -29,10 +31,7 @@ namespace ag
 		}
 
 		template <typename T>
-		void Uniform(std::string name, T val)
-		{
-			/// TODO: throw error
-
+		void Uniform(std::string name, T val) { // TODO: throw error 
 		}
 
 		template <>
@@ -63,21 +62,20 @@ namespace ag
 			glUniform4f(location, val.x, val.y, val.z, val.w);
 		}
 
+
 		template <typename T>
-		void Uniform(std::string name, T val, bool transpose = false)
-		{
-			/// TODO: throw error
+		void Uniform(std::string name, const T& val, bool transpose) { /// TODO: throw error 
 		}
 
 		template <>
-		void Uniform(std::string name, const glm::mat3& val, bool transpose = false)
+		void Uniform(std::string name, const glm::mat3& val, bool transpose)
 		{
 			int location = UniformLocation(name);
 			glUniformMatrix3fv(location, 1, transpose, glm::value_ptr(val));
 		}
 
 		template <>
-		void Uniform(std::string name, const glm::mat4& val, bool transpose = false)
+		void Uniform(std::string name, const glm::mat4& val, bool transpose)
 		{
 			int location = UniformLocation(name);
 			glUniformMatrix4fv(location, 1, transpose, glm::value_ptr(val));

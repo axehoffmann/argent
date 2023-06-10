@@ -7,6 +7,7 @@
 #include "GLScreen.h"
 #include "GLBuffer.h"
 #include "GLTexture.h"
+#include "GLShader.h"
 #include <unordered_map>
 
 #include "../../resources/AssetManager.h"
@@ -85,5 +86,6 @@ namespace ag
 		ag::GLScreen* screen;
 
 		GLHandle currentShader;
+		ag::GLShader shader;
 	};
 }
