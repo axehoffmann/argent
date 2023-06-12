@@ -81,7 +81,7 @@ namespace ag
 		std::unordered_map<uint32_t, GLMaterial> materials;
 		std::unordered_map<uint32_t, std::shared_ptr<ag::GLTexture>> textures;
 
-		GLHandle vao;
+		ag::GLBuffer* vao;
 
 		ag::GLScreen* screen;
 

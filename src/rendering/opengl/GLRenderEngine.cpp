@@ -10,7 +10,7 @@ void ag::GLRenderEngine::Initialise()
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.3f, 0.3f, 0.4f, 1.0f);
 
-	vao = ag::GL::MakeVAO();
+	vao = new ag::GLBuffer(ag::BufferType::VertexArray, ag::BufferAccessType::StaticDraw);
 	shader.InitialiseAttribute("aPos", 3, GL_FLOAT, false, 14 * sizeof(float), 0);
 	shader.InitialiseAttribute("aTexCoord", 2, GL_FLOAT, false, 14 * sizeof(float), 3 * sizeof(float));
 	shader.InitialiseAttribute("aNormal", 3, GL_FLOAT, false, 14 * sizeof(float), 5 * sizeof(float));
