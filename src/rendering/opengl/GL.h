@@ -1,5 +1,8 @@
 #pragma once
 
+#define GLEW_STATIC
+#include <GL/glew.h>
+
 typedef unsigned int GLEnum;
 typedef unsigned int GLHandle;
 

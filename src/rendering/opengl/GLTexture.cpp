@@ -1,6 +1,6 @@
 #include "GLTexture.h"
 
-ag::GLTexture::GLTexture(std::shared_ptr<ag::Texture> tex, ag::TextureType type, ag::TextureFormat format, bool mipmap = false)
+ag::GLTexture::GLTexture(std::shared_ptr<ag::Texture> tex, ag::TextureType type, ag::TextureFormat format, bool mipmap)
 {
 	texType = type;
 
