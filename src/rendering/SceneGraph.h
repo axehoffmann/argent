@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include "lighting/PointLight.h"    
 #include "../core/Transform.h"
 #include "../ecs/ECSTypes.h"
 
@@ -44,6 +45,9 @@ namespace ag
     {
         std::vector<StaticRenderInstance> statics;
         std::unordered_map<EntityID, DynamicRenderInstance> dynamics;
+
+        /// TODO: should this directly point to the PL components in the scene?
+        std::vector<ag::PointLight*> pointLights;
 
     };
 }

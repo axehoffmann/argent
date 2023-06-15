@@ -8,8 +8,8 @@ namespace ag
 	struct PointLight
 	{
 	public:
-		PointLight(glm::vec3 pos, glm::vec3 col, float intense) : position(pos), colour(col), intensity(intense) { }
-		glm::vec3 position;
+		PointLight(glm::vec3* pos, glm::vec3 col, float intense) : position(pos), colour(col), intensity(intense) { }
+		glm::vec3* position;
 		glm::vec3 colour;
 		float intensity;
 	};

@@ -1,1 +1,1 @@
-add_library(lighting "PointLight.h")
+add_library(lighting "PointLight.h" "DirectionalLight.h")
