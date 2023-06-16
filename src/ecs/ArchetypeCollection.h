@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <atomic>
 #include <string>
+#include <optional>
 
 namespace ag
 {
@@ -41,12 +42,11 @@ namespace ag
 		 * @param i The index of the entity in the collection.
 		 * @return A copy of the EntityInfo struct of the entity
 		*/
-		EntityInfo GetEntityInfo(size_t i)
+		std::optional<EntityInfo> GetEntityInfo(size_t i)
 		{
-			/// TODO: return an optional?
 			if (i >= entities.size() || i < 0)
 			{
-				return EntityInfo();
+				return std::optional<EntityInfo>();
 			}
 
 			return entities[i];
@@ -62,8 +62,12 @@ namespace ag
 		template <typename C>
 		C* GetComponent(size_t i)
 		{
-			/// TODO: Checks for values < 0, and component types not included in the collection?
-			if (i >= entities.size())
+			if (i >= entities.size() || i < 0)
+			{
+				return nullptr;
+			}
+			/// TODO: is this check too intensive to do a gazillion times a second? can we cache this some way idk
+			if (std::find(ComponentTypes.begin(), ComponentTypes.end(), Component::GetID<C>()) == ComponentTypes.end())
 			{
 				return nullptr;
 			}

@@ -9,6 +9,9 @@
 
 namespace ag
 {
+    /// TODO: should we have a system where transforms/other components can all share a reference to a position value etc?
+
+
     /**
      * Stores 3D transformation data of an entity.
     */
