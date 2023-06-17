@@ -23,7 +23,7 @@ void ag::SceneBuilder::Update()
         graph->statics.reserve(tr.Length());
         for (size_t i = 0; i < tr.Length(); i++)
         {
-            EntityID id = tr.GetInfo(i).ID;
+            EntityID id = tr.GetInfo(i).value().ID;
             ag::StaticRenderable* renderable = re[i];
             graph->statics.emplace_back(id, renderable->materialID, renderable->meshID, *tr[i]);
         }

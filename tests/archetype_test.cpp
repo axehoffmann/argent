@@ -35,7 +35,6 @@ void Cleanup()
 }
 
 // Entity Creation and Destruction
-/// TODO: Test entity parenting
 void create_destroy()
 {
     collection1->SpawnEntity("e1", ComponentA(100));

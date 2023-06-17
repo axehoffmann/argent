@@ -33,15 +33,15 @@ namespace ag
         * Returns the EntityInfo block from the specified entity
         * @param index The index of the entity within this query to fetch
         */
-        ag::EntityInfo GetInfo(size_t index)
+        std::optional<ag::EntityInfo> GetInfo(size_t index)
         {
             if (index >= length)
-                return ag::EntityInfo();
+                return std::optional<ag::EntityInfo>{};
 
             std::tuple<ag::ArchetypeCollection*, size_t> find = FindArchetypeAndLocalIndex(index);
             
             if (std::get<ag::ArchetypeCollection*>(find) == nullptr || std::get<size_t>(find) < 0)
-                return ag::EntityInfo();
+                return std::optional<ag::EntityInfo>{};
             
             return std::get<ag::ArchetypeCollection*>(find)->GetEntityInfo(std::get<size_t>(find));
         }
