@@ -8,6 +8,9 @@
 
 #include "Resource.h"
 
+#include <fstream>
+#include <nlohmann/json.hpp>
+
 #include <iostream>
 
 namespace ag
@@ -70,6 +73,12 @@ namespace ag
 			}
 			std::vector<std::shared_ptr<ag::Resource>>().swap(resources);
 			pathToID.clear();
+		}
+
+		static nlohmann::json ReadJson(std::string& path)
+		{
+			std::ifstream f(path);
+			return nlohmann::json::parse(f);
 		}
 
 	private:

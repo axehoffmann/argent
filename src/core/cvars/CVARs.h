@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 
+#include "../../resources/AssetManager.h"
 
 #include "CVAR.h"
 
@@ -91,6 +92,12 @@ namespace ag
 
 			std::vector<cvars::ICVAR*>().swap(vars);
 		}
+
+		/**
+		* Loads CVARs from a file.
+		*/
+		static void LoadFile(std::string path);
+
 
 	private:
 		static std::vector<cvars::ICVAR*> vars;
