@@ -5,6 +5,8 @@
 
 #include <string>
 
+std::string configPath = "assets/cvars.json";
+
 void basic()
 {
     ag::CVARs::Create<int>("test_int", " ", 2);
@@ -38,11 +40,23 @@ void basic()
     ag_expect(t_string == "test", "Expected test_string to have reset value of 'test', instead found {}", t_string);
 }
 
+void load_file()
+{
+    ag::CVARs::LoadFile(configPath);
+    int c_int = ag::CVARs::Get<int>("config_int");
+    float c_float = ag::CVARs::Get<float>("config_float");
+
+    ag_expect(c_int == 1, "Expected config_int to have initial value of 1, instead found {}", c_int);
+    ag_expect(c_float == 0.5f, "Expected config_float to have initial value of 0.5f, instead found {}", c_float);
+
+}
+
 int main()
 {
     Test::Name("CVARs");
 
     Test::Case("Basic", basic);
+    Test::Case("Load from File", load_file);
 
     Test::Run();
 }
