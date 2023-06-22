@@ -1,3 +1,4 @@
-add_library(core "BoundingBox.cpp" "Transform.cpp" "BoundingBox.h" "Camera.h" "Transform.h" "Utility.h" "Engine.h" "Engine.cpp" "Grid.h" "Stats.h" "Stats.cpp" "Input.h" "Input.cpp")
+add_library(core "Transform.cpp" "Camera.h" "Transform.h" "Utility.h" "Engine.h" "Engine.cpp" "Stats.h" "Stats.cpp" "Input.h" "Input.cpp")
 add_subdirectory(cvars)
-target_link_libraries(core cvars)
+add_subdirectory(spatial)
+target_link_libraries(core cvars spatial)

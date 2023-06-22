@@ -1,5 +1,5 @@
 #include "TestFramework.h"
-#include "../src/core/Grid.h"
+#include "../src/core/spatial/Grid.h"
 
 #include <glm/glm.hpp>
 
