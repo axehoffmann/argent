@@ -12,6 +12,7 @@
 
 #include "GL.h"
 
+#include <string>
 
 
 namespace ag
@@ -20,7 +21,7 @@ namespace ag
 	{
 	public:
 		/// TODO: build a GLShader from a shader resource
-		GLShader();
+		GLShader(std::string vpath, std::string fpath);
 		~GLShader();
 
 		void InitialiseAttribute(std::string attribName, int size, GLEnum type, bool normalized, int stride, int offset)
@@ -87,6 +88,10 @@ namespace ag
 
 		GLHandle handle;
 	private:
+
+		std::string ReadText(std::string path, std::string name);
+
+		void CompileShader(std::string source, GLHandle dest);
 
 		int UniformLocation(std::string name)
 		{
