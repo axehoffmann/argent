@@ -42,7 +42,7 @@ void ag::ArchetypeCollection::ResolveDestroyBuffer()
 		entities.erase(std::next(entities.begin(), entitiesToDestroy.at(i)));
 		for (size_t j = 0; j < ComponentTypes.size(); j++)
 		{
-			int componentSize = Component::GetSize(ComponentTypes[j]);
+			int componentSize = ComponentInfo::GetSize(ComponentTypes[j]);
 			auto start = std::next(data[j].begin(), componentSize * entitiesToDestroy[i]);
 			auto end = std::next(start, componentSize);
 			data[j].erase(start, end);

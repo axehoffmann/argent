@@ -42,10 +42,12 @@ namespace ag
 	class GLRenderEngine : public RenderEngine
 	{
 	public:
+
 		void Initialise() override;
 
 		void Render(ag::SceneGraph* graph) override;
 
+		GLRenderEngine();
 		~GLRenderEngine();
 	private:
 
@@ -86,6 +88,6 @@ namespace ag
 		ag::GLScreen* screen;
 
 		GLHandle currentShader;
-		ag::GLShader shader;
+		ag::GLShader* shader;
 	};
 }

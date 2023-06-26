@@ -24,9 +24,9 @@ struct ComponentC { };
 
 void Setup()
 {
-    cA = new ag::ArchetypeCollection({ ag::Component::GetID<ComponentA>() });
-    cAB = new ag::ArchetypeCollection({ ag::Component::GetID<ComponentA>(), ag::Component::GetID<ComponentB>() });
-    cAC = new ag::ArchetypeCollection({ ag::Component::GetID<ComponentA>(), ag::Component::GetID<ComponentC>() });
+    cA = new ag::ArchetypeCollection({ ag::ComponentInfo::GetID<ComponentA>() });
+    cAB = new ag::ArchetypeCollection({ ag::ComponentInfo::GetID<ComponentA>(), ag::ComponentInfo::GetID<ComponentB>() });
+    cAC = new ag::ArchetypeCollection({ ag::ComponentInfo::GetID<ComponentA>(), ag::ComponentInfo::GetID<ComponentC>() });
 
     world = new ag::World();
 

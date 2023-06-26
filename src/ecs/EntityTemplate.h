@@ -6,6 +6,7 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 
 namespace ag
 {
@@ -22,6 +23,12 @@ namespace ag
 			{
 				data.push_back(Component::FromJSON(*it));
 			}
+
+			// ArchetypeCollections expect components to be sorted by ID
+			std::sort(data.begin(), data.end(), [](const Component& a, const Component& b) -> bool
+			{
+				return a.GetID() < b.GetID();
+			});
 		}
 
 	private:

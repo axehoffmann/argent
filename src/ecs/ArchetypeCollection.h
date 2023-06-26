@@ -67,14 +67,14 @@ namespace ag
 				return nullptr;
 			}
 			/// TODO: is this check too intensive to do a gazillion times a second? can we cache this some way idk
-			if (std::find(ComponentTypes.begin(), ComponentTypes.end(), Component::GetID<C>()) == ComponentTypes.end())
+			if (std::find(ComponentTypes.begin(), ComponentTypes.end(), ComponentInfo::GetID<C>()) == ComponentTypes.end())
 			{
 				return nullptr;
 			}
 			
 			size_t stride = sizeof(C);
 			// The component array that stores this component type
-			auto ci = std::find(ComponentTypes.begin(), ComponentTypes.end(), ag::Component::GetID<C>()) - ComponentTypes.begin();
+			auto ci = std::find(ComponentTypes.begin(), ComponentTypes.end(), ag::ComponentInfo::GetID<C>()) - ComponentTypes.begin();
             
 			// Return a pointer to the component
 			return (C*)(&data[ci].at(i * stride));

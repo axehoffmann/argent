@@ -22,7 +22,7 @@ namespace ag
         void Query(std::function<void(QueryResult<Q>...)>& callback)
         {
             std::vector<ComponentTypeID> search;
-            (search.push_back(ag::Component::GetID<Q>()), ...);
+            (search.push_back(ag::ComponentInfo::GetID<Q>()), ...);
 
             std::vector<ag::ArchetypeCollection*> matches;
 

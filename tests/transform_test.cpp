@@ -1,6 +1,10 @@
 #include "TestFramework.h"
 #include "../src/core/Transform.h"
 
+#include <fstream>
+#include <nlohmann/json.hpp>
+
+std::string jsonPath = "assets/entity.json";
 
 void data_access()
 {
@@ -43,6 +47,15 @@ void dirty_flag()
     ag_expect(!t.HasChanged(), "Expected false, instead found true");
 }
 
+void serialisation()
+{
+    // Deserialisation
+    std::ifstream f(jsonPath);
+    ag::Component c = ag::Component::FromJSON(nlohmann::json::parse(f)[0]);
+
+    ag::Transform t = c.GetData<ag::Transform>();
+    ag_expect(t.GetPosition().y == 32.0f, "Expected deserialised transform to have y pos of 32, instead found {}", t.GetPosition().y);
+}
 
 int main()
 {
@@ -51,6 +64,7 @@ int main()
     Test::Case("Data Access", data_access);
     Test::Case("Translation", translation);
     Test::Case("Dirty Flag", dirty_flag);
+    Test::Case("Serialisation", serialisation);
 
     Test::Run();
 }

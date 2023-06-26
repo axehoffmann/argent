@@ -5,9 +5,34 @@
 #include <unordered_map>
 
 #include <nlohmann/json.hpp>
-
 namespace ag
 {
+
+	class ComponentInfo
+	{
+	public:
+		/**
+		* Allocates a unique ID for each type of component registered with this function.
+		* @tparam The type of the component
+		* @return The ID of the component type
+		*/
+		template <typename T>
+		static ComponentTypeID GetID()
+		{
+			// Generates a unique ID for each type
+			// trick from @nice_byte
+			static ComponentTypeID id = ++nextComponentID;
+			componentSize[id] = sizeof(T);
+			return id;
+		}
+		static int GetSize(ComponentTypeID id);
+
+	private:
+		inline static std::atomic<ComponentTypeID> nextComponentID{0};
+		/// TODO: Evaluate if this map is necessary.
+		inline static std::unordered_map<ComponentTypeID, int> componentSize{};
+	};
+
 	/**
 	* Can store any type of data to be used as a component
 	*/
@@ -21,29 +46,20 @@ namespace ag
 		template <typename T>
 		T GetData()
 		{
-			if (GetID<T>() != id)
+			if (ComponentInfo::GetID<T>() != id)
 			{
 				/// TODO: Throw error
 			}
-			return *((T*)data);
+			return *static_cast<T*>(data);
 		}
 
 		/**
-		 * Allocates a unique ID for each type of component registered with this function.
-		 * @tparam The type of the component
-		 * @return The ID of the component type
+		* Gets the type ID of a component instance
 		*/
-		template <typename T>
-		static ComponentTypeID GetID()
+		ComponentTypeID GetID()
 		{
-			// Generates a unique ID for each type
-			// trick from @nice_byte
-			static ComponentTypeID id = ++nextComponentID;
-			componentSize[id] = sizeof(T);
 			return id;
 		}
-		static int GetSize(ComponentTypeID id);
-
 
 		static Component FromJSON(nlohmann::json data)
 		{
@@ -52,10 +68,10 @@ namespace ag
 
 		int Size()
 		{
-			return componentSize[id];
+			return ComponentInfo::GetSize(id);
 		}
 
-		class IComponentSerialiser
+		class ISerialiser
 		{
 		public:
 			virtual nlohmann::json ToJSON(Component& c) = 0;
@@ -63,10 +79,10 @@ namespace ag
 		};
 
 		template <typename T>
-		class ComponentSerialiser : public IComponentSerialiser
+		class Serialiser : public ISerialiser
 		{
 		public:
-			ComponentSerialiser(std::string componentName)
+			Serialiser(std::string componentName)
 			{
 				Serialisers()[componentName] = this;
 			}
@@ -77,34 +93,30 @@ namespace ag
 			}
 			Component FromJSON(nlohmann::json ob) override
 			{
-				return Create(T::FromJSON(ob));
+				return Create<T>(T::FromJSON(ob));
 			}
 		};
 
 	private:
-		static std::map<std::string, IComponentSerialiser*>& Serialisers()
+		static std::map<std::string, ISerialiser*>& Serialisers()
 		{
-			static std::map<std::string, IComponentSerialiser*> s;
+			static std::map<std::string, ISerialiser*> s;
 			return s;
 		}
 
 		template <typename T>
-		static Component Create(T& data)
+		static Component Create(T data)
 		{
+			/// TODO: Maybe memory leak? clean up raw data? Consider lifetime of component object
 			Component c;
 			T* raw = new T(data);
 			c.data = (void*)raw;
-			c.id = GetID<T>();
+			c.id = ComponentInfo::GetID<T>();
 			return c;
 		}
 
 		ComponentTypeID id;
 		void* data;
-
-		static std::atomic<ComponentTypeID> nextComponentID;
-		/// TODO: Evaluate if this map is necessary.
-		static std::unordered_map<ComponentTypeID, int> componentSize;
-		
 	};
 }
 

@@ -1,5 +1,8 @@
 #include "Transform.h"
 
+ag::Component::Serialiser<ag::Transform> ag::Transform::serialiser("transform");
+
+
 ag::Transform::Transform(glm::vec3 pos)
 {
     position = pos;
@@ -45,6 +48,12 @@ void ag::Transform::SetPosition(glm::vec3 pos)
 void ag::Transform::SetRotation(glm::vec3 rot)
 {
     rotation = glm::quat(rot);
+    hasChanged = true;
+}
+
+void ag::Transform::SetRotation(glm::quat rot)
+{
+    rotation = rot;
     hasChanged = true;
 }
 
@@ -97,4 +106,31 @@ glm::vec3 ag::Transform::Right()
 glm::vec3 ag::Transform::Front()
 {
     return rotation * glm::vec3(0.0f, 0.0f, 1.0f);
+}
+
+nlohmann::json ag::Transform::ToJSON(Transform t)
+{
+    using json = nlohmann::json;
+    glm::vec3 rot = glm::eulerAngles(t.rotation);
+    json ob = {
+        { "type", "transform" },
+        { "position", { t.position.x, t.position.y, t.position.z } },
+        { "rotation", { rot.x, rot.y, rot.z} },
+        { "scale", { t.scale.x, t.scale.y, t.scale.z } }
+    };
+    return ob;
+}
+
+ag::Transform ag::Transform::FromJSON(nlohmann::json& ob)
+{
+    using json = nlohmann::json;
+    json pos = ob["position"];
+    json rot = ob["rotation"];
+    json scl = ob["scale"];
+
+    return Transform(
+        glm::vec3(pos[0], pos[1], pos[2]),
+        glm::vec3(rot[0], rot[1], rot[2]),
+        glm::vec3(scl[0], scl[1], scl[2])
+    );
 }

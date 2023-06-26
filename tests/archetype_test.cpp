@@ -24,8 +24,8 @@ struct ComponentB
 
 void Setup()
 {
-    collection1 = new ag::ArchetypeCollection({ ag::Component::GetID<ComponentA>() });
-    collection2 = new ag::ArchetypeCollection({ ag::Component::GetID<ComponentA>(), ag::Component::GetID<ComponentB>() });
+    collection1 = new ag::ArchetypeCollection({ ag::ComponentInfo::GetID<ComponentA>() });
+    collection2 = new ag::ArchetypeCollection({ ag::ComponentInfo::GetID<ComponentA>(), ag::ComponentInfo::GetID<ComponentB>() });
 }
 
 void Cleanup()

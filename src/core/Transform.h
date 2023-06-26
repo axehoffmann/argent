@@ -5,6 +5,7 @@
 #include <glm/gtx/quaternion.hpp>
 
 #include "../ecs/ECSTypes.h"
+#include "../ecs/Component.h"
 #include <vector>
 
 namespace ag
@@ -37,6 +38,7 @@ namespace ag
         
         void SetPosition(glm::vec3 pos);
         void SetRotation(glm::vec3 rot);
+        void SetRotation(glm::quat rot);
         void SetScale(glm::vec3 sc);
 
         glm::vec3 GetPosition();
@@ -66,7 +68,12 @@ namespace ag
         */
         glm::vec3 Front();
 
+        static nlohmann::json ToJSON(Transform t);
+        static Transform FromJSON(nlohmann::json& ob);
+
     private:
+        static ag::Component::Serialiser<Transform> serialiser;
+
         bool hasChanged;
 
         glm::vec3 position;

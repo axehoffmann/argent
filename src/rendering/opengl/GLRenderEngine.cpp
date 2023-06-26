@@ -11,13 +11,17 @@ void ag::GLRenderEngine::Initialise()
 	glClearColor(0.3f, 0.3f, 0.4f, 1.0f);
 
 	vao = new ag::GLBuffer(ag::BufferType::VertexArray, ag::BufferAccessType::StaticDraw);
-	shader.InitialiseAttribute("aPos", 3, GL_FLOAT, false, 14 * sizeof(float), 0);
-	shader.InitialiseAttribute("aTexCoord", 2, GL_FLOAT, false, 14 * sizeof(float), 3 * sizeof(float));
-	shader.InitialiseAttribute("aNormal", 3, GL_FLOAT, false, 14 * sizeof(float), 5 * sizeof(float));
-	shader.InitialiseAttribute("aTangent", 3, GL_FLOAT, false, 14 * sizeof(float), 8 * sizeof(float));
-	shader.InitialiseAttribute("aBitangent", 3, GL_FLOAT, false, 14 * sizeof(float), 11 * sizeof(float));
+	shader->InitialiseAttribute("aPos", 3, GL_FLOAT, false, 14 * sizeof(float), 0);
+	shader->InitialiseAttribute("aTexCoord", 2, GL_FLOAT, false, 14 * sizeof(float), 3 * sizeof(float));
+	shader->InitialiseAttribute("aNormal", 3, GL_FLOAT, false, 14 * sizeof(float), 5 * sizeof(float));
+	shader->InitialiseAttribute("aTangent", 3, GL_FLOAT, false, 14 * sizeof(float), 8 * sizeof(float));
+	shader->InitialiseAttribute("aBitangent", 3, GL_FLOAT, false, 14 * sizeof(float), 11 * sizeof(float));
 }
 
+ag::GLRenderEngine::GLRenderEngine()
+{
+
+}
 ag::GLRenderEngine::~GLRenderEngine()
 {
 	for (auto& [id, mesh] : meshes)
@@ -139,11 +143,11 @@ void ag::GLRenderEngine::UseMaterial(uint32_t materialID)
 	}
 
 	/// TODO: make this agnostic to material format
-	shader.Uniform<int>("material.albedo", 0);
-	shader.Uniform<int>("material.metallic", 1);
-	shader.Uniform<int>("material.roughness", 2);
-	shader.Uniform<int>("material.ao", 3);
-	shader.Uniform<int>("material.normal", 4);
+	shader->Uniform<int>("material.albedo", 0);
+	shader->Uniform<int>("material.metallic", 1);
+	shader->Uniform<int>("material.roughness", 2);
+	shader->Uniform<int>("material.ao", 3);
+	shader->Uniform<int>("material.normal", 4);
 }
 
 void ag::GLRenderEngine::UseTexture(std::shared_ptr<ag::GLTexture> tex, int slot)
@@ -155,6 +159,6 @@ void ag::GLRenderEngine::UseTransform(ag::Transform* tr, ag::Transform* camTr, a
 {
 	glm::mat4 modelView = ag::Utility::ViewMatrix(camTr) * ag::Utility::ModelMatrix(tr);
 
-	shader.Uniform<glm::mat4>("modelView", modelView);
-	shader.Uniform<glm::mat4>("mvp", ag::Utility::ProjectionMatrix(cam) * modelView);
+	shader->Uniform<glm::mat4>("modelView", modelView);
+	shader->Uniform<glm::mat4>("mvp", ag::Utility::ProjectionMatrix(cam) * modelView);
 }
