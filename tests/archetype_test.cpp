@@ -71,26 +71,33 @@ void data_access()
         lastEntity = collection2->SpawnEntity("entity", ComponentA(100 + i), ComponentB(i));
     }
 
-    ag_expect(collection2->GetComponent<ComponentA>(0) == nullptr, "Expected nullptr as entity should be in buffer");
+    bool err = false;
+    try
+    {
+        collection2->GetComponent<ComponentA>(0);
+    }
+    catch (const std::exception&)
+    {
+        err = true;
+    }
+    ag_expect(err, "Expected an error as entity should be in buffer and innacessible");
 
     collection2->ResolveBuffers();
 
-    ComponentA* componentA = collection2->GetComponent<ComponentA>(0);
-    ag_expect(componentA != nullptr, "Expected pointer to ComponentA, instead found nullptr");
-    ag_expect(componentA->value == 100, "Expected initial ComponentA.value of 100, instead found {}", componentA->value);
-    componentA->value = 10;
-    ag_expect(collection2->GetComponent<ComponentA>(0)->value == 10, "GetComponent error: Expected updated ComponentA.value of 10, instead found {}", collection2->GetComponent<ComponentA>(0)->value);
+    ComponentA& componentA = collection2->GetComponent<ComponentA>(0);
+    ag_expect(componentA.value == 100, "Expected initial ComponentA.value of 100, instead found {}", componentA.value);
+    componentA.value = 10;
+    ag_expect(collection2->GetComponent<ComponentA>(0).value == 10, "GetComponent error: Expected updated ComponentA.value of 10, instead found {}", collection2->GetComponent<ComponentA>(0).value);
 
-    ComponentB* componentB = collection2->GetComponent<ComponentB>(2);
-    ag_expect(componentB != nullptr, "Expected pointer to ComponentB, instead found nullptr");
-    ag_expect(componentB->partner == 2, "Expected initial ComponentB.partner of 2, instead found {}", componentB->partner);
-    componentB->partner = lastEntity;
-    ag_expect(collection2->GetComponent<ComponentB>(2)->partner == lastEntity, "Expected updated ComponentB.partner of {}, instead found {}", lastEntity, collection2->GetComponent<ComponentB>(2)->partner);
+    ComponentB& componentB = collection2->GetComponent<ComponentB>(2);
+    ag_expect(componentB.partner == 2, "Expected initial ComponentB.partner of 2, instead found {}", componentB.partner);
+    componentB.partner = lastEntity;
+    ag_expect(collection2->GetComponent<ComponentB>(2).partner == lastEntity, "Expected updated ComponentB.partner of {}, instead found {}", lastEntity, collection2->GetComponent<ComponentB>(2).partner);
 
-    size_t partnerIndex = collection2->GetIndexByID(componentB->partner);
+    size_t partnerIndex = collection2->GetIndexByID(componentB.partner);
     ag_expect(partnerIndex == 4, "Expected last entity at index 4, instead found {}", partnerIndex);
-    ComponentA* partnerComponentA = collection2->GetComponent<ComponentA>(partnerIndex);
-    ag_expect(partnerComponentA->value == 104, "Expected last entity to have ComponentA.value of 104, instead found {}", partnerComponentA->value);
+    ComponentA& partnerComponentA = collection2->GetComponent<ComponentA>(partnerIndex);
+    ag_expect(partnerComponentA.value == 104, "Expected last entity to have ComponentA.value of 104, instead found {}", partnerComponentA.value);
 }
 
 void entity_class()
@@ -106,12 +113,12 @@ void entity_class()
 
     ag_expect(entityA.GetID() == lastEntity, "Expected entity ID to be {}, instead found {}", lastEntity, entityA.GetID());
 
-    ag_expect(entityA.Get<ComponentA>()->value == 104, "Expected entity's A value to be 104, instead found {}", entityA.Get<ComponentA>()->value);
-    ag_expect(entityA.Get<ComponentB>()->partner == 4, "Expected entity's B value to be 4, instead found {}", entityA.Get<ComponentB>()->partner);
+    ag_expect(entityA.Get<ComponentA>().value == 104, "Expected entity's A value to be 104, instead found {}", entityA.Get<ComponentA>().value);
+    ag_expect(entityA.Get<ComponentB>().partner == 4, "Expected entity's B value to be 4, instead found {}", entityA.Get<ComponentB>().partner);
 
-    entityA.Get<ComponentA>()->value = -10;
+    entityA.Get<ComponentA>().value = -10;
 
-    ag_expect(entityA.Get<ComponentA>()->value == -10, "Expected entity's A value to be -10, instead found {}", entityA.Get<ComponentA>()->value);
+    ag_expect(entityA.Get<ComponentA>().value == -10, "Expected entity's A value to be -10, instead found {}", entityA.Get<ComponentA>().value);
 }
 
 int main()

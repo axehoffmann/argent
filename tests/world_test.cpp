@@ -93,7 +93,7 @@ void two_populated()
     qIter.clear();
     std::function<void(ag::QueryResult<ComponentA>)> lm = [&qIter](ag::QueryResult<ComponentA> a) {
         for (size_t i = 0; i < a.Length(); i++)
-            qIter.push_back(a[i]->value);
+            qIter.push_back(a[i].value);
     };
     world->Query(lm);
     ag_expect(qIter == expected, "Expected query to iterate all 10 entities");
@@ -103,7 +103,7 @@ void two_populated()
     qIter.clear();
     std::function<void(ag::QueryResult<ComponentA>, ag::QueryResult<ComponentB>)> lm2 = [&qIter](ag::QueryResult<ComponentA> a, ag::QueryResult<ComponentB> b) {
         for (size_t i = 0; i < a.Length(); i++)
-            qIter.push_back(a[i]->value);
+            qIter.push_back(a[i].value);
     };
     world->Query(lm2);
     ag_expect(qIter == expected, "Expected query to iterate 5 AB entities");

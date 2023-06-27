@@ -50,7 +50,7 @@ namespace ag
 			{
 				/// TODO: Throw error
 			}
-			return *static_cast<T*>(data);
+			return static_cast<RawData<T>*>(data.get())->value;
 		}
 
 		/**
@@ -61,9 +61,9 @@ namespace ag
 			return id;
 		}
 
-		static Component FromJSON(nlohmann::json data)
+		static Component FromJSON(nlohmann::json ob)
 		{
-			return Serialisers()[data["type"]]->FromJSON(data);
+			return Serialisers()[ob["type"]]->FromJSON(ob);
 		}
 
 		int Size()
@@ -107,16 +107,24 @@ namespace ag
 		template <typename T>
 		static Component Create(T data)
 		{
-			/// TODO: Maybe memory leak? clean up raw data? Consider lifetime of component object
-			Component c;
-			T* raw = new T(data);
-			c.data = (void*)raw;
-			c.id = ComponentInfo::GetID<T>();
-			return c;
+			return Component(ComponentInfo::GetID<T>(), std::make_unique<RawData<T>>(data));
 		}
 
+		/**
+		* Type-erased component data handler
+		*/
+		struct IRawData{};
+		template <typename T>
+		struct RawData : public IRawData
+		{
+			RawData(T v) : value(v) { }
+			T value;
+		};
+
 		ComponentTypeID id;
-		void* data;
+		std::unique_ptr<IRawData> data;
+
+		Component(ComponentTypeID i, std::unique_ptr<IRawData> d) : id(i), data(std::move(d)) {}
 	};
 }
 

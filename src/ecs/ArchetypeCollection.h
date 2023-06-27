@@ -9,6 +9,8 @@
 #include <string>
 #include <optional>
 
+#include <stdexcept>
+
 namespace ag
 {
 	struct EntityInfo
@@ -60,24 +62,21 @@ namespace ag
 		 * @return A pointer to the fetched component, or nullptr if the search was invalid.
 		*/
 		template <typename C>
-		C* GetComponent(size_t i)
+		C& GetComponent(size_t i)
 		{
-			if (i >= entities.size() || i < 0)
-			{
-				return nullptr;
-			}
+			if (i >= entities.size() || i < 0) 
+				throw std::out_of_range("ArchetypeCollection GetComponent index out of range");
+
 			/// TODO: is this check too intensive to do a gazillion times a second? can we cache this some way idk
 			if (std::find(ComponentTypes.begin(), ComponentTypes.end(), ComponentInfo::GetID<C>()) == ComponentTypes.end())
-			{
-				return nullptr;
-			}
-			
-			size_t stride = sizeof(C);
+				throw std::runtime_error("Attempted to get component of type " + std::string(typeid(C).name()));
+
 			// The component array that stores this component type
+			/// TODO: should this be a hash map? benchmark
 			auto ci = std::find(ComponentTypes.begin(), ComponentTypes.end(), ag::ComponentInfo::GetID<C>()) - ComponentTypes.begin();
             
-			// Return a pointer to the component
-			return (C*)(&data[ci].at(i * stride));
+			// Return a reference to the component
+			return (C&)(data[ci].at(i * sizeof(C)));
 		}
 
 		ArchetypeID GetID()

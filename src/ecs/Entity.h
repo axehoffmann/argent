@@ -3,6 +3,8 @@
 #include "ECSTypes.h"
 #include "ArchetypeCollection.h"
 
+#include <stdexcept>
+
 namespace ag
 {
 	/**
@@ -24,11 +26,13 @@ namespace ag
 		 * @return A pointer to the component, or nullptr if the search was unsuccessful.
 		*/
 		template <typename C>
-		C* Get()
+		C& Get()
 		{
 			size_t index = archetype->GetIndexByID(ID);
+
 			if (index == -1)
-				return nullptr;
+				throw std::runtime_error("GetIndexByID failed, returned -1");
+
 			return archetype->GetComponent<C>(index);
 		}
 

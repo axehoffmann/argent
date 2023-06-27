@@ -13,6 +13,7 @@ namespace ag
     struct QueryResult
     {
     public:
+        /// TODO: should use weak_ptrs
         QueryResult(std::vector<ag::ArchetypeCollection*> matches)
         {
             matchingCollections = matches;
@@ -46,24 +47,29 @@ namespace ag
             return std::get<ag::ArchetypeCollection*>(find)->GetEntityInfo(std::get<size_t>(find));
         }
 
-        ComponentType* operator[](size_t index)
+        ComponentType& At(size_t index)
         {
             if (index >= length)
                 return nullptr;
 
             std::tuple<ag::ArchetypeCollection*, size_t> find = FindArchetypeAndLocalIndex(index);
-            
+
             if (std::get<ag::ArchetypeCollection*>(find) == nullptr || std::get<size_t>(find) < 0)
                 return nullptr;
 
             return std::get<ag::ArchetypeCollection*>(find)->GetComponent<ComponentType>(std::get<size_t>(find));
         }
 
+        ComponentType& operator[](size_t index)
+        {
+            return At(index);
+        }
+
         /**
         * Returns the component from the specified entity
         * @param id The ID of the entity to fetch the component from
         */
-        ComponentType* ByID(EntityID id)
+        ComponentType& ByID(EntityID id)
         {
             ag::ArchetypeCollection* match = ag::ArchetypeCollection::GetArchetypeFromEntityID(id);
 
@@ -71,7 +77,7 @@ namespace ag
             if (!std::count(matchingCollections.begin(), matchingCollections.end(), match))
                 return nullptr;
         
-            return match->GetIndexByID(id);
+            return At(match->GetIndexByID(id));
         }
 
         /**
