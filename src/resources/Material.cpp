@@ -25,4 +25,6 @@ void ag::Material::Load()
 void ag::Material::Unload()
 {
 	// TODO: material data should theoretically be minimal. may not need to unload.
+	std::vector<float>().swap(parameters);
+	std::vector<uint32_t>().swap(textures);
 }

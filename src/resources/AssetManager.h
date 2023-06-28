@@ -52,13 +52,14 @@ namespace ag
 			if (pathToID.find(path) != pathToID.end())
 				return pathToID[path];
 
-			uint32_t idx = resources.size();
 
 			std::shared_ptr<ag::Resource> ptr = std::make_shared<T>(path);
+			
 
 			/// TODO: asynchronously load data
 			ptr->Load();
 
+			uint32_t idx = resources.size();
 			resources.push_back(ptr);
 			pathToID[path] = idx;
 

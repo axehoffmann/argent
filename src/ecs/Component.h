@@ -28,9 +28,9 @@ namespace ag
 		static int GetSize(ComponentTypeID id);
 
 	private:
-		inline static std::atomic<ComponentTypeID> nextComponentID{0};
+		static std::atomic<ComponentTypeID> nextComponentID;
 		/// TODO: Evaluate if this map is necessary.
-		inline static std::unordered_map<ComponentTypeID, int> componentSize{};
+		static std::unordered_map<ComponentTypeID, int> componentSize;
 	};
 
 	/**
