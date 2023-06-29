@@ -41,6 +41,21 @@ namespace ag
             callback( QueryResult<Q>(matches)... );
         }
 
+        std::shared_ptr<ag::ArchetypeCollection> FindArchetype(std::vector<ComponentTypeID>& set)
+        {
+            /// TODO: benchmark... maybe could use a search tree
+
+            for (size_t i = 0; i < archetypes.size(); i++)
+            {
+                std::vector<ComponentTypeID> currentSet = archetypes[i]->GetComponentSet();
+
+                if (set == currentSet)
+                    return std::shared_ptr<ArchetypeCollection>(archetypes[i]);
+            }
+
+            /// TODO: should create an archetype if it doesn't already exist
+        }
+
         /**
         * Adds an archetype to the world collection.
         * @param arch The archetype to add. 

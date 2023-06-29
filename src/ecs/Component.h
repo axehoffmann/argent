@@ -53,6 +53,11 @@ namespace ag
 			return static_cast<RawData<T>*>(data.get())->value;
 		}
 
+		void* GetRawData()
+		{
+			return dataRaw;
+		}
+
 		/**
 		* Gets the type ID of a component instance
 		*/
@@ -107,7 +112,8 @@ namespace ag
 		template <typename T>
 		static Component Create(T data)
 		{
-			return Component(ComponentInfo::GetID<T>(), std::make_unique<RawData<T>>(data));
+			std::unique_ptr<RawData<T>> p = std::make_unique<RawData<T>>(data);
+			return Component(ComponentInfo::GetID<T>(), p, &p->value);
 		}
 
 		/**
@@ -123,8 +129,9 @@ namespace ag
 
 		ComponentTypeID id;
 		std::unique_ptr<IRawData> data;
+		void* dataRaw;
 
-		Component(ComponentTypeID i, std::unique_ptr<IRawData> d) : id(i), data(std::move(d)) {}
+		Component(ComponentTypeID i, std::unique_ptr<IRawData> d, void* raw) : id(i), data(std::move(d)), dataRaw(raw) {}
 	};
 }
 

@@ -40,6 +40,14 @@ namespace ag
 		}
 
 		/**
+		* Adds an entity to the spawn buffer from a vector of type-erased components
+		*/
+		EntityID SpawnEntity(std::string name, std::vector<ag::Component>& components)
+		{
+			return InstantiateEntity(name, components);
+		}
+
+		/**
 		 * Returns an EntityInfo struct from an index.
 		 * @param i The index of the entity in the collection.
 		 * @return A copy of the EntityInfo struct of the entity
@@ -136,6 +144,23 @@ namespace ag
 			int i = 0;
 			// We assume the components are in the order matching the archetype and add them to each component array (in the spawn buffer)
 			(AddComponent((byte*)&component, i++, sizeof(component), spawnBuffer), ...);
+
+			return newEntityID;
+		}
+
+
+		EntityID InstantiateEntity(std::string name, std::vector<ag::Component>& components)
+		{
+			EntityID newEntityID = GetNextID();
+			EntityInfo entityData;
+			entityData.ID = newEntityID;
+			entityData.name = name;
+			entitiesToSpawn.push_back(entityData);
+
+			for (size_t i = 0; i < components.size(); i++)
+			{
+				AddComponent((byte*)components[i].GetRawData(), i, components[i].Size(), spawnBuffer);
+			}
 
 			return newEntityID;
 		}
