@@ -4,7 +4,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
-std::string jsonPath = "assets/entity.json";
+const std::string jsonPath = "assets/entity.json";
 
 void data_access()
 {

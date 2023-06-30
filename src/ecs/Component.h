@@ -112,8 +112,9 @@ namespace ag
 		template <typename T>
 		static Component Create(T data)
 		{
-			std::unique_ptr<RawData<T>> p = std::make_unique<RawData<T>>(data);
-			return Component(ComponentInfo::GetID<T>(), p, &p->value);
+			RawData<T>* p = new RawData<T>(data);
+			std::unique_ptr<IRawData> i = std::unique_ptr<IRawData>(p);
+			return ag::Component(ComponentInfo::GetID<T>(), std::move(i), (void*)&p->value);
 		}
 
 		/**

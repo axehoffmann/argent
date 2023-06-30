@@ -15,6 +15,7 @@
 
 namespace ag
 {
+	/// TODO: change system, we don't need integer ids, can just directly have weak_ptrs I think
 	class AssetManager 
 	{
 		/// TODO: have all assets use a raw binary format for fast loading

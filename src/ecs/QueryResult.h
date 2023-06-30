@@ -50,12 +50,12 @@ namespace ag
         ComponentType& At(size_t index)
         {
             if (index >= length)
-                return nullptr;
+                throw std::out_of_range("QueryResult index out of range");
 
             std::tuple<ag::ArchetypeCollection*, size_t> find = FindArchetypeAndLocalIndex(index);
 
             if (std::get<ag::ArchetypeCollection*>(find) == nullptr || std::get<size_t>(find) < 0)
-                return nullptr;
+                throw std::runtime_error("Query could not find a matching archetype");
 
             return std::get<ag::ArchetypeCollection*>(find)->GetComponent<ComponentType>(std::get<size_t>(find));
         }

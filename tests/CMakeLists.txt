@@ -15,6 +15,9 @@ target_link_libraries(transform_test PRIVATE core test_framework)
 add_executable(component_test  "component_test.cpp")
 target_link_libraries(component_test PRIVATE ecs test_framework)
 
+add_executable(blueprint_test  "blueprint_test.cpp")
+target_link_libraries(blueprint_test PRIVATE ecs rendering resources core test_framework)
+
 add_executable(grid_test  "grid_test.cpp")
 target_link_libraries(grid_test PRIVATE ecs test_framework)
 

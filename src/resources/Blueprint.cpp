@@ -37,5 +37,6 @@ void ag::Blueprint::SetWorld(std::shared_ptr<ag::World> w)
 
 ag::Entity ag::Blueprint::Instantiate()
 {
-
+	EntityID id = archetype->SpawnEntity("TODO: change", components);
+	return ag::Entity(id);
 }

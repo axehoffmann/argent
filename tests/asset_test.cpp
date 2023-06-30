@@ -4,9 +4,9 @@
 #include "../src/resources/Texture.h"
 #include "../src/resources/Material.h"
 
-std::string meshPath = "assets/cube.obj";
-std::string texPath = "assets/frog.png";
-std::string matPath = "assets/test.mat";
+const std::string meshPath = "assets/cube.obj";
+const std::string texPath = "assets/frog.png";
+const std::string matPath = "assets/test.mat";
 
 void Setup()
 {

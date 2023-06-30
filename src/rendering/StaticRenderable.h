@@ -15,17 +15,9 @@ namespace ag
         uint32_t meshID;
         uint32_t materialID;
 
-        static nlohmann::json ToJSON(StaticRenderable t)
-        {
-            nlohmann::json ob;
-            ob["type"] = "static_renderable";
-            /// TODO: this doesn't re-serialise the paths of the resources
-        }
-        static StaticRenderable FromJSON(nlohmann::json& ob)
-        {
-            StaticRenderable r;
-            r.meshID = ag::AssetManager::Load<ag::Mesh>(ob["mesh"]);
-            r.materialID = ag::AssetManager::Load<ag::Material>(ob["material"]);
-        }
+        static ag::Component::Serialiser<StaticRenderable> serialiser;
+
+        static nlohmann::json ToJSON(StaticRenderable t);
+        static StaticRenderable FromJSON(nlohmann::json& ob);
     };
 }
