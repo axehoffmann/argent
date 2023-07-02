@@ -169,14 +169,14 @@ namespace ag
 		// The component types that make up this archetype
 		ComponentSet ComponentTypes;
 		// The entity data stored in this archetype. Each component array is a byte array of a specific component type.
-		ComponentArray* data;
+		std::vector<ComponentArray> data;
 
 		EntityID GetNextID();
 		// The ID of the next entity to spawn
 		EntityID NextEntityID;
 
 		// Entity creation/destruction buffers
-		ComponentArray* spawnBuffer;
+		std::vector<ComponentArray> spawnBuffer;
 		std::vector<EntityInfo> entitiesToSpawn;
 		void ResolveSpawnBuffer();
 		std::vector<size_t> entitiesToDestroy;
@@ -185,7 +185,7 @@ namespace ag
 		// Core entity data (a component that every entity has)
 		std::vector<EntityInfo> entities;
 
-		void AddComponent(byte* bytes, int i, int n, ComponentArray* target);
+		void AddComponent(byte* bytes, int i, int n, std::vector<ComponentArray>& target);
 
 		static void RegisterArchetype(ArchetypeCollection* archetype);
 		static void DeregisterArchetype(ArchetypeID id);

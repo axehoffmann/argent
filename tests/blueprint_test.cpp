@@ -62,12 +62,10 @@ void instantiation()
         ag_expect(t.Length() == 1, "Expected a single entity after the blueprint was instantiated");
 
         ag_expect(t[0].GetPosition().y == 32.0f, "Expected deserialised transform to have y pos of 32, instead found {}", t[0].GetPosition().y);
-
-
     };
     world->Query(lm);
 
-    delete world;
+    // delete world;
 }
 
 
@@ -81,4 +79,7 @@ int main()
     Test::Case("Instantiation", instantiation);
 
     Test::Run();
+
+    // Stop rendering unit from getting discarded at link time
+    ag::StaticRenderable::serialiser.FromJSON(nlohmann::json{});
 }

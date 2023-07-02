@@ -12,17 +12,16 @@ ag::ArchetypeCollection::ArchetypeCollection(ComponentSet components)
 	NextEntityID = ((EntityID)ID) << EPARTSIZE;
 
 	ComponentTypes = components;
-	data = new ComponentArray[ComponentTypes.size()];
-	spawnBuffer = new ComponentArray[ComponentTypes.size()];
+	data.resize(ComponentTypes.size());
+	spawnBuffer.resize(ComponentTypes.size());
 }
 
 ag::ArchetypeCollection::~ArchetypeCollection()
 {
-	delete[] data;
-	delete[] spawnBuffer;
+
 }
 
-void ag::ArchetypeCollection::AddComponent(byte* bytes, int i, int n, ComponentArray* target)
+void ag::ArchetypeCollection::AddComponent(byte* bytes, int i, int n, std::vector<ComponentArray>& target)
 {
 	target[i].insert(target[i].end(), bytes, bytes + n);
 }
