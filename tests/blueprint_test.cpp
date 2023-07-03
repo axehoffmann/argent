@@ -65,7 +65,7 @@ void instantiation()
     };
     world->Query(lm);
 
-    // delete world;
+    delete world;
 }
 
 
