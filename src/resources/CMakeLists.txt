@@ -1,1 +1,1 @@
-add_library(resources "Resource.cpp" "Mesh.cpp" "Texture.cpp" "Material.h" "Material.cpp" "AssetManager.h" "AssetManager.cpp" "Shader.h" "Blueprint.cpp" "Blueprint.h")
+add_library(resources "Resource.cpp" "Mesh.cpp" "Texture.cpp" "Material.h" "Material.cpp" "AssetManager.h" "AssetManager.cpp" "Shader.h" "Blueprint.cpp" "Blueprint.h" "AudioClip.h" "AudioClip.cpp")
