@@ -24,7 +24,7 @@ namespace ag
             std::vector<ComponentTypeID> search;
             (search.push_back(ag::ComponentInfo::GetID<Q>()), ...);
 
-            std::vector<ag::ArchetypeCollection*> matches;
+            std::vector<std::shared_ptr<ag::ArchetypeCollection>> matches;
 
             /// TODO: benchmark... maybe could use a search tree
             for (size_t i = 0; i < archetypes.size(); i++)
@@ -50,7 +50,7 @@ namespace ag
                 std::vector<ComponentTypeID> currentSet = archetypes[i]->GetComponentSet();
 
                 if (set == currentSet)
-                    return std::shared_ptr<ArchetypeCollection>(archetypes[i]);
+                    return archetypes[i];
             }
 
             /// TODO: should create an archetype if it doesn't already exist
@@ -65,6 +65,6 @@ namespace ag
         ~World();
 
     private:
-        std::vector<ag::ArchetypeCollection*> archetypes;
+        std::vector<std::shared_ptr<ag::ArchetypeCollection>> archetypes;
     };
 }

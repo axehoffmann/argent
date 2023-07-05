@@ -14,7 +14,7 @@ namespace ag
     {
     public:
         /// TODO: should use weak_ptrs
-        QueryResult(std::vector<ag::ArchetypeCollection*> matches)
+        QueryResult(std::vector<std::shared_ptr<ag::ArchetypeCollection>> matches)
         {
             matchingCollections = matches;
 
@@ -39,25 +39,26 @@ namespace ag
             if (index >= length)
                 return std::optional<ag::EntityInfo>{};
 
-            std::tuple<ag::ArchetypeCollection*, size_t> find = FindArchetypeAndLocalIndex(index);
+            std::tuple<ag::ArchetypeCollection*, size_t> targetEntityLocation = FindArchetypeAndLocalIndex(index);
             
-            if (std::get<ag::ArchetypeCollection*>(find) == nullptr || std::get<size_t>(find) < 0)
+            if (std::get<ag::ArchetypeCollection*>(targetEntityLocation) == nullptr || std::get<size_t>(targetEntityLocation) < 0)
                 return std::optional<ag::EntityInfo>{};
             
-            return std::get<ag::ArchetypeCollection*>(find)->GetEntityInfo(std::get<size_t>(find));
+            return std::get<ag::ArchetypeCollection*>(targetEntityLocation)->GetEntityInfo(std::get<size_t>(targetEntityLocation));
         }
 
+        /// TODO: Repeated code.
         ComponentType& At(size_t index)
         {
             if (index >= length)
                 throw std::out_of_range("QueryResult index out of range");
 
-            std::tuple<ag::ArchetypeCollection*, size_t> find = FindArchetypeAndLocalIndex(index);
+            std::tuple<ag::ArchetypeCollection*, size_t> targetEntityLocation = FindArchetypeAndLocalIndex(index);
 
-            if (std::get<ag::ArchetypeCollection*>(find) == nullptr || std::get<size_t>(find) < 0)
+            if (std::get<ag::ArchetypeCollection*>(targetEntityLocation) == nullptr || std::get<size_t>(targetEntityLocation) < 0)
                 throw std::runtime_error("Query could not find a matching archetype");
 
-            return std::get<ag::ArchetypeCollection*>(find)->GetComponent<ComponentType>(std::get<size_t>(find));
+            return std::get<ag::ArchetypeCollection*>(targetEntityLocation)->GetComponent<ComponentType>(std::get<size_t>(targetEntityLocation));
         }
 
         ComponentType& operator[](size_t index)
@@ -85,7 +86,7 @@ namespace ag
         */
         typedef ComponentType cType;
     private:
-        std::vector<ag::ArchetypeCollection*> matchingCollections;
+        std::vector<std::shared_ptr<ag::ArchetypeCollection>> matchingCollections;
         size_t length;
 
         /**
@@ -95,7 +96,7 @@ namespace ag
         */
         std::tuple<ag::ArchetypeCollection*, size_t> FindArchetypeAndLocalIndex(size_t index)
         {
-            /// TODO: could probably optimise by caching ranges in constructor
+            /// TODO: could probably optimise by caching ranges in constructor? The ranges would have to update once the buffers are resolved though
             size_t localIndex = index;
 
             for (size_t i = 0; i < matchingCollections.size(); i++)
@@ -107,8 +108,7 @@ namespace ag
                     return std::tuple<ag::ArchetypeCollection*, size_t>{a, localIndex};
             }
 
-            /// TODO: throw out of range exceptions?
-            return std::tuple<ag::ArchetypeCollection*, size_t>{nullptr, -1};
+            throw std::runtime_error("QueryResult was unable to find an ArchetypeCollection");
         }
     };
 }

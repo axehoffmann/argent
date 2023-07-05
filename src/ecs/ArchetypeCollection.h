@@ -79,12 +79,11 @@ namespace ag
 			if (std::find(ComponentTypes.begin(), ComponentTypes.end(), ComponentInfo::GetID<C>()) == ComponentTypes.end())
 				throw std::runtime_error("Attempted to get component of type " + std::string(typeid(C).name()));
 
-			// The component array that stores this component type
 			/// TODO: should this be a hash map? benchmark
-			auto ci = std::find(ComponentTypes.begin(), ComponentTypes.end(), ag::ComponentInfo::GetID<C>()) - ComponentTypes.begin();
+			auto componentTypeIndex = std::find(ComponentTypes.begin(), ComponentTypes.end(), ag::ComponentInfo::GetID<C>()) - ComponentTypes.begin();
             
 			// Return a reference to the component
-			return (C&)(data[ci].at(i * sizeof(C)));
+			return (C&)(data[componentTypeIndex].at(i * sizeof(C)));
 		}
 
 		ArchetypeID GetID()
@@ -165,7 +164,7 @@ namespace ag
 			return newEntityID;
 		}
 
-		ArchetypeID ID;
+		const ArchetypeID ID;
 		// The component types that make up this archetype
 		ComponentSet ComponentTypes;
 		// The entity data stored in this archetype. Each component array is a byte array of a specific component type.
