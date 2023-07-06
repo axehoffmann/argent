@@ -41,6 +41,11 @@ namespace ag
             callback( QueryResult<Q>(matches)... );
         }
 
+        /**
+        * Finds an archetype who's set of components matches the query set exactly. If no match is found, a new ArchetypeCollection is created and returned.
+        * @param set    A vector of ComponentTypeIDs (expected to be sorted ascendingly) to query
+        * @returns      An ArchetypeCollection with an exactly matching component set.
+        */
         std::shared_ptr<ag::ArchetypeCollection> FindArchetype(std::vector<ComponentTypeID>& set)
         {
             /// TODO: benchmark... maybe could use a search tree

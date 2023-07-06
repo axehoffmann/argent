@@ -9,6 +9,10 @@
 
 namespace ag
 {
+    /**
+    * Indexes into a subset of ArchetypeCollections that match a query.
+    * Each QueryResult can examine one component type determined by its template parameter.
+    */
     template <typename ComponentType>
     struct QueryResult
     {
@@ -74,6 +78,7 @@ namespace ag
         {
             ag::ArchetypeCollection* match = ag::ArchetypeCollection::GetArchetypeFromEntityID(id);
 
+            /// TODO: Return an Optional<C> instead
             // Can only access an entity by ID if it is included in this query
             if (!std::count(matchingCollections.begin(), matchingCollections.end(), match))
                 return nullptr;
