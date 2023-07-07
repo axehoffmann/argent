@@ -1,6 +1,6 @@
 #include "SceneBuilder.h"
 
-ag::SceneBuilder::SceneBuilder(ag::World* w)
+ag::SceneBuilder::SceneBuilder(std::shared_ptr<ag::World> w)
 {
     graphUnderConstruction = -1;
     graphReadByRenderer = -1;
@@ -45,7 +45,6 @@ ag::SceneGraph* ag::SceneBuilder::StartGraphRead()
             return &graphs[i];
         }
     }
-    std::cout << "reading no graph" << std::endl;
 
     return nullptr;
 }

@@ -3,10 +3,10 @@
 #include "SceneGraph.h"
 #include "../ecs/ECS.h"
 #include "StaticRenderable.h"
+
+#include <memory>
 #include <atomic>
 #include <array>
-
-#include <iostream>
 
 #define GRAPH_BUFFER_SIZE 3
 
@@ -21,7 +21,7 @@ namespace ag
     class SceneBuilder
     {
     public:
-        SceneBuilder(ag::World* w);
+        SceneBuilder(std::shared_ptr<ag::World> w);
 
         /**
          * Generates a new graph at the end of each gametick
@@ -49,6 +49,6 @@ namespace ag
         std::atomic<int> graphReady;
         std::array<ag::SceneGraph, GRAPH_BUFFER_SIZE> graphs;
 
-        ag::World* world;
+        std::shared_ptr<ag::World> world;
     };
 }

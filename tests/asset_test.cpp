@@ -15,7 +15,7 @@ void Setup()
 
 void Cleanup()
 {
-    ag::AssetManager::UnloadAll();
+    ag::AssetManager::DropAll();
 }
 
 void mesh_loading()

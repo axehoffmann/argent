@@ -17,7 +17,7 @@ const std::string en2Path = "assets/entity2.json";
 
 void Cleanup()
 {
-    ag::AssetManager::UnloadAll();
+    ag::AssetManager::DropAll();
 }
 
 void loading()

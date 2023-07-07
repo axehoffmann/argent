@@ -1,6 +1,6 @@
 #include "Renderer.h"
 
-ag::Renderer::Renderer(ag::RenderEngine* engine, ag::SceneBuilder* scene)
+ag::Renderer::Renderer(std::shared_ptr<ag::RenderEngine> engine, std::shared_ptr<ag::SceneBuilder> scene)
 {
     renderEngine = engine;
     sceneBuilder = scene;

@@ -4,10 +4,10 @@ ag::Engine::Engine()
 {
 	active = true;
 
-	ecsWorld = new ag::World();
-	sceneBuilder = new ag::SceneBuilder(ecsWorld);
-	renderEngine = new ag::GLRenderEngine();
-	renderer = new ag::Renderer(renderEngine, sceneBuilder);
+	ecsWorld = std::make_shared<ag::World>();
+	sceneBuilder = std::make_shared<ag::SceneBuilder>(ecsWorld);
+
+	renderer = std::make_unique<ag::Renderer>(std::make_unique<ag::GLRenderEngine>(), sceneBuilder);
 
 	/// TODO: handle errors
 	renderer->Initialise();
@@ -15,11 +15,7 @@ ag::Engine::Engine()
 
 ag::Engine::~Engine()
 {
-	/// TODO: this beats the point of smart pointers.
-	delete renderer;
-	delete renderEngine;
-	delete sceneBuilder;
-	delete ecsWorld;
+
 }
 
 void ag::Engine::Run()
@@ -62,7 +58,7 @@ void ag::Engine::Run()
 void ag::Engine::RegisterSystem(ag::System* s)
 {
 	systems.push_back(s);
-	s->Create(std::shared_ptr<ag::World>(ecsWorld));
+	s->SetWorld(std::shared_ptr<ag::World>(ecsWorld));
 }
 
 void ag::Engine::End()

@@ -16,18 +16,9 @@ namespace ag
     template <typename ComponentType>
     struct QueryResult
     {
+        /// TODO: alternatives to friend?
+        friend class World;
     public:
-        /// TODO: should use weak_ptrs
-        QueryResult(std::vector<std::shared_ptr<ag::ArchetypeCollection>> matches)
-        {
-            matchingCollections = matches;
-
-            length = 0;
-            for (size_t i = 0; i < matchingCollections.size(); i++)
-            {
-                length += matchingCollections[i]->GetEntityCount();
-            }
-        }
 
         size_t Length()
         {
@@ -43,12 +34,12 @@ namespace ag
             if (index >= length)
                 return std::optional<ag::EntityInfo>{};
 
-            std::tuple<ag::ArchetypeCollection*, size_t> targetEntityLocation = FindArchetypeAndLocalIndex(index);
+            auto targetEntityLocation = FindArchetypeAndLocalIndex(index);
             
-            if (std::get<ag::ArchetypeCollection*>(targetEntityLocation) == nullptr || std::get<size_t>(targetEntityLocation) < 0)
+            if (std::get<std::shared_ptr<ag::ArchetypeCollection>>(targetEntityLocation) == nullptr || std::get<size_t>(targetEntityLocation) < 0)
                 return std::optional<ag::EntityInfo>{};
             
-            return std::get<ag::ArchetypeCollection*>(targetEntityLocation)->GetEntityInfo(std::get<size_t>(targetEntityLocation));
+            return std::get<std::shared_ptr<ag::ArchetypeCollection>>(targetEntityLocation)->GetEntityInfo(std::get<size_t>(targetEntityLocation));
         }
 
         /// TODO: Repeated code.
@@ -57,12 +48,12 @@ namespace ag
             if (index >= length)
                 throw std::out_of_range("QueryResult index out of range");
 
-            std::tuple<ag::ArchetypeCollection*, size_t> targetEntityLocation = FindArchetypeAndLocalIndex(index);
+            auto targetEntityLocation = FindArchetypeAndLocalIndex(index);
 
-            if (std::get<ag::ArchetypeCollection*>(targetEntityLocation) == nullptr || std::get<size_t>(targetEntityLocation) < 0)
+            if (std::get<std::shared_ptr<ag::ArchetypeCollection>>(targetEntityLocation) == nullptr || std::get<size_t>(targetEntityLocation) < 0)
                 throw std::runtime_error("Query could not find a matching archetype");
 
-            return std::get<ag::ArchetypeCollection*>(targetEntityLocation)->GetComponent<ComponentType>(std::get<size_t>(targetEntityLocation));
+            return std::get<std::shared_ptr<ag::ArchetypeCollection>>(targetEntityLocation)->GetComponent<ComponentType>(std::get<size_t>(targetEntityLocation));
         }
 
         ComponentType& operator[](size_t index)
@@ -78,7 +69,7 @@ namespace ag
         {
             ag::ArchetypeCollection* match = ag::ArchetypeCollection::GetArchetypeFromEntityID(id);
 
-            /// TODO: Return an Optional<C> instead
+            /// TODO: Cannot return an optional reference. Find an alternative for what to do when not found.
             // Can only access an entity by ID if it is included in this query
             if (!std::count(matchingCollections.begin(), matchingCollections.end(), match))
                 return nullptr;
@@ -86,11 +77,20 @@ namespace ag
             return At(match->GetIndexByID(id));
         }
 
-        /**
-         * Public access to parameter type
-        */
-        typedef ComponentType cType;
     private:
+
+        /// TODO: should use weak_ptrs
+        QueryResult(std::vector<std::shared_ptr<ag::ArchetypeCollection>> matches)
+        {
+            matchingCollections = matches;
+
+            length = 0;
+            for (size_t i = 0; i < matchingCollections.size(); i++)
+            {
+                length += matchingCollections[i]->GetEntityCount();
+            }
+        }
+
         std::vector<std::shared_ptr<ag::ArchetypeCollection>> matchingCollections;
         size_t length;
 
@@ -99,18 +99,18 @@ namespace ag
          * @param index The indexer into the QueryResult.
          * @return An std::tuple of the Archetype in matchingCollections, and the local entity index.
         */
-        std::tuple<ag::ArchetypeCollection*, size_t> FindArchetypeAndLocalIndex(size_t index)
+        std::tuple<std::shared_ptr<ag::ArchetypeCollection>, size_t> FindArchetypeAndLocalIndex(size_t index)
         {
             /// TODO: could probably optimise by caching ranges in constructor? The ranges would have to update once the buffers are resolved though
             size_t localIndex = index;
 
             for (size_t i = 0; i < matchingCollections.size(); i++)
             {
-                ag::ArchetypeCollection* a = matchingCollections[i];
+                std::shared_ptr<ag::ArchetypeCollection>& a = matchingCollections[i];
                 if (localIndex >= a->GetEntityCount())
                     localIndex -= a->GetEntityCount();
                 else
-                    return std::tuple<ag::ArchetypeCollection*, size_t>{a, localIndex};
+                    return std::tuple<std::shared_ptr<ag::ArchetypeCollection>, size_t>{a, localIndex};
             }
 
             throw std::runtime_error("QueryResult was unable to find an ArchetypeCollection");

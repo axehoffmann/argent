@@ -15,7 +15,9 @@
 
 namespace ag
 {
-	/// TODO: change system, we don't need integer ids, can just directly have weak_ptrs I think
+	/// TODO: change system, we don't need integer ids, can just directly have weak_ptrs
+	///		Although, we want to sort scene graph by model/material for instanced 
+	///		rendering which benefits from having IDs. IDK
 	class AssetManager 
 	{
 		/// TODO: have all assets use a raw binary format for fast loading
@@ -67,7 +69,10 @@ namespace ag
 			return idx;
 		}
 
-		static void UnloadAll()
+		/**
+		* Unloads data and drops all Resource pointers. Clean slate.
+		*/
+		static void DropAll()
 		{
 			for (size_t i = 0; i < resources.size(); i++)
 			{

@@ -27,6 +27,8 @@ namespace ag
 		}
 		static int GetSize(ComponentTypeID id);
 
+		ComponentInfo() = delete;
+
 	private:
 		static std::atomic<ComponentTypeID> nextComponentID;
 		/// TODO: Evaluate if this map is necessary.

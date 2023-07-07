@@ -7,6 +7,7 @@
 #include "../ecs/System.h"
 #include "Stats.h"
 
+#include <memory>
 #include <chrono>
 #include <vector>
 
@@ -34,11 +35,10 @@ namespace ag
 		void Update(double dt);
 		void FrameUpdate(double dt);
 
-		ag::Renderer* renderer;
-		ag::RenderEngine* renderEngine;
+		std::unique_ptr<ag::Renderer> renderer;
 
-		ag::SceneBuilder* sceneBuilder;
-		ag::World* ecsWorld;
+		std::shared_ptr<ag::SceneBuilder> sceneBuilder;
+		std::shared_ptr<ag::World> ecsWorld;
 
 		std::vector<ag::System*> systems;
 
