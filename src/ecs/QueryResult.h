@@ -6,9 +6,100 @@
 #include <vector>
 #include <tuple>
 #include <algorithm>
+#include <type_traits>
+#include <numeric>
 
 namespace ag
 {
+    /// TODO: New Architecture:
+    ///     - World stores a list of Queries
+    ///     - Each Query matches a set of Archetypes
+    ///     - Whenever a new Archetype is created (infrequently), it is added to all matching Queries.
+    ///     - Systems interact ONLY with its Queries, decouple System from World
+    ///     - Identical queries should be merged by the World.
+    ///     - No longer need callback functions
+    /// 
+    /// Usage:
+    ///     System initialises all its queries on startup, via something like Query<A,B,C> myQuery = Query::Create<A,B,C>();
+    ///     New queries should not be created post-initialisation. (But would probably work anyway).
+    ///     No callback functions means all this data can just be accessed straight in update funcs
+    ///
+    class IQuery
+    {
+    public:
+        /**
+        * Called for all Queries at the end of each update to cache new ranges.
+        */
+        void UpdateRanges()
+        {
+            for (size_t i = 0; i < matches.size(); i++)
+            {
+                ranges[i] = matches[i]->GetEntityCount();
+            }
+        }
+
+    protected:
+        /**
+        * Private structure used to contain Entity location after a search.
+        */
+        struct EntityLocation
+        {
+            std::shared_ptr<ag::ArchetypeCollection> archetype;
+            size_t index;
+            EntityLocation(std::shared_ptr<ag::ArchetypeCollection> a, size_t i) : archetype(a), index(i) {}
+        };
+
+        EntityLocation EntityLocationFromIndex(size_t index)
+        {
+            // Binary search through ranges to find the archetype that aligns with this index
+            /// TODO: Test for safety
+            /// TODO: Benchmark compare with old iterative algorithm.
+            size_t lo = 0;
+            size_t hi = ranges.size() - 1;
+
+            while (lo <= hi)
+            {
+                size_t mid = (lo + hi) / 2;
+
+                if (index >= ranges[mid] && index < ranges[mid + 1])
+                    return EntityLocation(matches[mid], index - std::accumulate(matches.begin(), matches.begin() + mid, 0));
+
+                else if (index < ranges[mid])
+                    hi = mid - 1;
+
+                else if (index >= ranges[mid + 1])
+                    lo = mid + 1;
+            }
+
+            throw std::out_of_range("Could not find entity location from Query index " + std::to_string(index));
+        }
+
+        std::vector<std::shared_ptr<ArchetypeCollection>> matches;
+        std::vector<size_t> ranges;
+    };
+
+    template <typename... ComponentTypes>
+    class Query : public IQuery 
+    {
+    public:
+
+        template <typename C>
+        C& operator[](size_t i) { return At<C>(i) }
+
+        template <typename C>
+        C& At(size_t i)
+        {
+            // Type parameter for accessor MUST be one of the types included in the Query.
+            static_assert(std::is_same_v<C, ComponentTypes>);
+
+            EntityLocation loc = EntityLocationFromIndex(i);
+            
+            return loc.archetype->GetComponent<C>(i);
+        }
+
+    private:
+    };
+
     /**
     * Indexes into a subset of ArchetypeCollections that match a query.
     * Each QueryResult can examine one component type determined by its template parameter.

@@ -13,6 +13,7 @@ namespace ag
     class World
     {
     public:
+        /// TODO: World should maintain a list of Queries, and subscribe any new Archetypes to the relevant Queries
         /// TODO: check for issues with the way the callback is passed
         /**
         * Queries the world for all entities with the specified Component types
@@ -22,6 +23,8 @@ namespace ag
         void Query(std::function<void(QueryResult<Q>...)>& callback)
         {
             std::vector<ComponentTypeID> search;
+
+            search.reserve(sizeof...(Q));
             (search.push_back(ag::ComponentInfo::GetID<Q>()), ...);
 
             std::vector<std::shared_ptr<ag::ArchetypeCollection>> matches;
