@@ -52,11 +52,11 @@ namespace ag
 		 * @param i The index of the entity in the collection.
 		 * @return A copy of the EntityInfo struct of the entity
 		*/
-		std::optional<EntityInfo> GetEntityInfo(size_t i)
+		EntityInfo& GetEntityInfo(size_t i)
 		{
 			if (i >= entities.size() || i < 0)
 			{
-				return std::optional<EntityInfo>();
+				throw std::out_of_range("ArchetypeCollection GetEntityInfo index out of range");
 			}
 
 			return entities[i];

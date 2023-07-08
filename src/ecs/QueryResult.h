@@ -26,75 +26,90 @@ namespace ag
     ///
     class IQuery
     {
-    public:
-        /**
-        * Called for all Queries at the end of each update to cache new ranges.
-        */
-        void UpdateRanges()
-        {
-            for (size_t i = 0; i < matches.size(); i++)
-            {
-                ranges[i] = matches[i]->GetEntityCount();
-            }
-        }
-
     protected:
-        /**
-        * Private structure used to contain Entity location after a search.
-        */
-        struct EntityLocation
-        {
-            std::shared_ptr<ag::ArchetypeCollection> archetype;
-            size_t index;
-            EntityLocation(std::shared_ptr<ag::ArchetypeCollection> a, size_t i) : archetype(a), index(i) {}
-        };
-
-        EntityLocation EntityLocationFromIndex(size_t index)
-        {
-            // Binary search through ranges to find the archetype that aligns with this index
-            /// TODO: Test for safety
-            /// TODO: Benchmark compare with old iterative algorithm.
-            size_t lo = 0;
-            size_t hi = ranges.size() - 1;
-
-            while (lo <= hi)
-            {
-                size_t mid = (lo + hi) / 2;
-
-                if (index >= ranges[mid] && index < ranges[mid + 1])
-                    return EntityLocation(matches[mid], index - std::accumulate(matches.begin(), matches.begin() + mid, 0));
-
-                else if (index < ranges[mid])
-                    hi = mid - 1;
-
-                else if (index >= ranges[mid + 1])
-                    lo = mid + 1;
-            }
-
-            throw std::out_of_range("Could not find entity location from Query index " + std::to_string(index));
-        }
-
-        std::vector<std::shared_ptr<ArchetypeCollection>> matches;
-        std::vector<size_t> ranges;
+        std::vector<std::shared_ptr<ag::ArchetypeCollection>> matches;
     };
 
     template <typename... ComponentTypes>
     class Query : public IQuery 
     {
     public:
-
-        template <typename C>
-        C& operator[](size_t i) { return At<C>(i) }
-
-        template <typename C>
-        C& At(size_t i)
+        class Iterator
         {
-            // Type parameter for accessor MUST be one of the types included in the Query.
-            static_assert(std::is_same_v<C, ComponentTypes>);
+            Query::Entity operator*()
+            {
+                return Query::Entity(currentArchetype.get(), index);
+            }
 
-            EntityLocation loc = EntityLocationFromIndex(i);
-            
-            return loc.archetype->GetComponent<C>(i);
+            bool operator!=(const Iterator& other)
+            {
+                return currentArchetype != other.currentArchetype || index != other.index;
+            }
+
+            Iterator& operator++()
+            {
+                index++;
+
+                if (index >= currentArchetypeSize)
+                {
+                    index = 0;
+                    archIndex++;
+                    currentArchetype = query->matches[archIndex];
+                    currentArchetypeSize = currentArchetype->GetEntityCount();
+                }
+
+                return *this;
+            }
+
+
+        private:
+            Iterator(Query<ComponentTypes...>* q, size_t arch, size_t i) : 
+                query(q), archIndex(arch), index(i),
+                currentArchetype(q->matches[arch]), 
+                currentArchetypeSize(currentArchetype->GetEntityCount()) {}
+
+            std::shared_ptr<ag::ArchetypeCollection> currentArchetype;
+            size_t archIndex; // Index of the current Archetype within the parent Query's 'matches' array.
+            size_t index; // Index of the iterator WITHIN the current archetype. Once this exceeds the current Archetype's bounds, we move to the next archetype in the query.
+            size_t currentArchetypeSize; // We cache this so we don't go through 3 function calls to get the archetype's size every time we iterate.
+            Query<ComponentTypes...>* const query;
+        };
+
+        struct Entity
+        {
+            template <typename C>
+            C& operator->()
+            {
+                static_assert(std::is_same_v<C, ComponentTypes>);
+                return archetype->GetComponent<C>(index);
+            }
+
+            EntityInfo& Info()
+            {
+                return archetype->GetEntityInfo(index);
+            }
+
+            // This should not be copyable and cannot persist outside of a Query iteration
+            // because after entities are added or deleted this may no longer point to
+            // the same entity.
+            Query::Entity(const Query::Entity&) = delete;
+            Query::Entity& operator=(const Query::Entity&) = delete;
+
+        private:
+            Entity(ag::ArchetypeCollection* a, size_t i) : archetype(a), index(i) {}
+
+            const ag::ArchetypeCollection* archetype;
+            const size_t index;
+        };
+
+        Iterator begin()
+        {
+            return Iterator(this, 0, 0);
+        }
+
+        Iterator end()
+        {
+            return Iterator(this, matches.size() - 1, matches.back()->GetEntityCount());
         }
 
     private:

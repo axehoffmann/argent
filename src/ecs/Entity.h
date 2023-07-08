@@ -11,6 +11,7 @@ namespace ag
 	 * A class to wrap the concept of an entity into a shareable object.
 	 * An entity is truly only a set of components in an ArchetypeCollection, this class simply indexes into that collection.
 	*/
+	
 	class Entity
 	{
 	public:
@@ -42,4 +43,5 @@ namespace ag
 		EntityID ID;
 		ArchetypeCollection* archetype;
 	};
+
 }
