@@ -1,13 +1,11 @@
 #include "SceneBuilder.h"
 
-ag::SceneBuilder::SceneBuilder(std::shared_ptr<ag::World> w)
-{
-    graphUnderConstruction = -1;
-    graphReadByRenderer = -1;
-    graphReady = -1;
-
-    world = w;
-}
+ag::SceneBuilder::SceneBuilder(std::shared_ptr<ag::World> w) : 
+    staticQuery(w.get()),
+    world(w),
+    graphUnderConstruction(-1),
+    graphReadByRenderer(-1),
+    graphReady(-1) {}
 
 void ag::SceneBuilder::Update()
 {
@@ -17,18 +15,19 @@ void ag::SceneBuilder::Update()
     ag::SceneGraph* graph = &graphs[lockedGraph];
     
     /// TODO: static renderable graph should not be rebuilt every update. It should only be edited based on spawned and destroyed entities this update.
-    std::function<void(ag::QueryResult<ag::Transform>, ag::QueryResult<ag::StaticRenderable>)> lambda = [this, graph](ag::QueryResult<ag::Transform> tr, ag::QueryResult<ag::StaticRenderable> re)
-    {
-        graph->statics.clear();
-        graph->statics.reserve(tr.Length());
-        for (size_t i = 0; i < tr.Length(); i++)
-        {
-            EntityID id = tr.GetInfo(i).value().ID;
-            graph->statics.emplace_back(id, re[i].materialID, re[i].meshID, tr[i]);
-        }
-    };
+    graph->statics.clear();
 
-    world->Query(lambda);
+    graph->statics.reserve(staticQuery.Size());
+
+    for (auto entity : staticQuery)
+    {
+        EntityID id = entity.Info().ID;
+
+        graph->statics.emplace_back(id, 
+            entity.Get<StaticRenderable>().materialID, 
+            entity.Get<StaticRenderable>().meshID, 
+            entity.Get<Transform>());
+    }
 
     graphReady = lockedGraph;
     graphUnderConstruction = -1;

@@ -2,6 +2,7 @@
 
 #include "SceneGraph.h"
 #include "../ecs/ECS.h"
+#include "../ecs/Query.h"
 #include "StaticRenderable.h"
 
 #include <memory>
@@ -39,6 +40,9 @@ namespace ag
         void EndGraphRead();        
 
     private:
+        
+        ag::Query<Transform, StaticRenderable> staticQuery;
+
         // Chooses the location of the next graph to construct and updates atomic indices
         int ChooseGraph();
         // Graph currently owned by the SceneBuilder

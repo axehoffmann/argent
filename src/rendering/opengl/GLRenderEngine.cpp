@@ -137,7 +137,7 @@ void ag::GLRenderEngine::UseMesh(uint32_t meshID)
 
 void ag::GLRenderEngine::UseMaterial(uint32_t materialID)
 {
-	for (size_t i = 0; i < materials[materialID].textures.size(); i++)
+	for (int i = 0; i < materials[materialID].textures.size(); i++)
 	{
 		UseTexture(materials[materialID].textures[i], i);
 	}

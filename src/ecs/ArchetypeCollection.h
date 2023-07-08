@@ -17,7 +17,7 @@ namespace ag
 	{
 		/// TODO: Entity names should be stored in a map elsewhere so repeated names don't take up more memory
 		std::string name;
-		EntityID ID;
+		EntityID ID{0};
 	};
 
 	/**
@@ -52,7 +52,7 @@ namespace ag
 		 * @param i The index of the entity in the collection.
 		 * @return A copy of the EntityInfo struct of the entity
 		*/
-		EntityInfo& GetEntityInfo(size_t i)
+		EntityInfo GetEntityInfo(size_t i)
 		{
 			if (i >= entities.size() || i < 0)
 			{
@@ -156,7 +156,7 @@ namespace ag
 			entityData.name = name;
 			entitiesToSpawn.push_back(entityData);
 
-			for (size_t i = 0; i < components.size(); i++)
+			for (int i = 0; i < components.size(); i++)
 			{
 				AddComponent((byte*)components[i].GetRawData(), i, components[i].Size(), spawnBuffer);
 			}

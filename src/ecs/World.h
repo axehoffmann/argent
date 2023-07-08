@@ -2,47 +2,19 @@
 
 #include "ECSTypes.h"
 #include "ArchetypeCollection.h"
-#include "QueryResult.h"
+#include "Query.h"
 
+#include <memory>
 #include <vector>
 #include <algorithm>
 #include <functional>
 
 namespace ag
 {
+    class IQuery;
     class World
     {
     public:
-        /// TODO: World should maintain a list of Queries, and subscribe any new Archetypes to the relevant Queries
-        /// TODO: check for issues with the way the callback is passed
-        /**
-        * Queries the world for all entities with the specified Component types
-        * @param callback A callback function where the arguments QueryResult<A>, QueryResult<B>... specify the Components A, B... to search for.
-        */
-        template <typename... Q>
-        void Query(std::function<void(QueryResult<Q>...)>& callback)
-        {
-            std::vector<ComponentTypeID> search;
-
-            search.reserve(sizeof...(Q));
-            (search.push_back(ag::ComponentInfo::GetID<Q>()), ...);
-
-            std::vector<std::shared_ptr<ag::ArchetypeCollection>> matches;
-
-            /// TODO: benchmark... maybe could use a search tree
-            for (size_t i = 0; i < archetypes.size(); i++)
-            {
-                std::vector<ComponentTypeID> currentSet = archetypes[i]->GetComponentSet();
-
-                if (std::includes(currentSet.begin(), currentSet.end(), search.begin(), search.end()))
-                    matches.push_back(archetypes[i]);
-            }
-            
-            if (matches.size() == 0)
-                return;
-
-            callback( QueryResult<Q>(matches)... );
-        }
 
         /**
         * Finds an archetype who's set of components matches the query set exactly. If no match is found, a new ArchetypeCollection is created and returned.
@@ -62,6 +34,7 @@ namespace ag
             }
 
             /// TODO: should create an archetype if it doesn't already exist
+            throw std::exception("NOT IMPLEMENTED");
         }
 
         /**
@@ -70,9 +43,20 @@ namespace ag
         */
         void AddArchetype(ag::ArchetypeCollection* arch);
 
+        void InitialiseQuery(ag::IQuery* query);
+
+
+        void DeleteQuery(ag::IQuery* query)
+        {
+            auto iter = std::find(queries.begin(), queries.end(), query);
+            if (iter != queries.end())
+                queries.erase(iter);
+        }
+
         ~World();
 
     private:
         std::vector<std::shared_ptr<ag::ArchetypeCollection>> archetypes;
+        std::vector<ag::IQuery*> queries;
     };
 }

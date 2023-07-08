@@ -13,7 +13,7 @@ namespace ag
 	public:
 		static void DrawIndexed(GLEnum primitiveType, size_t count, GLEnum indexType, size_t offset)
 		{
-			glDrawElements(primitiveType, count, indexType, (void*)offset);
+			glDrawElements(primitiveType, (GLsizei)count, indexType, (void*)offset);
 		}
 	};
 }
