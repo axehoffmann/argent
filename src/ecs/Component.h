@@ -29,6 +29,19 @@ namespace ag
 
 		ComponentInfo() = delete;
 
+		/**
+		* Generates a ComponentSet from a variadic template, ie. multiple component type IDs at once
+		*/
+		template <typename... Ts>
+		static ComponentSet GetComponentSet()
+		{
+			ComponentSet out;
+			out.reserve(sizeof...(Ts));
+			(out.push_back(GetID<Ts>()), ...);
+			std::sort(out.begin(), out.end());
+			return out;
+		}
+
 	private:
 		static std::atomic<ComponentTypeID> nextComponentID;
 		/// TODO: Evaluate if this map is necessary.

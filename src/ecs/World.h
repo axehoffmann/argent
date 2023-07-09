@@ -48,9 +48,7 @@ namespace ag
 
         void DeleteQuery(ag::IQuery* query)
         {
-            auto iter = std::find(queries.begin(), queries.end(), query);
-            if (iter != queries.end())
-                queries.erase(iter);
+            queries.erase(std::remove(queries.begin(), queries.end(), query), queries.end());
         }
 
         ~World();

@@ -9,7 +9,7 @@
 #include "../src/ecs/World.h"
 
 ag::ArchetypeCollection* archetype;
-ag::World* world;
+std::shared_ptr<ag::World> world;
 
 const std::string en1Path = "assets/entity.json";
 const std::string en2Path = "assets/entity2.json";
@@ -37,9 +37,11 @@ void loading()
 void instantiation()
 {
     archetype = new ag::ArchetypeCollection({ ag::ComponentInfo::GetID<ag::Transform>(), ag::ComponentInfo::GetID<ag::StaticRenderable>() });
-    world = new ag::World();
+    world = std::make_shared<ag::World>();
 
     world->AddArchetype(archetype);
+
+    auto query = ag::Query<ag::Transform, ag::StaticRenderable>(world.get());
 
     uint32_t bpID = ag::AssetManager::Load<ag::Blueprint>(en1Path);
     std::weak_ptr<ag::Blueprint> wBp = ag::AssetManager::Fetch<ag::Blueprint>(bpID);
@@ -48,24 +50,20 @@ void instantiation()
     std::shared_ptr<ag::Blueprint> bp = wBp.lock();
     ag_expect(bp->IsReady(), "Expected Blueprint to be ready");
 
-    std::function<void(ag::QueryResult<ag::Transform>, ag::QueryResult<ag::StaticRenderable>)> lm = [](ag::QueryResult<ag::Transform> t, ag::QueryResult<ag::StaticRenderable> s) {
-        ag_expect(t.Length() == 0, "Expected an empty query before the blueprint was instantiated");
-    };
-    world->Query(lm);
+    ag_expect(query.Size() == 0, "Expected an empty query before the blueprint was instantiated");
 
-    bp->SetWorld(std::shared_ptr<ag::World>(world));
+
+    bp->SetWorld(world);
     bp->Instantiate();
 
     archetype->ResolveBuffers();
 
-    lm = [](ag::QueryResult<ag::Transform> t, ag::QueryResult<ag::StaticRenderable> s) {
-        ag_expect(t.Length() == 1, "Expected a single entity after the blueprint was instantiated");
+    ag_expect(query.Size() == 1, "Expected a single entity after the blueprint was instantiated");
 
-        ag_expect(t[0].GetPosition().y == 32.0f, "Expected deserialised transform to have y pos of 32, instead found {}", t[0].GetPosition().y);
-    };
-    world->Query(lm);
+    ag_expect((*query.begin()).Get<ag::Transform>().GetPosition().y == 32.0f, 
+        "Expected deserialised transform to have y pos of 32, instead found {}", 
+        (*query.begin()).Get<ag::Transform>().GetPosition().y);
 
-    delete world;
 }
 
 
@@ -81,5 +79,5 @@ int main()
     Test::Run();
 
     // Stop rendering unit from getting discarded at link time
-    ag::StaticRenderable::serialiser.FromJSON(nlohmann::json{});
+    ag::StaticRenderable::serialiser.FromJSON(nlohmann::json{{"material", "assets/material.mat"}, { "mesh", "assets/cube.obj" }});
 }

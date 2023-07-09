@@ -16,7 +16,7 @@ public:
 	template <typename... Ins>
 	static void Expect(bool condition, std::string failure, Ins... args)
 	{
-		Expect(condition, std::format(failure, args...));
+		Expect(condition, std::vformat(failure, std::make_format_args(args...)));
 	}
 
 	static void Case(std::string name, void (*func)());

@@ -25,7 +25,7 @@ namespace ag
                 matches.push_back(archetype);
         }
 
-        IQuery(ag::World* w);
+        IQuery(ag::World* w, const ComponentSet& set);
 
         /**
         * Unsubscribe from getting archetype updates
@@ -47,7 +47,7 @@ namespace ag
     protected:
         bool Matches(const ComponentSet& set)
         {
-            return std::includes(componentTypes.begin(), componentTypes.end(), set.begin(), set.end());
+            return std::includes(set.begin(), set.end(), componentTypes.begin(), componentTypes.end());
         }
 
         std::vector<std::shared_ptr<ag::ArchetypeCollection>> matches;
@@ -64,12 +64,7 @@ namespace ag
         friend class ag::World;
     public:
 
-        Query(ag::World* w) : IQuery(w)
-        {
-            componentTypes.reserve(sizeof...(ComponentTypes));
-            (componentTypes.push_back(ag::ComponentInfo::GetID<ComponentTypes>()), ...);
-        }
-
+        Query(ag::World* w) : IQuery(w, ag::ComponentInfo::GetComponentSet<ComponentTypes...>()) {}
 
         class Iterator
         {
@@ -90,7 +85,7 @@ namespace ag
             {
                 index++;
 
-                if (index >= currentArchetypeSize)
+                if (index >= currentArchetypeSize && archIndex + 1 < query->matches.size())
                 {
                     index = 0;
                     archIndex++;

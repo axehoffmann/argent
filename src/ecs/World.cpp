@@ -3,6 +3,11 @@
 void ag::World::AddArchetype(ag::ArchetypeCollection* arch)
 {
     archetypes.push_back(std::shared_ptr<ag::ArchetypeCollection>(arch));
+
+    for (ag::IQuery* q : queries)
+    {
+        q->AddIfMatch(std::shared_ptr<ag::ArchetypeCollection>(arch));
+    }
 }
 
 void ag::World::InitialiseQuery(ag::IQuery* query)

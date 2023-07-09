@@ -41,72 +41,66 @@ void Cleanup()
 
 void empty_query()
 {
-    bool qEmpty = true;
-    std::function<void(ag::QueryResult<ComponentC>)> lm = [&qEmpty](ag::QueryResult<ComponentC> c) {
-        qEmpty = false;
-    };
-    world->Query(lm);
+    // Query has no matches (cAC not added to world)
+    auto query = ag::Query<ComponentC>(world);
 
-    ag_expect(qEmpty, "Expected empty query to not execute callback function");
+    ag_expect(query.Size() == 0, "Expected query to yield no results");
 }
 
 void success_empty_query()
 {
-    // Test valid query with empty archetypes
-    int qCount = 0;
-    std::function<void(ag::QueryResult<ComponentA>)> lm = [&qCount](ag::QueryResult<ComponentA> a) {
-        qCount = a.Length();
-    };
-    world->Query(lm);
-    ag_expect(qCount == 0, "Expected query to have length 0, instead found {}", qCount);
+    // Query has 2 matches but neither has any entities
+    auto query = ag::Query<ComponentA>(world);
+
+    ag_expect(query.Size() == 0, "Expected query to have length 0, instead found {}", query.Size());
 }
 
 void one_populated()
 {
     // Test valid query with 1 populated archetype
-    for (size_t i = 0; i < 5; i++)
+    for (int i = 0; i < 5; i++)
         cA->SpawnEntity("", ComponentA(i));
     cA->ResolveBuffers();
 
-    int qCount = 0;
-    std::function<void(ag::QueryResult<ComponentA>)> lm = [&qCount](ag::QueryResult<ComponentA> a) {
-        qCount = a.Length();
-    };
-    world->Query(lm);
-    ag_expect(qCount == 5, "Expected query to have length 5, instead found {}", qCount);
+    auto query = ag::Query<ComponentA>(world);
+
+    ag_expect(query.Size() == 5, "Expected query to have length 5, instead found {}", query.Size());
 }
 
 void two_populated()
 {
     // Test valid query with 2 populated archetypes
-    for (size_t i = 0; i < 5; i++)
+    for (int i = 0; i < 5; i++)
         cA->SpawnEntity("", ComponentA(i));
     cA->ResolveBuffers();
 
-    for (size_t i = 0; i < 5; i++)
+    for (int i = 0; i < 5; i++)
         cAB->SpawnEntity("", ComponentA(i + 5), ComponentB());
     cAB->ResolveBuffers();
 
     std::vector<int> expected { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     std::vector<int> qIter;
 
+    auto queryA = ag::Query<ComponentA>(world);
+
     qIter.clear();
-    std::function<void(ag::QueryResult<ComponentA>)> lm = [&qIter](ag::QueryResult<ComponentA> a) {
-        for (size_t i = 0; i < a.Length(); i++)
-            qIter.push_back(a[i].value);
-    };
-    world->Query(lm);
-    ag_expect(qIter == expected, "Expected query to iterate all 10 entities");
+    for (auto entity : queryA)
+    {
+        qIter.push_back(entity.Get<ComponentA>().value);
+    }
+    ag_expect(qIter == expected, "Expected query to iterate all 10 entities, instead found {}", qIter.size());
 
     // Test valid query on a set of Components
     expected = std::vector<int> { 5, 6, 7, 8, 9 };
+
+    auto queryAB = ag::Query<ComponentA, ComponentB>(world);
+
     qIter.clear();
-    std::function<void(ag::QueryResult<ComponentA>, ag::QueryResult<ComponentB>)> lm2 = [&qIter](ag::QueryResult<ComponentA> a, ag::QueryResult<ComponentB> b) {
-        for (size_t i = 0; i < a.Length(); i++)
-            qIter.push_back(a[i].value);
-    };
-    world->Query(lm2);
-    ag_expect(qIter == expected, "Expected query to iterate 5 AB entities");
+    for (auto entity : queryAB)
+    {
+        qIter.push_back(entity.Get<ComponentA>().value);
+    }
+    ag_expect(qIter == expected, "Expected query to iterate 5 AB entities, instead found {}", qIter.size());
 }
 
 

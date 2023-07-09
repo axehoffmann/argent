@@ -1,6 +1,6 @@
 #include "Query.h"
 
-ag::IQuery::IQuery(ag::World* w) : world(w)
+ag::IQuery::IQuery(ag::World* w, const ComponentSet& set) : world(w), componentTypes(set)
 {
     world->InitialiseQuery(this);
 }
