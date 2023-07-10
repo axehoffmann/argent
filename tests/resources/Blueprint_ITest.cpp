@@ -1,12 +1,12 @@
-#include "TestFramework.h"
-#include "../src/resources/AssetManager.h"
-#include "../src/resources/Blueprint.h"
+#include "../TestFramework.h"
+#include "resources/AssetManager.h"
+#include "resources/Blueprint.h"
 
-#include "../src/core/Transform.h"
-#include "../src/rendering/StaticRenderable.h"
+#include "core/Transform.h"
+#include "rendering/StaticRenderable.h"
 
-#include "../src/ecs/ArchetypeCollection.h"
-#include "../src/ecs/World.h"
+#include "ecs/ArchetypeCollection.h"
+#include "ecs/World.h"
 
 ag::ArchetypeCollection* archetype;
 std::shared_ptr<ag::World> world;

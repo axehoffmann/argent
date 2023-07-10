@@ -1,8 +1,8 @@
-#include "TestFramework.h"
-#include "../src/resources/AssetManager.h"
-#include "../src/resources/Mesh.h"
-#include "../src/resources/Texture.h"
-#include "../src/resources/Material.h"
+#include "../TestFramework.h"
+#include "resources/AssetManager.h"
+#include "resources/Mesh.h"
+#include "resources/Texture.h"
+#include "resources/Material.h"
 
 const std::string meshPath = "assets/cube.obj";
 const std::string texPath = "assets/frog.png";

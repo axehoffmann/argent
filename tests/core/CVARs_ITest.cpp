@@ -1,5 +1,6 @@
-#include "TestFramework.h"
-#include "../src/core/cvars/CVARs.h"
+#include "../TestFramework.h"
+
+#include "core/cvars/CVARs.h"
 
 #include <glm/glm.hpp>
 

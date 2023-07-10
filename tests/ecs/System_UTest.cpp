@@ -1,6 +1,6 @@
-#include "TestFramework.h"
-#include "../src/ecs/ECS.h"
-#include "../src/ecs/System.h"
+#include "../TestFramework.h"
+#include "ecs/ECS.h"
+#include "ecs/System.h"
 
 #include <vector>
 
