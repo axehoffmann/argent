@@ -6,7 +6,7 @@
 
 const std::string meshPath = "assets/cube.obj";
 const std::string texPath = "assets/frog.png";
-const std::string matPath = "assets/test.mat";
+const std::string matPath = "assets/material.mat";
 
 
 $ITest(resources, {});

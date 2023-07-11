@@ -1,0 +1,14 @@
+[
+	{
+		"type" : "int",
+		"name" : "config_int",
+		"desc" : "",
+		"val" : 1
+	},
+		{
+		"type" : "float",
+		"name" : "config_float",
+		"desc" : "",
+		"val" : 0.5
+	}
+]
