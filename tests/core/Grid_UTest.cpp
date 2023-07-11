@@ -3,7 +3,9 @@
 
 #include <glm/glm.hpp>
 
-void data_access()
+$UTest(grid);
+
+$Case(data_access, grid)
 {
     ag::Grid<int, int> gr(5, 5, 10.0f);
     
@@ -25,7 +27,7 @@ void data_access()
     ag_expect(q.size() == 1, "Expected 1 query result");
 }
 
-void moving()
+$Case(moving, grid)
 {
     ag::Grid<int, int> gr(5, 5, 10.0f);
 
@@ -40,7 +42,7 @@ void moving()
     ag_expect(q.size() == 0, "Expected 0 query results after object moved");
 }
 
-void many_objects()
+$Case(many_objects, grid)
 {
     ag::Grid<int, int> gr(5, 5, 10.0f);
 
@@ -73,15 +75,4 @@ void many_objects()
             index++;
         }
     }
-}
-
-int main()
-{
-    Test::Name("Grids");
-
-    Test::Case("Data Access", data_access);
-    Test::Case("Moving Objects", moving);
-    Test::Case("Many Objects", many_objects);
-
-    Test::Run();
 }

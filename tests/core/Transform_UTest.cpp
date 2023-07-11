@@ -4,9 +4,11 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
+$UTest(transform);
+
 const std::string jsonPath = "assets/entity.json";
 
-void data_access()
+$Case(data_access, transform)
 {
     ag::Transform t({ 0, 1, 0 });
     glm::vec3 pos = t.GetPosition();
@@ -24,7 +26,7 @@ void data_access()
     ag_expect(rot == glm::vec3(glm::half_pi<float>(), 0, 0), "Expected a rotation of (0, 0, 0), instead found ({}, {}, {})", rot.x, rot.y, rot.z);
 }
 
-void translation()
+$Case(translation, transform)
 {
     ag::Transform t({0, 1, 0});
 
@@ -37,7 +39,7 @@ void translation()
     ag_expect(pos == glm::vec3(1, 200, -2), "Expected a position of (1, 200, -2), instead found ({}, {}, {})", pos.x, pos.y, pos.z);
 }
 
-void dirty_flag()
+$Case(dirty_flag, transform)
 {
     ag::Transform t({0, 1, 0});
     ag_expect(!t.HasChanged(), "Expected false, instead found true");
@@ -47,7 +49,7 @@ void dirty_flag()
     ag_expect(!t.HasChanged(), "Expected false, instead found true");
 }
 
-void serialisation()
+$Case(serialisation, transform)
 {
     // Deserialisation
     std::ifstream f(jsonPath);
@@ -55,16 +57,4 @@ void serialisation()
 
     ag::Transform t = c.GetData<ag::Transform>();
     ag_expect(t.GetPosition().y == 32.0f, "Expected deserialised transform to have y pos of 32, instead found {}", t.GetPosition().y);
-}
-
-int main()
-{
-    Test::Name("Transforms");
-
-    Test::Case("Data Access", data_access);
-    Test::Case("Translation", translation);
-    Test::Case("Dirty Flag", dirty_flag);
-    Test::Case("Serialisation", serialisation);
-
-    Test::Run();
 }

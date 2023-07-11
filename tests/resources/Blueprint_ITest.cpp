@@ -15,12 +15,14 @@ const std::string en1Path = "assets/entity.json";
 const std::string en2Path = "assets/entity2.json";
 
 
-void Cleanup()
+$ITest(blueprint, {});
+
+$Cleanup(blueprint)
 {
     ag::AssetManager::DropAll();
 }
 
-void loading()
+$Case(loading, blueprint)
 {
     uint32_t bpID = ag::AssetManager::Load<ag::Blueprint>(en1Path);
 
@@ -34,7 +36,7 @@ void loading()
     ag_expect(!bp->IsReady(), "Expected Blueprint to no longer be ready after unload");
 }
 
-void instantiation()
+$Case(instantiation, blueprint)
 {
     archetype = new ag::ArchetypeCollection({ ag::ComponentInfo::GetID<ag::Transform>(), ag::ComponentInfo::GetID<ag::StaticRenderable>() });
     world = std::make_shared<ag::World>();
@@ -64,20 +66,4 @@ void instantiation()
         "Expected deserialised transform to have y pos of 32, instead found {}", 
         (*query.begin()).Get<ag::Transform>().GetPosition().y);
 
-}
-
-
-int main()
-{
-    Test::Name("Blueprints");
-
-    Test::clean = Cleanup;
-
-    Test::Case("Loading", loading);
-    Test::Case("Instantiation", instantiation);
-
-    Test::Run();
-
-    // Stop rendering unit from getting discarded at link time
-    ag::StaticRenderable::serialiser.FromJSON(nlohmann::json{{"material", "assets/material.mat"}, { "mesh", "assets/cube.obj" }});
 }

@@ -1,76 +1,128 @@
 #include "TestFramework.h"
-void(*Test::init)() = nullptr;
-void(*Test::clean)() = nullptr;
-int Test::successes(0);
-int Test::failures(0);
-bool Test::failed(false);
-std::vector<std::string> Test::errorMsgs;
-std::vector<Test::testCase> Test::tests;
-std::string Test::name;
-std::string Test::currentCaseName;
 
-void Test::Expect(bool condition, std::string failure)
+using namespace agtest;
+
+int main()
 {
-	if (!condition)
+	for (auto& s : agtest::Test::TestRegister::Suites())
 	{
-		failed = true;
-		errorMsgs.push_back(currentCaseName + " error on " + failure);
+		s.second.Run();
 	}
 }
 
-void Test::Case(std::string name, void(*func)())
+CaseResult Case::Execute()
 {
-	tests.push_back(testCase(name, func));
+	func(this);
+	return result;
 }
 
-void Test::Run()
+void agtest::Case::Expect(bool condition, int ln, std::string message)
 {
-	for (size_t i = 0; i < tests.size(); i++)
+	if (condition)
 	{
-		currentCaseName = tests[i].name;
-		InitFunc();
-		tests[i].func();
-		CleanFunc();
-
-		if (failed)
-			failures++;
-		else
-			successes++;
-		
-		failed = false;
+		return;
 	}
 
+	result.failures.emplace_back(message, ln);
+}
+
+void PrintReportLine(int success, int fail, std::string name)
+{
 	HANDLE c = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	SetConsoleTextAttribute(c, 15 + 0 * 16);
 	std::cout << "[ ";
 	SetConsoleTextAttribute(c, 7 + 0 * 16);
-	std::cout << name.insert(name.length(), 12 - name.length(), ' ');
+	std::cout << name.insert(name.length(), 16 - name.length(), ' ');
 	SetConsoleTextAttribute(c, 15 + 0 * 16);
 	std::cout << " | Passed: ";
-	SetConsoleTextAttribute(c, successes > 0 ? 10 : 12);
-	std::cout << std::to_string(successes);
+	SetConsoleTextAttribute(c, success > 0 ? 10 : 12);
+	std::cout << std::to_string(success);
 	SetConsoleTextAttribute(c, 15 + 0 * 16);
 	std::cout << " Failed: ";
-	SetConsoleTextAttribute(c, failures == 0 ? 10 : 12);
-	std::cout << std::to_string(failures);
+	SetConsoleTextAttribute(c, fail == 0 ? 10 : 12);
+	std::cout << std::to_string(fail);
 	SetConsoleTextAttribute(c, 15 + 0 * 16);
 	std::cout << " ]" << std::endl;
+}
 
-	for (size_t i = 0; i < errorMsgs.size(); i++)
+std::string ToPascalCase(const std::string& in)
+{
+	std::string out;
+	bool capsNext = true;
+
+	for (const auto ch : in)
 	{
-		std::cout << errorMsgs[i] << std::endl;
+		if (ch == '_')
+		{
+			capsNext = true;
+			out += ' ';
+			continue;
+		}
+
+		if (capsNext)
+		{
+			capsNext = false;
+			out += static_cast<char>(std::toupper(ch));
+			continue;
+		}
+
+		out += ch;
+	}
+	return out;
+}
+
+void agtest::Test::Run()
+{
+	std::vector<CaseResult> results;
+	results.reserve(cases.size());
+
+	for (Case& c : cases)
+	{
+		if (init) init();
+		results.push_back(c.Execute());
+		if (cleanup) cleanup();
+	}
+
+	int successTally = 0, failTally = 0;
+	std::vector<std::string> failMsgs;
+
+	for (CaseResult& r : results)
+	{
+		if (r.failures.size() == 0)
+			successTally++;
+		else
+			failTally++;
+
+		for (Failure& f : r.failures)
+		{
+			failMsgs.push_back(std::vformat("Assert fail on line {}: {}", std::make_format_args(f.lineNum, f.message)));
+		}
+	}
+
+	PrintReportLine(successTally, failTally, name);
+	for (std::string& fm : failMsgs)
+	{
+		std::cout << fm << "\n";
 	}
 }
 
-void Test::InitFunc()
+agtest::Case::CaseRegister::CaseRegister(const std::string& name, const std::string& suite, void(*f)(agtest::Case*))
 {
-	if (init)
-		init();
+	Test::TestRegister::Suites()[suite].cases.push_back(Case(ToPascalCase(name), f));
 }
 
-void Test::CleanFunc()
+agtest::Test::Test(const std::string& n, void(*initialiser)(), void(*cleaner)(), std::initializer_list<std::string> dep) : name(n), init(initialiser), cleanup(cleaner), dependencies(dep)
 {
-	if (clean)
-		clean();
+
+}
+
+agtest::Test::TestRegister::TestRegister(const std::string& name, std::initializer_list<std::string> dep)
+{
+	Suites()[name] = Test(ToPascalCase(name), nullptr, nullptr, dep);
+}
+
+agtest::Test::TestRegister::TestRegister(const std::string& name, void(*initialiser)(), void(*cleaner)(), std::initializer_list<std::string> dependencies)
+{
+	Suites()[name] = Test(ToPascalCase(name), initialiser, cleaner, dependencies);
 }

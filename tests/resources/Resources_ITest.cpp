@@ -8,17 +8,15 @@ const std::string meshPath = "assets/cube.obj";
 const std::string texPath = "assets/frog.png";
 const std::string matPath = "assets/test.mat";
 
-void Setup()
-{
 
-}
+$ITest(resources, {});
 
-void Cleanup()
+$Cleanup(resources)
 {
     ag::AssetManager::DropAll();
 }
 
-void mesh_loading()
+$Case(mesh_loading, resources)
 {
     uint32_t meshID = ag::AssetManager::Load<ag::Mesh>(meshPath);
 
@@ -38,7 +36,7 @@ void mesh_loading()
 }
 
 
-void texture_loading()
+$Case(texture_loading, resources)
 {
     uint32_t texID = ag::AssetManager::Load<ag::Texture>(texPath);
 
@@ -57,7 +55,7 @@ void texture_loading()
     ag_expect(!tex->IsReady(), "Expected Texture to no longer be ready after unload");
 }
 
-void material_loading()
+$Case(material_loading, resources)
 {
     uint32_t matID = ag::AssetManager::Load<ag::Material>(matPath);
 
@@ -74,17 +72,4 @@ void material_loading()
     mat->Unload();
     
     ag_expect(!mat->IsReady(), "Expected Material to no longer be ready after unload");
-}
-
-int main()
-{
-    Test::Name("Assets");
-    Test::init = Setup;
-    Test::clean = Cleanup;
-
-    Test::Case("Mesh Loading", mesh_loading);
-    Test::Case("Texture Loading", texture_loading);
-    Test::Case("Material Loading", material_loading);
-
-    Test::Run();
 }

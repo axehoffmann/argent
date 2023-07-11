@@ -4,6 +4,7 @@
 ag::ArchetypeCollection* collection1;
 ag::ArchetypeCollection* collection2;
 
+
 struct ComponentA 
 {
     int value;
@@ -22,20 +23,22 @@ struct ComponentB
     }
 };
 
-void Setup()
+$UTest(archetype);
+
+$Init(archetype)
 {
     collection1 = new ag::ArchetypeCollection({ ag::ComponentInfo::GetID<ComponentA>() });
     collection2 = new ag::ArchetypeCollection({ ag::ComponentInfo::GetID<ComponentA>(), ag::ComponentInfo::GetID<ComponentB>() });
 }
 
-void Cleanup()
+$Cleanup(archetype)
 {
     delete collection1;
     delete collection2;
 }
 
 // Entity Creation and Destruction
-void create_destroy()
+$Case(create_destroy, archetype)
 {
     collection1->SpawnEntity("e1", ComponentA(100));
 
@@ -63,7 +66,7 @@ void create_destroy()
 }
 
 // Data access and modification
-void data_access()
+$Case(data_access, archetype)
 {
     EntityID lastEntity;
     for (int i = 0; i < 5; i++)
@@ -100,7 +103,7 @@ void data_access()
     ag_expect(partnerComponentA.value == 104, "Expected last entity to have ComponentA.value of 104, instead found {}", partnerComponentA.value);
 }
 
-void entity_class()
+$Case(entity_class, archetype)
 {
     EntityID lastEntity;
     for (int i = 0; i < 5; i++)
@@ -119,17 +122,4 @@ void entity_class()
     entityA.Get<ComponentA>().value = -10;
 
     ag_expect(entityA.Get<ComponentA>().value == -10, "Expected entity's A value to be -10, instead found {}", entityA.Get<ComponentA>().value);
-}
-
-int main()
-{
-    Test::Name("Archetypes");
-    Test::init = Setup;
-    Test::clean = Cleanup;
-
-    Test::Case("Create/Destroy", create_destroy);
-    Test::Case("Data Access", data_access);
-    Test::Case("Entity Class", entity_class);
-
-    Test::Run();
 }

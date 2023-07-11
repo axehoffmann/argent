@@ -4,6 +4,7 @@
 
 #include <vector>
 
+$UTest(systems);
 
 struct ComponentA
 {
@@ -37,7 +38,7 @@ private:
 ag::System::SystemRegister<TestSystem> TestSystem::reg = ag::System::SystemRegister<TestSystem>();
 
 
-void initialisation()
+$Case(initialisation, systems)
 {
     size_t systemCount = ag::System::Systems().size();
     ag_expect(systemCount == 1, "Expected 1 registered system, instead found {}", systemCount);
@@ -48,7 +49,7 @@ void initialisation()
     ag_expect(pt->testVal == 10, "Expected initial testVal of 10, instead found {}", pt->testVal);
 }
 
-void updating()
+$Case(updating, systems)
 {
     std::unique_ptr<ag::System> sys = ag::System::Systems().at(0)();
     TestSystem* pt = static_cast<TestSystem*>(sys.get());
@@ -58,15 +59,4 @@ void updating()
         ag_expect(pt->testVal == 10 + i, "Expected total time of {}, instead found {}", 10 + i, pt->testVal);
         pt->Update(0.0);
     }
-}
-
-int main()
-{
-    Test::Name("Systems");
-
-    Test::Case("Initialisation", initialisation);
-    Test::Case("Updating", updating);
-
-
-    Test::Run();
 }
