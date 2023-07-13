@@ -81,11 +81,20 @@ namespace ag
 			return id;
 		}
 
+		/**
+		* Deserialise a type-erased component from JSON.
+		* Requires the component type ('type' property in JSON) has a statically-registered FromJSON function.
+		* @param ob The JSON object to deserialise
+		* @return A component object containing the deserialised data.
+		*/
 		static Component FromJSON(nlohmann::json ob)
 		{
 			return Serialisers()[ob["type"]]->FromJSON(ob);
 		}
-
+		
+		/**
+		* Get the size in bytes of the raw data contained in this component.
+		*/
 		int Size()
 		{
 			return ComponentInfo::GetSize(id);

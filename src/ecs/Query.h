@@ -18,6 +18,7 @@ namespace ag
     public:
         /**
         * Adds an archetype to this Query if it matches the Query's component set.
+        * @param archetype A pointer to the archetype match candidate.
         */
         void AddIfMatch(std::shared_ptr<ag::ArchetypeCollection> archetype)
         {
@@ -109,11 +110,19 @@ namespace ag
             size_t currentArchetypeSize; // We cache this so we don't go through 3 function calls to get the archetype's size every time we iterate.
             Query<ComponentTypes...>* query;
         };
-
+        
+        /**
+        * An indexer object used to conveniently access the properties of entities in a query.
+        */
         struct Entity
         {
             friend class Query::Iterator;
 
+            /**
+            * Get a reference to a component from this entity.
+            * @tparam The type of component to get. Must be a type in the query.
+            * @return A reference to the selected component
+            */
             template <typename C>
             C& Get()
             {
@@ -122,9 +131,20 @@ namespace ag
                 return archetype->GetComponent<C>(index);
             }
 
+            /**
+            * Get a copy of the info struct of the entity.
+            */
             EntityInfo Info()
             {
                 return archetype->GetEntityInfo(index);
+            }
+
+            /**
+            * Mark the entity to be destroyed next update.
+            */
+            void Destroy() 
+            {
+                archetype->DestroyEntity(index);
             }
 
             // This should not be copyable and cannot persist outside of a Query iteration
