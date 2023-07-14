@@ -76,11 +76,12 @@ namespace ag
 				throw std::out_of_range("ArchetypeCollection GetComponent index out of range");
 
 			/// TODO: is this check too intensive to do a gazillion times a second? can we cache this some way idk
-			if (std::find(ComponentTypes.begin(), ComponentTypes.end(), ComponentInfo::GetID<C>()) == ComponentTypes.end())
+			auto componentTypeIter = std::find(ComponentTypes.begin(), ComponentTypes.end(), ag::ComponentInfo::GetID<C>());
+			if (componentTypeIter == ComponentTypes.end())
 				throw std::runtime_error("Attempted to get component of type " + std::string(typeid(C).name()));
 
 			/// TODO: should this be a hash map? benchmark
-			auto componentTypeIndex = std::find(ComponentTypes.begin(), ComponentTypes.end(), ag::ComponentInfo::GetID<C>()) - ComponentTypes.begin();
+			auto componentTypeIndex = componentTypeIter - ComponentTypes.begin();
             
 			// Return a reference to the component
 			return (C&)(data[componentTypeIndex].at(i * sizeof(C)));

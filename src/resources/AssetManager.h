@@ -62,7 +62,7 @@ namespace ag
 			/// TODO: asynchronously load data
 			ptr->Load();
 
-			uint32_t idx = resources.size();
+			uint32_t idx = static_cast<uint32_t>(resources.size());
 			resources.push_back(ptr);
 			pathToID[path] = idx;
 

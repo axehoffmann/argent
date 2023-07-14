@@ -117,6 +117,7 @@ namespace ag
         struct Entity
         {
             friend class Query::Iterator;
+            friend class Query;
 
             /**
             * Get a reference to a component from this entity.
@@ -160,6 +161,19 @@ namespace ag
             size_t index;
         };
 
+        /**
+        * Generates an Entity indexer referencing index 'i' of the Query.
+        * @param i The index of the Entity to get within this Query's bounds
+        * @return An entity indexer
+        */
+        Entity at(size_t i)
+        {
+            // We won't bounds check as that is done in FindArchetypeAndLocalIndex and within the Archetype itself
+            auto[archetype, localIndex] = FindArchetypeAndLocalIndex(i);
+
+            return Entity(archetype.get(), localIndex);
+        }
+
         Iterator begin()
         {
             return Iterator(this, 0, 0);
@@ -168,6 +182,29 @@ namespace ag
         Iterator end()
         {
             return Iterator(this, matches.size() - 1, matches.back()->GetEntityCount());
+        }
+
+    private:
+        /**
+         * Finds the Archetype in matches, and the index of the entity within that archetype.
+         * @param index The indexer into the Query.
+         * @return An std::tuple of the aligned ArchetypeCollection, and the local entity index.
+         */
+        std::tuple<std::shared_ptr<ag::ArchetypeCollection>, size_t> FindArchetypeAndLocalIndex(size_t index)
+        {
+            /// TODO: could probably optimise by caching ranges in constructor? The ranges would have to update once the buffers are resolved though
+            size_t localIndex = index;
+
+            for (size_t i = 0; i < matches.size(); i++)
+            {
+                std::shared_ptr<ag::ArchetypeCollection>& a = matches[i];
+                if (localIndex >= a->GetEntityCount())
+                    localIndex -= a->GetEntityCount();
+                else
+                    return std::tuple<std::shared_ptr<ag::ArchetypeCollection>, size_t>{a, localIndex};
+            }
+
+            throw std::runtime_error("QueryResult was unable to find an ArchetypeCollection");
         }
     };
 }
