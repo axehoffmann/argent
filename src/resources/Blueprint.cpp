@@ -11,10 +11,11 @@ void ag::Blueprint::Load()
 {
 	json ob = ag::AssetManager::ReadJson(filePath);
 
+	components.reserve(ob.size());
+	types.reserve(ob.size());
 	for (json::iterator it = ob.begin(); it != ob.end(); it++)
 	{
 		components.push_back(ag::Component::FromJSON(*it));
-		types.push_back(components.back().GetID());
 	}
 
 	// ArchetypeCollections expect components to be sorted by ID
@@ -22,6 +23,11 @@ void ag::Blueprint::Load()
 	{
 		return a.GetID() < b.GetID();
 	});
+
+	for (auto& component : components)
+	{
+		types.push_back(component.GetID());
+	}
 }
 
 void ag::Blueprint::Unload()
