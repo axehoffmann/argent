@@ -6,7 +6,7 @@
 #pragma warning(pop)
 
 
-bool ag::Mesh::IsReady()
+bool ag::Mesh::IsReady() const
 {
     return vertices.size() > 0;
 }

@@ -15,7 +15,7 @@ namespace ag
         /**
         * Returns whether the asset data is loaded into memory and ready for use
         */
-        virtual bool IsReady()=0;
+        virtual bool IsReady() const =0;
         /**
         * Loads the asset to memory
         */

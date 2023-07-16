@@ -1,7 +1,6 @@
 #include "Material.h"
 
-/// TODO: Implement
-bool ag::Material::IsReady()
+bool ag::Material::IsReady() const
 {
 	return parameters.size() > 0 || textures.size() > 0;
 }

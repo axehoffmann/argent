@@ -21,7 +21,7 @@ namespace ag
         * @param set    A vector of ComponentTypeIDs (expected to be sorted ascendingly) to query
         * @returns      An ArchetypeCollection with an exactly matching component set.
         */
-        std::shared_ptr<ag::ArchetypeCollection> FindArchetype(std::vector<ComponentTypeID>& set)
+        std::shared_ptr<ag::ArchetypeCollection> FindArchetype(const std::vector<ComponentTypeID>& set) const
         {
             /// TODO: benchmark... maybe could use a search tree
 

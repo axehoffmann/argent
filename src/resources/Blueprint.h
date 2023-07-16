@@ -19,9 +19,9 @@ namespace ag
 		Blueprint(std::string path) : Resource(path) {}
 		~Blueprint() { Unload(); }
 
-		bool IsReady();
-		void Load();
-		void Unload();
+		bool IsReady() const override;
+		void Load() override;
+		void Unload() override;
 
 		void SetWorld(std::shared_ptr<ag::World> w);
 		ag::Entity Instantiate();

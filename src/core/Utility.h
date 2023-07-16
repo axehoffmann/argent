@@ -10,26 +10,26 @@ namespace ag
 {
     struct Utility
     {
-        static glm::mat4 ModelMatrix(ag::Transform* tr)
+        static glm::mat4 ModelMatrix(const ag::Transform& tr)
         {
-            glm::quat rot = tr->GetRotation();
+            glm::quat rot = tr.GetRotation();
 
-            glm::mat4 out = glm::scale(out, tr->GetScale());
+            glm::mat4 out = glm::scale(out, tr.GetScale());
             out = glm::rotate(out, rot.w, glm::vec3(rot.x, rot.y, rot.z));
-            out = glm::translate(glm::mat4(), tr->GetPosition());
+            out = glm::translate(glm::mat4(), tr.GetPosition());
 
             return out;
 
         }
 
-        static glm::mat4 ProjectionMatrix(ag::Camera* camera)
+        static glm::mat4 ProjectionMatrix(const ag::Camera& camera)
 		{
-			return glm::perspective(glm::radians(camera->fieldOfView), camera->aspectRatio, camera->nearPlane, camera->farPlane);
+			return glm::perspective(glm::radians(camera.fieldOfView), camera.aspectRatio, camera.nearPlane, camera.farPlane);
         }
         
-        static glm::mat4 ViewMatrix(ag::Transform* transform)
+        static glm::mat4 ViewMatrix(const ag::Transform& transform)
 		{
-			return glm::lookAt(transform->GetPosition(), transform->GetPosition() + transform->Front(), transform->Up());
+			return glm::lookAt(transform.GetPosition(), transform.GetPosition() + transform.Front(), transform.Up());
 		}
     };
 }

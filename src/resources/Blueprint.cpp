@@ -2,7 +2,7 @@
 
 using json = nlohmann::json;
 
-bool ag::Blueprint::IsReady()
+bool ag::Blueprint::IsReady() const
 {
 	return components.size() > 0;
 }

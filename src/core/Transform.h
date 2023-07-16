@@ -41,15 +41,15 @@ namespace ag
         void SetRotation(glm::quat rot);
         void SetScale(glm::vec3 sc);
 
-        glm::vec3 GetPosition();
-        glm::quat GetRotation();
-        glm::vec3 GetEulerRotation();
-        glm::vec3 GetScale();
+        glm::vec3 GetPosition() const;
+        glm::quat GetRotation() const;
+        glm::vec3 GetEulerRotation() const;
+        glm::vec3 GetScale() const;
 
         /**
          * @return Whether the Transform has changed since the last time Clean() was invoked.
         */
-        bool HasChanged();
+        bool HasChanged() const;
         /**
          * Marks the Transform as clean until it is changed.
         */
@@ -58,15 +58,15 @@ namespace ag
         /**
         * Returns the up vector relative to the transform's rotation
         */
-        glm::vec3 Up();
+        glm::vec3 Up() const;
         /**
         * Returns the right vector relative to the transform's rotation
         */
-        glm::vec3 Right();
+        glm::vec3 Right() const;
         /**
         * Returns the forward vector relative to the transform's rotation
         */
-        glm::vec3 Front();
+        glm::vec3 Front() const;
 
         static nlohmann::json ToJSON(Transform t);
         static Transform FromJSON(nlohmann::json& ob);

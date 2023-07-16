@@ -63,27 +63,27 @@ void ag::Transform::SetScale(glm::vec3 sc)
     hasChanged = true;
 }
 
-glm::vec3 ag::Transform::GetPosition()
+glm::vec3 ag::Transform::GetPosition() const
 {
     return position;
 }
 
-glm::quat ag::Transform::GetRotation()
+glm::quat ag::Transform::GetRotation() const
 {
     return rotation;
 }
 
-glm::vec3 ag::Transform::GetEulerRotation()
+glm::vec3 ag::Transform::GetEulerRotation() const
 {
     return glm::eulerAngles(rotation);
 }
 
-glm::vec3 ag::Transform::GetScale()
+glm::vec3 ag::Transform::GetScale() const
 {
     return scale;
 }
 
-bool ag::Transform::HasChanged()
+bool ag::Transform::HasChanged() const
 {
     return hasChanged;
 }
@@ -93,17 +93,17 @@ void ag::Transform::Clean()
     hasChanged = false;
 }
 
-glm::vec3 ag::Transform::Up()
+glm::vec3 ag::Transform::Up() const
 {
     return rotation * glm::vec3(0.0f, 1.0f, 0.0f);
 }
 
-glm::vec3 ag::Transform::Right()
+glm::vec3 ag::Transform::Right() const
 {
     return rotation * glm::vec3(1.0f, 0.0f, 0.0f);
 }
 
-glm::vec3 ag::Transform::Front()
+glm::vec3 ag::Transform::Front() const
 {
     return rotation * glm::vec3(0.0f, 0.0f, 1.0f);
 }

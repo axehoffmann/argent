@@ -13,7 +13,7 @@ namespace ag
 
         std::vector<uint16_t> data;
 
-        bool IsReady() override;
+        bool IsReady() const override;
         void Load() override;
         void Unload() override;
     };

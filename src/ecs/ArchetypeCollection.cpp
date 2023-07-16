@@ -85,7 +85,7 @@ EntityID ag::ArchetypeCollection::GetNextID()
 	return NextEntityID++;
 }
 
-ComponentSet ag::ArchetypeCollection::GetComponentSet()
+ComponentSet ag::ArchetypeCollection::GetComponentSet() const
 {
 	return ComponentTypes;
 }
@@ -110,7 +110,7 @@ ag::ArchetypeCollection* ag::ArchetypeCollection::GetArchetypeFromEntityID(Entit
 	return archetypes[archID];
 }
 
-size_t ag::ArchetypeCollection::GetIndexByID(EntityID id)
+size_t ag::ArchetypeCollection::GetIndexByID(EntityID id) const
 {
 	// Binary search for the entity's ID
 	size_t lo = 0;

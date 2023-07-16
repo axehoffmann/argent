@@ -6,7 +6,7 @@
 #pragma warning(pop)
 
 
-bool ag::Texture::IsReady()
+bool ag::Texture::IsReady() const
 {
     return data != nullptr;
 }

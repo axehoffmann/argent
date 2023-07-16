@@ -21,7 +21,7 @@ namespace ag
         int height;
         int channels;
 
-        bool IsReady() override;
+        bool IsReady() const override;
         void Load() override;
         void Unload() override;
 

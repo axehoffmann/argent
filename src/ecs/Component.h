@@ -68,7 +68,7 @@ namespace ag
 			return static_cast<RawData<T>*>(data.get())->value;
 		}
 
-		void* GetRawData()
+		void* GetRawData() const
 		{
 			return dataRaw;
 		}
@@ -76,7 +76,7 @@ namespace ag
 		/**
 		* Gets the type ID of a component instance
 		*/
-		ComponentTypeID GetID()
+		ComponentTypeID GetID() const
 		{
 			return id;
 		}

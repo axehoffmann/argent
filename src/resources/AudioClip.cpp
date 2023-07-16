@@ -1,6 +1,6 @@
 #include "AudioClip.h"
 
-bool ag::AudioClip::IsReady()
+bool ag::AudioClip::IsReady() const
 {
 	return data.size() > 0;
 }

@@ -25,8 +25,8 @@ namespace ag
         /// TODO: change parameters to accept different types
         std::vector<float> parameters;
 
-        bool IsReady();
-        void Load();
-        void Unload();
+        bool IsReady() const override;
+        void Load() override;
+        void Unload() override;
     };
 }

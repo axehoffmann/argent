@@ -52,7 +52,7 @@ namespace ag
 		 * @param i The index of the entity in the collection.
 		 * @return A copy of the EntityInfo struct of the entity
 		*/
-		EntityInfo GetEntityInfo(size_t i)
+		EntityInfo GetEntityInfo(size_t i) const
 		{
 			if (i >= entities.size() || i < 0)
 			{
@@ -87,19 +87,19 @@ namespace ag
 			return (C&)(data[componentTypeIndex].at(i * sizeof(C)));
 		}
 
-		ArchetypeID GetID()
+		ArchetypeID GetID() const
 		{
 			return ID;
 		}
 
-		size_t GetEntityCount() { return entities.size(); }
+		size_t GetEntityCount() const { return entities.size(); }
 
 		/**
 		 * Searches for the index of an entity in the collection by its ID.
 		 * @param id The id of the entity to search for.
 		 * @return The index of the found entity, or -1 if no entity was found.
 		*/
-		size_t GetIndexByID(EntityID id);
+		size_t GetIndexByID(EntityID id) const;
 
 		/**
 		 * Resolves the spawn and destroy buffers of the collection.
@@ -128,7 +128,7 @@ namespace ag
 		*/
 		static ArchetypeCollection* GetArchetypeFromEntityID(EntityID id);
 
-		ComponentSet GetComponentSet();
+		ComponentSet GetComponentSet() const;
 
 	private:
 

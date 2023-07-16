@@ -36,7 +36,7 @@ namespace ag
         /**
         * Calculates total count of matched entities.
         */
-        size_t Size() 
+        size_t Size() const
         {
             return std::accumulate(matches.begin(), matches.end(), 0,
                 [](size_t sum, std::shared_ptr<ag::ArchetypeCollection> b) {
@@ -46,7 +46,7 @@ namespace ag
 
 
     protected:
-        bool Matches(const ComponentSet& set)
+        bool Matches(const ComponentSet& set) const
         {
             return std::includes(set.begin(), set.end(), componentTypes.begin(), componentTypes.end());
         }
@@ -135,7 +135,7 @@ namespace ag
             /**
             * Get a copy of the info struct of the entity.
             */
-            EntityInfo Info()
+            EntityInfo Info() const
             {
                 return archetype->GetEntityInfo(index);
             }
@@ -166,7 +166,7 @@ namespace ag
         * @param i The index of the Entity to get within this Query's bounds
         * @return An entity indexer
         */
-        Entity at(size_t i)
+        Entity at(size_t i) const
         {
             // We won't bounds check as that is done in FindArchetypeAndLocalIndex and within the Archetype itself
             auto[archetype, localIndex] = FindArchetypeAndLocalIndex(i);
@@ -190,7 +190,7 @@ namespace ag
          * @param index The indexer into the Query.
          * @return An std::tuple of the aligned ArchetypeCollection, and the local entity index.
          */
-        std::tuple<std::shared_ptr<ag::ArchetypeCollection>, size_t> FindArchetypeAndLocalIndex(size_t index)
+        std::tuple<std::shared_ptr<ag::ArchetypeCollection>, size_t> FindArchetypeAndLocalIndex(size_t index) const
         {
             /// TODO: could probably optimise by caching ranges in constructor? The ranges would have to update once the buffers are resolved though
             size_t localIndex = index;

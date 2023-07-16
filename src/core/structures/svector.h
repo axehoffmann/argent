@@ -6,10 +6,18 @@ namespace agt
 {
 	// Inspired by llvm/Chandler Carruth's hybrid data structures talk
 
+	// This may leak memory when type-erased, investigate
+
 	template <typename T>
 	class svectorn
 	{
 	public:
+
+		int size()
+		{
+			return count;
+		}
+
 		void push_back(const T& value)
 		{
 			if (count == capacity)
