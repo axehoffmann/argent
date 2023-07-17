@@ -1,9 +1,11 @@
 #include "TestFramework.h"
+#include "ConsoleWriter.h"
 
 using namespace agtest;
 
 int main()
 {
+
 	for (auto& s : agtest::Test::TestRegister::Suites())
 	{
 		s.second.Run();
@@ -28,22 +30,17 @@ void agtest::Case::Expect(bool condition, int ln, std::string message)
 
 void PrintReportLine(int success, int fail, std::string name)
 {
-	HANDLE c = GetStdHandle(STD_OUTPUT_HANDLE);
+	std::string paddedName = name.insert(name.length(), 24 - name.length(), ' ');
 
-	SetConsoleTextAttribute(c, 15 + 0 * 16);
-	std::cout << "[ ";
-	SetConsoleTextAttribute(c, 7 + 0 * 16);
-	std::cout << name.insert(name.length(), 16 - name.length(), ' ');
-	SetConsoleTextAttribute(c, 15 + 0 * 16);
-	std::cout << " | Passed: ";
-	SetConsoleTextAttribute(c, success > 0 ? 10 : 12);
-	std::cout << std::to_string(success);
-	SetConsoleTextAttribute(c, 15 + 0 * 16);
-	std::cout << " Failed: ";
-	SetConsoleTextAttribute(c, fail == 0 ? 10 : 12);
-	std::cout << std::to_string(fail);
-	SetConsoleTextAttribute(c, 15 + 0 * 16);
-	std::cout << " ]" << std::endl;
+	csw::print({
+			{ csw::Colour::BrightWhite, "[ " },
+			{ csw::Colour::White, paddedName },
+			{ csw::Colour::BrightWhite, " | P: "},
+			{ success > 0 ? csw::Colour::BrightGreen : csw::Colour::BrightRed, std::to_string(success) },
+			{ csw::Colour::BrightWhite, "    F: "},
+			{ fail == 0 ? csw::Colour::BrightGreen : csw::Colour::BrightRed, std::to_string(fail) },
+			{ csw::Colour::BrightWhite, " ]" },
+		});
 }
 
 std::string ToPascalCase(const std::string& in)
