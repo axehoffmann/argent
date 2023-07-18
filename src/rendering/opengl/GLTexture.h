@@ -3,9 +3,6 @@
 #include "../../resources/Texture.h"
 #include "GL.h"
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-
 #include <memory>
 #include <string>
 

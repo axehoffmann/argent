@@ -1,6 +1,6 @@
 #include "GLScreen.h"
 
-void ag::GLScreen::Initialise()
+ag::GLScreen::GLScreen()
 {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -14,6 +14,8 @@ void ag::GLScreen::Initialise()
 		return;
 	}
 	glfwMakeContextCurrent(window);
+
+	glewInit();
 }
 
 void ag::GLScreen::SetInfo(std::string info)

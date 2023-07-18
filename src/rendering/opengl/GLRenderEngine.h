@@ -1,13 +1,11 @@
 #pragma once
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-
 #include "../RenderEngine.h"
 #include "GLScreen.h"
 #include "GLBuffer.h"
 #include "GLTexture.h"
 #include "GLShader.h"
+#include "GLVAO.h"
 #include <unordered_map>
 
 #include "../../resources/AssetManager.h"
@@ -43,8 +41,6 @@ namespace ag
 	{
 	public:
 
-		void Initialise() override;
-
 		void Render(ag::SceneGraph* graph) override;
 
 		GLRenderEngine();
@@ -77,17 +73,18 @@ namespace ag
 		* @param camTr A pointer to the camera's transform
 		* @param cam A pointer to the camera data
 		*/
-		void UseTransform(ag::Transform* tr, ag::Transform* camTr, ag::Camera* cam);
+		void UseTransform(const ag::Transform& tr, const ag::Transform& camTr, const ag::Camera& cam);
 
 		std::unordered_map<uint32_t, GLMesh> meshes;
 		std::unordered_map<uint32_t, GLMaterial> materials;
 		std::unordered_map<uint32_t, std::shared_ptr<ag::GLTexture>> textures;
 
-		ag::GLBuffer* vao;
+		ag::GLScreen screen;
 
-		ag::GLScreen* screen;
+		ag::GLVAO vao;
 
-		GLHandle currentShader;
-		ag::GLShader* shader;
+		ag::GLShader shader;
+
+		ag::GLBuffer vbo;
 	};
 }

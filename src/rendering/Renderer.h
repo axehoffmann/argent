@@ -15,8 +15,6 @@ namespace ag
     public:
         Renderer(std::shared_ptr<ag::RenderEngine> engine, std::shared_ptr<ag::SceneBuilder> scene);
         
-        bool Initialise();
-
         void Render();
     
     private:

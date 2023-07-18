@@ -1,8 +1,5 @@
 #pragma once
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -15,7 +12,7 @@ namespace ag
 {
 	enum class BufferType
 	{
-		VertexArray = GL_ARRAY_BUFFER,
+		VertexData = GL_ARRAY_BUFFER,
 		IndexArray = GL_ELEMENT_ARRAY_BUFFER,
 		Storage = GL_SHADER_STORAGE_BUFFER,
 		Uniform = GL_UNIFORM_BUFFER
@@ -48,7 +45,7 @@ namespace ag
 		* @param data The vector of input data.
 		*/
 		template <typename T>
-		void SetData(std::vector<T>& data)
+		void SetData(const std::vector<T>& data)
 		{
 			size_t newSize = sizeof(T) * data.size();
 			if (newSize > size && firstAlloc)
@@ -75,7 +72,7 @@ namespace ag
 		* @param offset The index into the buffer that the subset begins at.
 		*/
 		template <typename T>
-		void SetSubData(std::vector<T>& data, size_t offset)
+		void SetSubData(const std::vector<T>& data, size_t offset)
 		{
 			size_t subSize = sizeof(T) * data.size();
 			if (subSize + offset > size)

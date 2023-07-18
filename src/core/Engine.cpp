@@ -8,9 +8,6 @@ ag::Engine::Engine()
 	sceneBuilder = std::make_shared<ag::SceneBuilder>(ecsWorld);
 
 	renderer = std::make_unique<ag::Renderer>(std::make_unique<ag::GLRenderEngine>(), sceneBuilder);
-
-	/// TODO: handle errors
-	renderer->Initialise();
 }
 
 ag::Engine::~Engine()

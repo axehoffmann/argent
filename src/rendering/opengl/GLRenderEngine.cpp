@@ -1,27 +1,35 @@
 #include "GLRenderEngine.h"
 
-void ag::GLRenderEngine::Initialise()
-{
-	screen = new GLScreen();
-	screen->Initialise();
-	glewInit();
+static std::string SHADER_PATH = "assets/default.shader";
 
+
+ag::GLRenderEngine::GLRenderEngine() : 
+	screen(),
+	shader(ag::GLShader::FromResource(ag::AssetManager::Load<ag::Shader>(SHADER_PATH))),
+	vbo(ag::GLBuffer(ag::BufferType::VertexData, ag::BufferAccessType::StaticDraw)),
+	vao()
+{
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.3f, 0.3f, 0.4f, 1.0f);
 
-	vao = new ag::GLBuffer(ag::BufferType::VertexArray, ag::BufferAccessType::StaticDraw);
-	shader->InitialiseAttribute("aPos", 3, GL_FLOAT, false, 14 * sizeof(float), 0);
-	shader->InitialiseAttribute("aTexCoord", 2, GL_FLOAT, false, 14 * sizeof(float), 3 * sizeof(float));
-	shader->InitialiseAttribute("aNormal", 3, GL_FLOAT, false, 14 * sizeof(float), 5 * sizeof(float));
-	shader->InitialiseAttribute("aTangent", 3, GL_FLOAT, false, 14 * sizeof(float), 8 * sizeof(float));
-	shader->InitialiseAttribute("aBitangent", 3, GL_FLOAT, false, 14 * sizeof(float), 11 * sizeof(float));
+
+	vao.Bind();
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	vbo.SetData(std::vector<float>{
+			-0.5f, -0.5f, 0.0f,
+			 0.5f, -0.5f, 0.0f,
+			 0.0f,  0.5f, 0.0f
+		});
+	//shader.InitialiseAttribute("aPos", 3, GL_FLOAT, false, 14 * sizeof(float), 0);
+	//shader.InitialiseAttribute("aTexCoord", 2, GL_FLOAT, false, 14 * sizeof(float), 3 * sizeof(float));
+	//shader.InitialiseAttribute("aNormal", 3, GL_FLOAT, false, 14 * sizeof(float), 5 * sizeof(float));
+	//shader.InitialiseAttribute("aTangent", 3, GL_FLOAT, false, 14 * sizeof(float), 8 * sizeof(float));
+	//shader.InitialiseAttribute("aBitangent", 3, GL_FLOAT, false, 14 * sizeof(float), 11 * sizeof(float));
 }
 
-ag::GLRenderEngine::GLRenderEngine()
-{
-
-}
 ag::GLRenderEngine::~GLRenderEngine()
 {
 	for (auto& [id, mesh] : meshes)
@@ -29,12 +37,17 @@ ag::GLRenderEngine::~GLRenderEngine()
 		delete mesh.vbo;
 		delete mesh.ebo;
 	}
-
-	delete screen;
 }
 
 void ag::GLRenderEngine::Render(ag::SceneGraph* graph)
 {
+	vao.Bind();
+	vbo.Bind();
+	shader.Bind();
+
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	/*
 	/// TODO: instanced rendering
 
 	for (size_t i = 0; i < graph->statics.size(); i++)
@@ -43,13 +56,14 @@ void ag::GLRenderEngine::Render(ag::SceneGraph* graph)
 
 		UseMaterial(instance.materialID);
 		UseMesh(instance.meshID);
-		UseTransform(&instance.transform, new Transform({0, 0, -10}), new Camera(90, 1920.0f/1080.0f, 0.01f, 100.0f));
+		UseTransform(instance.transform, Transform({0, 0, -10}), Camera(90, 1920.0f/1080.0f, 0.01f, 100.0f));
 
 		ag::GL::DrawIndexed(GL_TRIANGLES, meshes[instance.meshID].indexCount, GL_UNSIGNED_INT, 0);
 	}
+	*/
+	screen.SetInfo(std::to_string(ag::Stats::GetAverageFrameTime()));
+	screen.SwapBuffers();
 
-	screen->SetInfo(std::to_string(ag::Stats::GetAverageFrameTime()));
-	screen->SwapBuffers();
 }
 
 void ag::GLRenderEngine::InitMesh(uint32_t meshID)
@@ -69,7 +83,7 @@ void ag::GLRenderEngine::InitMesh(uint32_t meshID)
 
 	std::shared_ptr<ag::Mesh> mesh = wMesh.lock();
 
-	ag::GLBuffer* vbo = new ag::GLBuffer(ag::BufferType::VertexArray, ag::BufferAccessType::StaticDraw);
+	ag::GLBuffer* vbo = new ag::GLBuffer(ag::BufferType::VertexData, ag::BufferAccessType::StaticDraw);
 	vbo->SetData(mesh->vertices);
 	ag::GLBuffer* ebo = new ag::GLBuffer(ag::BufferType::IndexArray, ag::BufferAccessType::StaticDraw);
 	ebo->SetData(mesh->indices);
@@ -143,11 +157,11 @@ void ag::GLRenderEngine::UseMaterial(uint32_t materialID)
 	}
 
 	/// TODO: make this agnostic to material format
-	shader->Uniform<int>("material.albedo", 0);
-	shader->Uniform<int>("material.metallic", 1);
-	shader->Uniform<int>("material.roughness", 2);
-	shader->Uniform<int>("material.ao", 3);
-	shader->Uniform<int>("material.normal", 4);
+	shader.Uniform<int>("material.albedo", 0);
+	shader.Uniform<int>("material.metallic", 1);
+	shader.Uniform<int>("material.roughness", 2);
+	shader.Uniform<int>("material.ao", 3);
+	shader.Uniform<int>("material.normal", 4);
 }
 
 void ag::GLRenderEngine::UseTexture(std::shared_ptr<ag::GLTexture> tex, int slot)
@@ -155,10 +169,10 @@ void ag::GLRenderEngine::UseTexture(std::shared_ptr<ag::GLTexture> tex, int slot
 	tex->Bind(slot);
 }
 
-void ag::GLRenderEngine::UseTransform(ag::Transform* tr, ag::Transform* camTr, ag::Camera* cam)
+void ag::GLRenderEngine::UseTransform(const ag::Transform& tr, const ag::Transform& camTr, const ag::Camera& cam)
 {
 	glm::mat4 modelView = ag::Utility::ViewMatrix(camTr) * ag::Utility::ModelMatrix(tr);
 
-	shader->Uniform<glm::mat4>("modelView", modelView);
-	shader->Uniform<glm::mat4>("mvp", ag::Utility::ProjectionMatrix(cam) * modelView);
+	shader.Uniform<glm::mat4>("modelView", modelView);
+	shader.Uniform<glm::mat4>("mvp", ag::Utility::ProjectionMatrix(cam) * modelView);
 }

@@ -12,6 +12,8 @@
 
 #include "GL.h"
 
+#include "resources/Shader.h"
+
 #include <string>
 
 
@@ -23,6 +25,18 @@ namespace ag
 		/// TODO: build a GLShader from a shader resource
 		GLShader(std::string vpath, std::string fpath);
 		~GLShader();
+
+		static GLShader FromResource(uint32_t resourceID)
+		{
+			std::weak_ptr<ag::Shader> wresource = ag::AssetManager::Fetch<ag::Shader>(resourceID);
+
+			if (std::shared_ptr<ag::Shader> resource = wresource.lock())
+			{
+				return GLShader(resource->vertexPath, resource->fragmentPath);
+			}
+
+			throw std::runtime_error("Couldn't get Shader resource");
+		}
 
 		void InitialiseAttribute(std::string attribName, int size, GLEnum type, bool normalized, int stride, int offset)
 		{
@@ -82,9 +96,10 @@ namespace ag
 			glUniformMatrix4fv(location, 1, transpose, glm::value_ptr(val));
 		}
 
-
-
-
+		void Bind()
+		{
+			glUseProgram(handle);
+		}
 
 		GLHandle handle;
 	private:

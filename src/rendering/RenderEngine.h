@@ -9,8 +9,6 @@ namespace ag
     {
     public:
 
-        virtual void Initialise() = 0;
-
         virtual void Render(ag::SceneGraph* scene) = 0;
 
     protected:

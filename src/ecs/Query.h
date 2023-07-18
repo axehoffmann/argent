@@ -101,8 +101,14 @@ namespace ag
         private:
             Iterator(Query<ComponentTypes...>* q, size_t arch, size_t i) : 
                 query(q), archIndex(arch), index(i),
-                currentArchetype(q->matches[arch]), 
+                currentArchetype(q->matches[arch]),
                 currentArchetypeSize(currentArchetype->GetEntityCount()) {}
+
+            // Null Iterator for empty Queries
+            Iterator(Query<ComponentTypes...>* q):
+                query(q), archIndex(0), index(0),
+                currentArchetype(),
+                currentArchetypeSize(0) {}
 
             std::shared_ptr<ag::ArchetypeCollection> currentArchetype;
             size_t archIndex; // Index of the current Archetype within the parent Query's 'matches' array.
@@ -176,11 +182,17 @@ namespace ag
 
         Iterator begin()
         {
+            if (matches.size() == 0)
+                return Iterator(this);
+
             return Iterator(this, 0, 0);
         }
 
         Iterator end()
         {
+            if (matches.size() == 0)
+                return Iterator(this);
+
             return Iterator(this, matches.size() - 1, matches.back()->GetEntityCount());
         }
 

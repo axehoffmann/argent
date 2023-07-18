@@ -20,6 +20,18 @@ ag::GLShader::GLShader(std::string vpath, std::string fpath)
 
 	glAttachShader(handle, vert);
 	glAttachShader(handle, frag);
+	glLinkProgram(handle);
+
+	int success = GL_FALSE;
+	glGetProgramiv(handle, GL_LINK_STATUS, &success);
+	if (!success)
+	{
+		int logLength = 0;
+		glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &logLength);
+		std::vector<char> errorLog(logLength + 1);
+		glGetShaderInfoLog(handle, 512, NULL, errorLog.data());
+		std::cout << "[ERROR] failed to link shader program:\n" << errorLog.data() << std::endl;
+	}
 
 	glDeleteShader(vert);
 	glDeleteShader(frag);
@@ -61,7 +73,7 @@ void ag::GLShader::CompileShader(std::string source, GLHandle dest)
 	if (logLength > 0)
 	{
 		std::vector<char> VertexShaderErrorMessage(logLength + 1);
-		glGetShaderInfoLog(dest, logLength, NULL, &VertexShaderErrorMessage[0]);
+		glGetShaderInfoLog(dest, logLength, NULL, VertexShaderErrorMessage.data());
 		std::cout << VertexShaderErrorMessage.data() << std::endl;
 	}
 }

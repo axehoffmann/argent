@@ -6,12 +6,6 @@ ag::Renderer::Renderer(std::shared_ptr<ag::RenderEngine> engine, std::shared_ptr
     sceneBuilder = scene;
 }
 
-bool ag::Renderer::Initialise()
-{
-    renderEngine->Initialise();
-    return true;
-}
-
 void ag::Renderer::Render()
 {
     ag::SceneGraph* graph = sceneBuilder->StartGraphRead();

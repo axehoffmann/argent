@@ -7,8 +7,7 @@ bool ag::Material::IsReady() const
 
 void ag::Material::Load()
 {
-	std::ifstream matFile(filePath);
-	json matData = json::parse(matFile);
+	json matData = AssetManager::ReadJson(filePath);
 
 	std::vector<std::string> texPaths = matData["textures"].get<std::vector<std::string>>();
 
