@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <cstdint>
+#include <type_traits>
 
 // ID structure: AAEEEEEE
 typedef uint64_t EntityID;

@@ -1,10 +1,12 @@
 #pragma once
 
-#include "../rendering/SceneBuilder.h"
-#include "../rendering/Renderer.h"
-#include "../rendering/opengl/GLRenderEngine.h"
-#include "../ecs/World.h"
-#include "../ecs/System.h"
+#include "rendering/SceneBuilder.h"
+#include "rendering/Renderer.h"
+#include "rendering/opengl/GLRenderEngine.h"
+#include "ecs/World.h"
+#include "ecs/System.h"
+#include "core/log/Log.h"
+
 #include "Stats.h"
 
 #include <memory>

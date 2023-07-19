@@ -59,13 +59,13 @@ namespace ag
         ComponentSet componentTypes;
     };
 
-    template <typename... ComponentTypes>
+    template <typename... Cs>
     class Query : public IQuery 
     {
         friend class ag::World;
     public:
 
-        Query(ag::World* w) : IQuery(w, ag::ComponentInfo::GetComponentSet<ComponentTypes...>()) {}
+        Query(ag::World* w) : IQuery(w, ag::ComponentInfo::GetComponentSet<Cs...>()) {}
 
         class Iterator
         {
@@ -99,13 +99,13 @@ namespace ag
 
 
         private:
-            Iterator(Query<ComponentTypes...>* q, size_t arch, size_t i) : 
+            Iterator(Query<Cs...>* q, size_t arch, size_t i) : 
                 query(q), archIndex(arch), index(i),
                 currentArchetype(q->matches[arch]),
                 currentArchetypeSize(currentArchetype->GetEntityCount()) {}
 
             // Null Iterator for empty Queries
-            Iterator(Query<ComponentTypes...>* q):
+            Iterator(Query<Cs...>* q):
                 query(q), archIndex(0), index(0),
                 currentArchetype(),
                 currentArchetypeSize(0) {}
@@ -114,7 +114,7 @@ namespace ag
             size_t archIndex; // Index of the current Archetype within the parent Query's 'matches' array.
             size_t index; // Index of the iterator WITHIN the current archetype. Once this exceeds the current Archetype's bounds, we move to the next archetype in the query.
             size_t currentArchetypeSize; // We cache this so we don't go through 3 function calls to get the archetype's size every time we iterate.
-            Query<ComponentTypes...>* query;
+            Query<Cs...>* query;
         };
         
         /**
@@ -134,7 +134,7 @@ namespace ag
             C& Get()
             {
                 // Component we are getting must be one of the types from the Query this entity is from
-                static_assert((std::is_same_v<C, ComponentTypes> || ...));
+                static_assert((std::is_same_v<C, Cs> || ...));
                 return archetype->GetComponent<C>(index);
             }
 

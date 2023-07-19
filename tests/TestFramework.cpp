@@ -1,5 +1,5 @@
 #include "TestFramework.h"
-#include "ConsoleWriter.h"
+#include "src/core/log/ConsoleWriter.h"
 
 using namespace agtest;
 

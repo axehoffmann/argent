@@ -21,6 +21,8 @@ void ag::Engine::Run()
 
 	Update(0);
 
+	Log<Engine>().Trace("Starting loop...");
+
 	// Based on Fix your Timestep! by Glenn Fiedler
 	std::chrono::nanoseconds t(0);
 	// TODO: proper 1/60? research better chrono stuff
