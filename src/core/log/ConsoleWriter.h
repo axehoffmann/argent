@@ -24,7 +24,8 @@ public:
 		BrightBlue = 94,
 		BrightMagenta = 95,
 		BrightCyan = 96,
-		BrightWhite = 97
+		BrightWhite = 97,
+		Unset
 	};
 
 	static std::string ColourCode(uint16_t c)
@@ -34,7 +35,7 @@ public:
 
 	struct ColourSegment
 	{
-		ColourSegment(Colour c, std::string t) : col((uint16_t)c), text(t), bgcol(30) {}
+		ColourSegment(Colour c, std::string t) : col((uint16_t)c), text(t), bgcol((uint16_t)Colour::Unset) {}
 		ColourSegment(Colour c, Colour bgc, std::string t) : col((uint16_t)c), bgcol((uint16_t)bgc), text(t) {}
 		uint16_t col;
 		uint16_t bgcol;
@@ -42,6 +43,9 @@ public:
 
 		std::string tostr() const
 		{
+			if (bgcol == (uint16_t)Colour::Unset)
+				return ColourCode(col) + text;
+
 			return ColourCode(col) + ColourCode(bgcol + 10) + text;
 		}
 	};
