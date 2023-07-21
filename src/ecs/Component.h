@@ -3,11 +3,14 @@
 #include "ECSTypes.h"
 #include <atomic>
 #include <unordered_map>
+#include <stdexcept>
 
 #include <nlohmann/json.hpp>
+
+#include "debug/log/Log.h"
+
 namespace ag
 {
-
 	class ComponentInfo
 	{
 	public:
@@ -63,7 +66,12 @@ namespace ag
 		{
 			if (ComponentInfo::GetID<T>() != id)
 			{
-				/// TODO: Throw error
+				Log::Error(sfmt("Trying to get value of type {} (id: {}) when this Component has id {}",
+					typeid(T).name(),
+					ComponentInfo::GetID<T>(),
+					id));
+				throw std::runtime_error("Getting wrong component type");
+
 			}
 			return static_cast<RawData<T>*>(data.get())->value;
 		}

@@ -1,0 +1,1 @@
+add_library(log STATIC "ConsoleWriter.h" "Log.h" "Log.cpp")

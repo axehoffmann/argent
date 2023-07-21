@@ -1,1 +1,0 @@
-add_library(log "ConsoleWriter.h" "Log.h" "Log.cpp")

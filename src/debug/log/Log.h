@@ -45,15 +45,17 @@ namespace ag
 
 	class Log
 	{
-	public:
-		static void Trace(const std::string& message, 
-			const std::source_location loc = std::source_location::current())
+	private:
+		static void LogMessage(const std::string& message,
+			const std::string& logType,
+			csw::Colour logTypeColour,
+			const std::source_location loc)
 		{
 
 			std::string filename = LogImpl::cut_fluff_directory(loc.file_name());
-			LogImpl::Write({ 
+			LogImpl::Write({
 					{ csw::Colour::BrightWhite, "["							},
-					{ csw::Colour::BrightCyan,	"TRACE"						},
+					{ logTypeColour,			logType						},
 					{ csw::Colour::BrightWhite, "] "						},
 					{ csw::Colour::BrightWhite, filename					},
 					{ csw::Colour::BrightBlack,	"(ln: "						},
@@ -61,6 +63,24 @@ namespace ag
 					{ csw::Colour::BrightBlack,	") "						},
 					{ csw::Colour::White,		message						}
 				});
+		}
+	public:
+		static void Trace(const std::string& message, 
+			const std::source_location loc = std::source_location::current())
+		{
+			LogMessage(message, "TRACE", csw::Colour::BrightCyan, loc);
+		}
+
+		static void WARN(const std::string& message,
+			const std::source_location loc = std::source_location::current())
+		{
+			LogMessage(message, "WARN", csw::Colour::BrightYellow, loc);
+		}
+
+		static void Error(const std::string& message,
+			const std::source_location loc = std::source_location::current())
+		{
+			LogMessage(message, "ERROR", csw::Colour::BrightRed, loc);
 		}
 
 		class Progress
@@ -99,6 +119,7 @@ namespace ag
 			}
 
 		private:
+
 			std::string title;
 			float max;
 			float progress = 0;

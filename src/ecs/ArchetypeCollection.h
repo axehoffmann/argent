@@ -56,6 +56,7 @@ namespace ag
 		{
 			if (i >= entities.size() || i < 0)
 			{
+				Log::Error(sfmt("ArchetypeCollection GetEntityInfo index {} out of range ({})", i, entities.size()));
 				throw std::out_of_range("ArchetypeCollection GetEntityInfo index out of range");
 			}
 
@@ -72,13 +73,19 @@ namespace ag
 		template <typename C>
 		C& GetComponent(size_t i)
 		{
-			if (i >= entities.size() || i < 0) 
+			if (i >= entities.size() || i < 0)
+			{
+				Log::Error(sfmt("ArchetypeCollection GetComponent index {} out of range ({})", i, entities.size()));
 				throw std::out_of_range("ArchetypeCollection GetComponent index out of range");
+			}
 
 			/// TODO: is this check too intensive to do a gazillion times a second? can we cache this some way idk
 			auto componentTypeIter = std::find(ComponentTypes.begin(), ComponentTypes.end(), ag::ComponentInfo::GetID<C>());
 			if (componentTypeIter == ComponentTypes.end())
+			{
+				Log::Error(sfmt("Attempted to get component of type {}", std::string(typeid(C).name())));
 				throw std::runtime_error("Attempted to get component of type " + std::string(typeid(C).name()));
+			}
 
 			/// TODO: should this be a hash map? benchmark
 			auto componentTypeIndex = componentTypeIter - ComponentTypes.begin();

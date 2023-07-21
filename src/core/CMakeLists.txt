@@ -2,5 +2,4 @@ add_library(core "Transform.cpp" "Camera.h" "Transform.h" "Utility.h" "Engine.h"
 add_subdirectory(cvars)
 add_subdirectory(spatial)
 add_subdirectory(structures)
-add_subdirectory(log)
 target_link_libraries(core cvars spatial structures log)

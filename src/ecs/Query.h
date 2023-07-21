@@ -10,6 +10,8 @@
 #include <type_traits>
 #include <numeric>
 
+#include "debug/log/Log.h"
+
 namespace ag
 {
     class World;
@@ -216,6 +218,7 @@ namespace ag
                     return std::tuple<std::shared_ptr<ag::ArchetypeCollection>, size_t>{a, localIndex};
             }
 
+            Log::Error("Query was unable to find an ArchetypeCollection");
             throw std::runtime_error("QueryResult was unable to find an ArchetypeCollection");
         }
     };

@@ -5,7 +5,7 @@
 #include "rendering/opengl/GLRenderEngine.h"
 #include "ecs/World.h"
 #include "ecs/System.h"
-#include "core/log/Log.h"
+#include "debug/log/Log.h"
 
 #include "Stats.h"
 

@@ -54,7 +54,7 @@ std::string ag::GLShader::ReadText(std::string path, std::string name)
 		stream.close();
 	}
 	else
-		throw new std::runtime_error("Failed to open " + name + " at " + path);
+		throw std::runtime_error("Failed to open " + name + " at " + path);
 
 	return source;
 }
