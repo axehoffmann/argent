@@ -6,7 +6,7 @@
 
 #include <vector>
 
-#include "GL.h"
+#include "rendering/opengl/GL.h"
 
 namespace ag
 {

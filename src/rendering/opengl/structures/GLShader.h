@@ -10,9 +10,10 @@
 #include <vector>
 #include <string>
 
-#include "GL.h"
+#include "rendering/opengl/GL.h"
 
 #include "resources/Shader.h"
+#include "debug/log/Log.h"
 
 #include <string>
 
@@ -29,20 +30,13 @@ namespace ag
 		static GLShader FromResource(uint32_t resourceID)
 		{
 			std::weak_ptr<ag::Shader> wresource = ag::AssetManager::Fetch<ag::Shader>(resourceID);
-
 			if (std::shared_ptr<ag::Shader> resource = wresource.lock())
 			{
 				return GLShader(resource->vertexPath, resource->fragmentPath);
 			}
 
+			Log::Error(sfmt("Couldn't get Shader resource with ID {} when trying to build GLShader", resourceID));
 			throw std::runtime_error("Couldn't get Shader resource");
-		}
-
-		void InitialiseAttribute(std::string attribName, int size, GLEnum type, bool normalized, int stride, int offset)
-		{
-			int loc = glGetAttribLocation(handle, attribName.c_str());
-			glVertexAttribPointer(loc, size, type, normalized, stride, (void*)offset);
-			glEnableVertexAttribArray(loc);
 		}
 
 		template <typename T>

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../resources/Texture.h"
-#include "GL.h"
+#include "resources/Texture.h"
+#include "rendering/opengl/GL.h"
 
 #include <memory>
 #include <string>

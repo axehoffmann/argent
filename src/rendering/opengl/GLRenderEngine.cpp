@@ -6,44 +6,47 @@ static std::string SHADER_PATH = "assets/default.shader";
 ag::GLRenderEngine::GLRenderEngine() : 
 	screen(),
 	shader(ag::GLShader::FromResource(ag::AssetManager::Load<ag::Shader>(SHADER_PATH))),
-	vbo(ag::GLBuffer(ag::BufferType::VertexData, ag::BufferAccessType::StaticDraw)),
-	vao()
+	vao(),
+	vbo(ag::GLBuffer(ag::BufferType::VertexData, ag::BufferAccessType::StaticDraw))
+	
 {
-	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	glEnable(GL_DEPTH_TEST);
+	
+	// glEnable(GL_DEPTH_TEST);
 	glClearColor(0.3f, 0.3f, 0.4f, 1.0f);
 
+
+	Log::Error(sfmt("GL ERROR: {}", glGetError()));
 
 	vao.Bind();
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-
 	vbo.SetData(std::vector<float>{
-			-0.5f, -0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			 0.0f,  0.5f, 0.0f
-		});
+		-0.5f, -0.5f, 0.0f,
+			0.5f, -0.5f, 0.0f,
+			0.0f, 0.5f, 0.0f
+	});
+
+
+
 	//shader.InitialiseAttribute("aPos", 3, GL_FLOAT, false, 14 * sizeof(float), 0);
 	//shader.InitialiseAttribute("aTexCoord", 2, GL_FLOAT, false, 14 * sizeof(float), 3 * sizeof(float));
 	//shader.InitialiseAttribute("aNormal", 3, GL_FLOAT, false, 14 * sizeof(float), 5 * sizeof(float));
 	//shader.InitialiseAttribute("aTangent", 3, GL_FLOAT, false, 14 * sizeof(float), 8 * sizeof(float));
 	//shader.InitialiseAttribute("aBitangent", 3, GL_FLOAT, false, 14 * sizeof(float), 11 * sizeof(float));
+	Log::Error(sfmt("GL ERROR: {}", glGetError()));
+	
 }
 
 ag::GLRenderEngine::~GLRenderEngine()
 {
-	for (auto& [id, mesh] : meshes)
-	{
-		delete mesh.vbo;
-		delete mesh.ebo;
-	}
+
 }
 
-void ag::GLRenderEngine::Render(ag::SceneGraph* graph)
+void ag::GLRenderEngine::Render(const ag::SceneGraph& graph)
 {
-	vao.Bind();
-	vbo.Bind();
 	shader.Bind();
+	vao.Bind();
+	Log::Error(sfmt("GL ERROR: {}", glGetError()));
 
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -61,34 +64,17 @@ void ag::GLRenderEngine::Render(ag::SceneGraph* graph)
 		ag::GL::DrawIndexed(GL_TRIANGLES, meshes[instance.meshID].indexCount, GL_UNSIGNED_INT, 0);
 	}
 	*/
-	screen.SetInfo(std::to_string(ag::Stats::GetAverageFrameTime()));
 	screen.SwapBuffers();
-
+	screen.PollEvents();
 }
-
+/*
 void ag::GLRenderEngine::InitMesh(uint32_t meshID)
 {
 	/// TODO: note that data is not unloaded from RAM
 	if (meshes.find(meshID) != meshes.end())
 		return;
 
-
-	std::weak_ptr<ag::Mesh> wMesh = ag::AssetManager::Fetch<ag::Mesh>(meshID);
-	
-	if (wMesh.expired())
-	{
-		/// TODO: throw error
-		return;
-	}
-
-	std::shared_ptr<ag::Mesh> mesh = wMesh.lock();
-
-	ag::GLBuffer* vbo = new ag::GLBuffer(ag::BufferType::VertexData, ag::BufferAccessType::StaticDraw);
-	vbo->SetData(mesh->vertices);
-	ag::GLBuffer* ebo = new ag::GLBuffer(ag::BufferType::IndexArray, ag::BufferAccessType::StaticDraw);
-	ebo->SetData(mesh->indices);
-
-	meshes[meshID] = GLMesh(vbo, ebo, mesh->indices.size());
+	meshes[meshID] = GLMesh::FromResource(meshID);
 }
 
 void ag::GLRenderEngine::InitMaterial(uint32_t materialID)
@@ -144,8 +130,7 @@ std::shared_ptr<ag::GLTexture> ag::GLRenderEngine::InitTexture(uint32_t textureI
 
 void ag::GLRenderEngine::UseMesh(uint32_t meshID)
 {
-	meshes[meshID].vbo->Bind();
-	meshes[meshID].ebo->Bind();
+	meshes[meshID].vao.Bind();
 }
 
 
@@ -168,6 +153,7 @@ void ag::GLRenderEngine::UseTexture(std::shared_ptr<ag::GLTexture> tex, int slot
 {
 	tex->Bind(slot);
 }
+*/
 
 void ag::GLRenderEngine::UseTransform(const ag::Transform& tr, const ag::Transform& camTr, const ag::Camera& cam)
 {

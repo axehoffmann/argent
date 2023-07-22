@@ -15,6 +15,7 @@ namespace ag
 	{
 	public:
 		void SetInfo(std::string info);
+		void PollEvents();
 		void SwapBuffers();
 
 		GLScreen();

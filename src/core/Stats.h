@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <string>
 
 namespace ag
 {
@@ -15,6 +16,9 @@ namespace ag
 		* Gets the average frame time of the last 10 frames
 		*/
 		static float GetAverageFrameTime();
+
+		static std::string FrameTimeInMs();
+		static int FramesPerSecond();
 	private:
 		static std::array<double, 10> frameTimeLog;
 		static int frameLogIndex;

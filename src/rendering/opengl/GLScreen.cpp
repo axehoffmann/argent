@@ -1,4 +1,5 @@
 #include "GLScreen.h"
+#include "GLScreen.h"
 
 ag::GLScreen::GLScreen()
 {
@@ -16,6 +17,8 @@ ag::GLScreen::GLScreen()
 	glfwMakeContextCurrent(window);
 
 	glewInit();
+
+	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 void ag::GLScreen::SetInfo(std::string info)
@@ -23,6 +26,11 @@ void ag::GLScreen::SetInfo(std::string info)
 	std::string title = ": " + info;
 	title = SCREEN_TITLE + title;
 	glfwSetWindowTitle(window, title.c_str());
+}
+
+void ag::GLScreen::PollEvents()
+{
+	glfwPollEvents();
 }
 
 void ag::GLScreen::SwapBuffers()

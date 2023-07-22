@@ -17,5 +17,15 @@ float ag::Stats::GetAverageFrameTime()
 	{
 		total += frameTimeLog[i];
 	}
-	return (float)(total / frameTimeLog.size() * 1000.0f);
+	return (float)(total / frameTimeLog.size());
+}
+
+std::string ag::Stats::FrameTimeInMs()
+{
+	return std::to_string(GetAverageFrameTime() * 1000.0f).substr(0, 4) + "ms";
+}
+
+int ag::Stats::FramesPerSecond()
+{
+	return 1 / GetAverageFrameTime();
 }

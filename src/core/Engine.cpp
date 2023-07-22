@@ -17,6 +17,7 @@ ag::Engine::~Engine()
 
 void ag::Engine::Run()
 {
+	using namespace std::chrono_literals;
 	/// TODO: may want to research MT loops in future, don't block frames behind physics etc
 
 	Update(0);
@@ -36,8 +37,8 @@ void ag::Engine::Run()
 		auto newTime = std::chrono::steady_clock::now();
 		auto frameTime = newTime - currentTime;
 
-		if (frameTime > std::chrono::milliseconds(250))
-			frameTime = std::chrono::milliseconds(250);
+		if (frameTime > 250ms)
+			frameTime = 250ms;
 		currentTime = newTime;
 
 		accumulator += frameTime;

@@ -1,4 +1,5 @@
 #include "SceneBuilder.h"
+#include "debug/log/Log.h"
 
 ag::SceneBuilder::SceneBuilder(std::shared_ptr<ag::World> w) : 
     staticQuery(w.get()),
@@ -33,7 +34,7 @@ void ag::SceneBuilder::Update()
     graphUnderConstruction = -1;
 }
 
-ag::SceneGraph* ag::SceneBuilder::StartGraphRead()
+const ag::SceneGraph& ag::SceneBuilder::StartGraphRead()
 {
     for (int i = 0; i < GRAPH_BUFFER_SIZE; i++)
     {
@@ -41,11 +42,11 @@ ag::SceneGraph* ag::SceneBuilder::StartGraphRead()
         {
             graphReadByRenderer = i;
 
-            return &graphs[i];
+            return graphs[i];
         }
     }
 
-    return nullptr;
+    Log::Error("Couldn't find a SceneGraph to read this frame");
 }
 
 void ag::SceneBuilder::EndGraphRead()
