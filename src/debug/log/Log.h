@@ -71,7 +71,7 @@ namespace ag
 			LogMessage(message, "TRACE", csw::Colour::BrightCyan, loc);
 		}
 
-		static void WARN(const std::string& message,
+		static void Warn(const std::string& message,
 			const std::source_location loc = std::source_location::current())
 		{
 			LogMessage(message, "WARN", csw::Colour::BrightYellow, loc);

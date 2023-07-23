@@ -78,7 +78,6 @@ namespace ag
 		ag::GLScreen screen;
 		ag::GLShader shader;
 
-		ag::GLVAO vao;
-		ag::GLBuffer vbo;
+		ag::GLMesh msh;
 	};
 }

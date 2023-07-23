@@ -14,6 +14,11 @@ namespace ag
 			Log::Error("Vao");
 		}
 
+		GLVAO(GLVAO&& other)
+		{
+			other.handle = 0;
+		}
+
 		void Bind()
 		{
 			glBindVertexArray(handle);
@@ -30,8 +35,13 @@ namespace ag
 
 		~GLVAO()
 		{
+			if (handle == 0)
+				return;
+
+			Log::Trace("Deleting a VAO");
 			glDeleteVertexArrays(1, &handle);
 		}
+
 	private:
 		GLHandle handle;
 		static GLHandle bound;

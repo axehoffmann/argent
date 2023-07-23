@@ -6,9 +6,11 @@ static std::string SHADER_PATH = "assets/default.shader";
 ag::GLRenderEngine::GLRenderEngine() : 
 	screen(),
 	shader(ag::GLShader::FromResource(ag::AssetManager::Load<ag::Shader>(SHADER_PATH))),
-	vao(),
-	vbo(ag::GLBuffer(ag::BufferType::VertexData, ag::BufferAccessType::StaticDraw))
-	
+	msh(GLMesh::FromData({
+		{ -0.5f, -0.5f, 0.0f}, // left  
+		{0.5f, -0.5f, 0.0f}, // right 
+		{0.0f,  0.5f, 0.0f}  // top   
+		}))
 {
 	
 	// glEnable(GL_DEPTH_TEST);
@@ -17,16 +19,7 @@ ag::GLRenderEngine::GLRenderEngine() :
 
 	Log::Error(sfmt("GL ERROR: {}", glGetError()));
 
-	vao.Bind();
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	vbo.SetData(std::vector<float>{
-		-0.5f, -0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f,
-			0.0f, 0.5f, 0.0f
-	});
-
-
+	
 
 	//shader.InitialiseAttribute("aPos", 3, GL_FLOAT, false, 14 * sizeof(float), 0);
 	//shader.InitialiseAttribute("aTexCoord", 2, GL_FLOAT, false, 14 * sizeof(float), 3 * sizeof(float));
@@ -45,11 +38,10 @@ ag::GLRenderEngine::~GLRenderEngine()
 void ag::GLRenderEngine::Render(const ag::SceneGraph& graph)
 {
 	shader.Bind();
-	vao.Bind();
-	Log::Error(sfmt("GL ERROR: {}", glGetError()));
+	msh.Bind();
 
 	glDrawArrays(GL_TRIANGLES, 0, 3);
-
+	
 	/*
 	/// TODO: instanced rendering
 

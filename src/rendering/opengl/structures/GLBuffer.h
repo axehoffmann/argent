@@ -8,6 +8,8 @@
 
 #include "rendering/opengl/GL.h"
 
+#include "debug/log/Log.h"
+
 namespace ag
 {
 	enum class BufferType
@@ -38,6 +40,7 @@ namespace ag
 	public:
 		GLBuffer(BufferType bufferType, BufferAccessType access);
 		GLBuffer(BufferType bufferType, BufferAccessType access, size_t bufferSize);
+		GLBuffer(GLBuffer&& other) { other.handle = 0; }
 		~GLBuffer();
 
 		/**
@@ -50,12 +53,13 @@ namespace ag
 			size_t newSize = sizeof(T) * data.size();
 			if (newSize > size && firstAlloc)
 			{
-				/// TODO: throw warning about reallocating buffer memory
+				Log::Warn("Reallocating GL Buffer memory, may be slow");
 			}
 
 			if (firstAlloc && staticBuffer)
 			{
-				/// TODO: throw warning about modifying static buffer data
+				Log::Warn("Modifying 'static' GL Buffer memory, may be slow");
+
 			}
 
 			firstAlloc = true;

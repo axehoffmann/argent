@@ -31,5 +31,9 @@ ag::GLBuffer::GLBuffer(BufferType bufferType, BufferAccessType access, size_t bu
 
 ag::GLBuffer::~GLBuffer()
 {
+	if (handle == 0)
+		return;
+
+	Log::Trace("Deleting a GL Buffer");
 	glDeleteBuffers(1, &handle);
 }
