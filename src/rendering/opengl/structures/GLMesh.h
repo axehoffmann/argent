@@ -21,15 +21,13 @@ namespace ag
 
 		static GLMesh FromData(std::vector<glm::vec3> positions)
 		{
-			GLVAO vao = GLVAO();
-			GLBuffer vbo = GLBuffer(BufferType::VertexData, BufferAccessType::StaticDraw);
+			GLMesh mesh = GLMesh(BufferAccessType::StaticDraw);
 
-			vao.Bind();
-			vbo.SetData(positions);
+			mesh.vao.Bind();
+			mesh.vbo.SetData(positions);
+			mesh.vao.InitialiseAttribute(0, 3, GL_FLOAT, false, 3 * sizeof(float), 0);
 
-			vao.InitialiseAttribute(0, 3, GL_FLOAT, false, 3 * sizeof(float), 0);
-
-			return GLMesh(std::move(vbo), std::move(vao));
+			return mesh;
 		}
 
 		static GLMesh FromResource(uint32_t resourceID)
@@ -37,15 +35,13 @@ namespace ag
 			std::weak_ptr<ag::Mesh> wresource = ag::AssetManager::Fetch<ag::Mesh>(resourceID);
 			if (auto resource = wresource.lock())
 			{
-				GLVAO vao = GLVAO();
-				GLBuffer vbo = GLBuffer(BufferType::VertexData, BufferAccessType::StaticDraw);
+				GLMesh mesh = GLMesh(BufferAccessType::StaticDraw);
 
-				vao.Bind();
-				vbo.SetData(resource->vertices);
+				mesh.vao.Bind();
+				mesh.vbo.SetData(resource->vertices);
+				mesh.vao.InitialiseAttribute(0, 3, GL_FLOAT, false, 3 * sizeof(float), 0);
 
-				vao.InitialiseAttribute(0, 3, GL_FLOAT, false, 3 * sizeof(float), 0);
-
-				return GLMesh(std::move(vbo), std::move(vao));
+				return mesh;
 			}
 
 			Log::Error(sfmt("Couldn't get Mesh resource with ID {} when trying to build GLMesh", resourceID));
@@ -58,7 +54,8 @@ namespace ag
 		}
 
 	private:
-		GLMesh(ag::GLBuffer&& buff, ag::GLVAO&& array) : vbo(std::move(buff)), vao(std::move(array)) {}
 		GLMesh(GLMesh&& other) : vbo(std::move(other.vbo)), vao(std::move(other.vao)) {}
+		GLMesh(BufferAccessType access) : vao(), vbo(BufferType::VertexData, access) {}
+
 	};
 }

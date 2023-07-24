@@ -11,10 +11,9 @@ namespace ag
 		GLVAO()
 		{
 			glGenVertexArrays(1, &handle);
-			Log::Error("Vao");
 		}
 
-		GLVAO(GLVAO&& other)
+		GLVAO(GLVAO&& other) noexcept : handle(other.handle)
 		{
 			other.handle = 0;
 		}
@@ -38,7 +37,6 @@ namespace ag
 			if (handle == 0)
 				return;
 
-			Log::Trace("Deleting a VAO");
 			glDeleteVertexArrays(1, &handle);
 		}
 

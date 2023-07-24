@@ -3,6 +3,13 @@
 static std::string SHADER_PATH = "assets/default.shader";
 
 
+void CheckError()
+{
+	int err = glGetError();
+	if (err != 0)
+		ag::Log::Error(ag::sfmt("OpenGL error: {}", (const char*)glewGetErrorString(err)));
+}
+
 ag::GLRenderEngine::GLRenderEngine() : 
 	screen(),
 	shader(ag::GLShader::FromResource(ag::AssetManager::Load<ag::Shader>(SHADER_PATH))),
@@ -16,17 +23,11 @@ ag::GLRenderEngine::GLRenderEngine() :
 	// glEnable(GL_DEPTH_TEST);
 	glClearColor(0.3f, 0.3f, 0.4f, 1.0f);
 
-
-	Log::Error(sfmt("GL ERROR: {}", glGetError()));
-
-	
-
 	//shader.InitialiseAttribute("aPos", 3, GL_FLOAT, false, 14 * sizeof(float), 0);
 	//shader.InitialiseAttribute("aTexCoord", 2, GL_FLOAT, false, 14 * sizeof(float), 3 * sizeof(float));
 	//shader.InitialiseAttribute("aNormal", 3, GL_FLOAT, false, 14 * sizeof(float), 5 * sizeof(float));
 	//shader.InitialiseAttribute("aTangent", 3, GL_FLOAT, false, 14 * sizeof(float), 8 * sizeof(float));
 	//shader.InitialiseAttribute("aBitangent", 3, GL_FLOAT, false, 14 * sizeof(float), 11 * sizeof(float));
-	Log::Error(sfmt("GL ERROR: {}", glGetError()));
 	
 }
 
