@@ -29,7 +29,7 @@ namespace ag
         
         static glm::mat4 ViewMatrix(const ag::Transform& transform)
 		{
-			return glm::lookAt(transform.GetPosition(), transform.GetPosition() + transform.Front(), transform.Up());
+			return glm::lookAt(transform.GetPosition(), transform.GetPosition() + transform.Front(), {0, 1, 0});
 		}
     };
 }

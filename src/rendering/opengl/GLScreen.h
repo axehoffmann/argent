@@ -5,6 +5,7 @@
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
+
 #define SCREEN_TITLE "argent"
 
 #include <GLFW/glfw3.h>

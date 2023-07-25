@@ -1,6 +1,7 @@
 #include "GLRenderEngine.h"
 
 static std::string SHADER_PATH = "assets/default.shader";
+static std::string MESH_PATH = "assets/cube.obj";
 
 
 void CheckError()
@@ -13,21 +14,11 @@ void CheckError()
 ag::GLRenderEngine::GLRenderEngine() : 
 	screen(),
 	shader(ag::GLShader::FromResource(ag::AssetManager::Load<ag::Shader>(SHADER_PATH))),
-	msh(GLMesh::FromData({
-		{ -0.5f, -0.5f, 0.0f}, // left  
-		{0.5f, -0.5f, 0.0f}, // right 
-		{0.0f,  0.5f, 0.0f}  // top   
-		}))
+	msh(GLMesh::FromResource(ag::AssetManager::Load<ag::Mesh>(MESH_PATH)))
 {
 	
 	// glEnable(GL_DEPTH_TEST);
 	glClearColor(0.3f, 0.3f, 0.4f, 1.0f);
-
-	//shader.InitialiseAttribute("aPos", 3, GL_FLOAT, false, 14 * sizeof(float), 0);
-	//shader.InitialiseAttribute("aTexCoord", 2, GL_FLOAT, false, 14 * sizeof(float), 3 * sizeof(float));
-	//shader.InitialiseAttribute("aNormal", 3, GL_FLOAT, false, 14 * sizeof(float), 5 * sizeof(float));
-	//shader.InitialiseAttribute("aTangent", 3, GL_FLOAT, false, 14 * sizeof(float), 8 * sizeof(float));
-	//shader.InitialiseAttribute("aBitangent", 3, GL_FLOAT, false, 14 * sizeof(float), 11 * sizeof(float));
 	
 }
 
@@ -40,9 +31,12 @@ void ag::GLRenderEngine::Render(const ag::SceneGraph& graph)
 {
 	shader.Bind();
 	msh.Bind();
+	UseTransform(ag::Transform({ 0,0,0 }), ag::Transform({ 0,0,2 }), ag::Camera(90.f, 1280.0f / 720.0f, 0.001f, 10.0f));
+
+	CheckError();
 
 	glDrawArrays(GL_TRIANGLES, 0, 3);
-	
+	glClear(GL_COLOR_BUFFER_BIT);
 	/*
 	/// TODO: instanced rendering
 
@@ -150,8 +144,15 @@ void ag::GLRenderEngine::UseTexture(std::shared_ptr<ag::GLTexture> tex, int slot
 
 void ag::GLRenderEngine::UseTransform(const ag::Transform& tr, const ag::Transform& camTr, const ag::Camera& cam)
 {
-	glm::mat4 modelView = ag::Utility::ViewMatrix(camTr) * ag::Utility::ModelMatrix(tr);
+	glm::mat4 model = ag::Utility::ModelMatrix(tr);
+	glm::mat4 view = ag::Utility::ViewMatrix(camTr);
+	glm::mat4 projection = ag::Utility::ProjectionMatrix(cam);
+	shader.Uniform<glm::mat4>("model", model);
+	shader.Uniform<glm::mat4>("view", view);
+	shader.Uniform<glm::mat4>("projection", projection);
 
-	shader.Uniform<glm::mat4>("modelView", modelView);
-	shader.Uniform<glm::mat4>("mvp", ag::Utility::ProjectionMatrix(cam) * modelView);
+	//glm::mat4 modelView = ag::Utility::ViewMatrix(camTr) * ag::Utility::ModelMatrix(tr);
+
+	//shader.Uniform<glm::mat4>("modelView", modelView);
+	//shader.Uniform<glm::mat4>("mvp", ag::Utility::ProjectionMatrix(cam) * modelView);
 }
