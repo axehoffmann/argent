@@ -69,6 +69,16 @@ namespace ag
 
         Query(ag::World* w) : IQuery(w, ag::ComponentInfo::GetComponentSet<Cs...>()) {}
 
+        std::optional<Query::Entity> ByID(EntityID id)
+        {
+            ag::ArchetypeCollection* archetype = ag::ArchetypeCollection::GetArchetypeFromEntityID(id);
+            size_t index = archetype->GetIndexByID(id);
+            if (index >= 0)
+                return Query::Entity(archetype, index);
+
+            return std::optional<Query::Entity>();
+        }
+
         class Iterator
         {
             friend class Query;
