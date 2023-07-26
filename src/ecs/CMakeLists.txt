@@ -1,2 +1,2 @@
-add_library(ecs "ArchetypeCollection.cpp" "ArchetypeCollection.h" "Component.h" "ECS.h" "ECSTypes.h" "Query.h" "Component.cpp" "Entity.cpp" "World.cpp" "World.h" "System.cpp" "System.h"  "Query.cpp")
+add_library(ecs "ArchetypeCollection.cpp" "ArchetypeCollection.h" "Component.h" "ECS.h" "ECSTypes.h" "Query.h" "Component.cpp"  "World.cpp" "World.h" "System.cpp" "System.h"  "Query.cpp" "EntityRef.h")
 target_link_libraries(ecs log)
