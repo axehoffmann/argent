@@ -16,6 +16,9 @@ namespace ag
 
 		bool Refresh()
 		{
+            if (archetype->GetEntityInfo(index).ID == id)
+                return true;
+
 			index = archetype->GetIndexByID(id);
 			return index >= 0;
 		}
