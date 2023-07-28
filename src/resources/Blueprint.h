@@ -6,9 +6,9 @@
 #include <nlohmann/json.hpp>
 #include <vector>
 
-#include "../ecs/Entity.h"
-#include "../ecs/World.h"
-#include "../ecs/ArchetypeCollection.h"
+#include "ecs/World.h"
+#include "ecs/EntityRef.h"
+#include "ecs/ArchetypeCollection.h"
 
 namespace ag
 {
@@ -24,7 +24,7 @@ namespace ag
 		void Unload() override;
 
 		void SetWorld(std::shared_ptr<ag::World> w);
-		ag::Entity Instantiate();
+		ag::EntityRef Instantiate();
 
 	private:
 		std::vector<ComponentTypeID> types;

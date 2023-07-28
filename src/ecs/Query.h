@@ -64,20 +64,11 @@ namespace ag
     template <typename... Cs>
     class Query : public IQuery 
     {
+    private:
         friend class ag::World;
     public:
 
         Query(ag::World* w) : IQuery(w, ag::ComponentInfo::GetComponentSet<Cs...>()) {}
-
-        std::optional<Query::Entity> ByID(EntityID id)
-        {
-            ag::ArchetypeCollection* archetype = ag::ArchetypeCollection::GetArchetypeFromEntityID(id);
-            size_t index = archetype->GetIndexByID(id);
-            if (index >= 0)
-                return Query::Entity(archetype, index);
-
-            return std::optional<Query::Entity>();
-        }
 
         class Iterator
         {
@@ -127,6 +118,9 @@ namespace ag
             size_t index; // Index of the iterator WITHIN the current archetype. Once this exceeds the current Archetype's bounds, we move to the next archetype in the query.
             size_t currentArchetypeSize; // We cache this so we don't go through 3 function calls to get the archetype's size every time we iterate.
             Query<Cs...>* query;
+
+            template<typename... Cs> using TempEntityPointer = Query<Cs...>::Entity;
+
         };
         
         /**
@@ -178,6 +172,16 @@ namespace ag
             ag::ArchetypeCollection* archetype;
             size_t index;
         };
+
+        std::optional<Entity> ByID(EntityID id)
+        {
+            ag::ArchetypeCollection* archetype = ag::ArchetypeCollection::GetArchetypeFromEntityID(id);
+            size_t index = archetype->GetIndexByID(id);
+            if (index >= 0)
+                return Entity(archetype, index);
+
+            return std::optional<Entity>();
+        }
 
         /**
         * Generates an Entity indexer referencing index 'i' of the Query.

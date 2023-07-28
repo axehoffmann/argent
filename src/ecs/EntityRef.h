@@ -50,6 +50,11 @@ namespace ag
             archetype->DestroyEntity(index);
         }
 
+        EntityID GetID()
+        {
+            return id;
+        }
+
 	private:
 		EntityID id;
 		std::shared_ptr<ag::ArchetypeCollection> archetype;

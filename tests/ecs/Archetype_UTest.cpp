@@ -1,5 +1,6 @@
 #include "../TestFramework.h"
 #include "ecs/ECS.h"
+#include "ecs/EntityRef.h"
 
 ag::ArchetypeCollection* collection1;
 ag::ArchetypeCollection* collection2;
@@ -113,7 +114,7 @@ namespace archetype_test {
         }
         collection2->ResolveBuffers();
 
-        ag::Entity entityA(lastEntity);
+        ag::EntityRef entityA(lastEntity);
 
         ag_expect(entityA.GetID() == lastEntity, "Expected entity ID to be {}, instead found {}", lastEntity, entityA.GetID());
 
