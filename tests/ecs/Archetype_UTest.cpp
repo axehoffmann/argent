@@ -2,10 +2,10 @@
 #include "ecs/ECS.h"
 #include "ecs/EntityRef.h"
 
-ag::ArchetypeCollection* collection1;
-ag::ArchetypeCollection* collection2;
-
 namespace archetype_test {
+
+    ag::ArchetypeCollection* collection1;
+    ag::ArchetypeCollection* collection2;
 
     struct ComponentA
     {
