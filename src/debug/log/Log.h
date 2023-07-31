@@ -24,7 +24,6 @@ namespace ag
 				std::cout << std::endl;
 			else
 				std::cout << std::flush;
-
 #endif
 		}
 
