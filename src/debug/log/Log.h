@@ -17,14 +17,14 @@ namespace ag
 	public:
 		static void Write(const std::vector<csw::ColourSegment>& text, bool endl = true)
 		{
-#if AG_LOGGING_CONSOLE == 1
+//#if AG_LOGGING_CONSOLE == 1
 
 			std::cout << csw::ColourText(text);
 			if (endl)
 				std::cout << std::endl;
 			else
 				std::cout << std::flush;
-#endif
+//#endif
 		}
 
 		static std::string cut_fluff_directory(const std::string& path)

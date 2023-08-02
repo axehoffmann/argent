@@ -24,8 +24,8 @@ namespace ag
 		{
 			// Generates a unique ID for each type
 			// trick from @nice_byte
-			static ComponentTypeID id = ++nextComponentID;
-			componentSize[id] = sizeof(T);
+			static ComponentTypeID id = nextComponentID++;
+			componentSize.push_back(sizeof(T));
 			return id;
 		}
 		static int GetSize(ComponentTypeID id);
@@ -48,7 +48,7 @@ namespace ag
 	private:
 		static std::atomic<ComponentTypeID> nextComponentID;
 		/// TODO: Evaluate if this map is necessary.
-		static std::unordered_map<ComponentTypeID, int> componentSize;
+		static std::vector<int> componentSize;
 	};
 
 	/**
