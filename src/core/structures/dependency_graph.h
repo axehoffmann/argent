@@ -39,7 +39,7 @@ namespace agt
 
 		void next_step()
 		{
-			return fringe.pop_back();
+			return fringe.back();
 		}
 
 		void reset()

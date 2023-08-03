@@ -15,8 +15,6 @@ namespace ag
 {
 	struct EntityInfo
 	{
-		/// TODO: Entity names should be stored in a map elsewhere so repeated names don't take up more memory
-		std::string name;
 		EntityID ID{0};
 	};
 
@@ -33,18 +31,17 @@ namespace ag
 		 * @return The ID of the newly created entity.
 		*/
 		template <typename... Cs>
-		EntityID SpawnEntity(std::string name, Cs... component)
+		EntityID SpawnEntity(Cs... component)
 		{
-			/// TODO: This may need to be mutexed
 			return InstantiateEntity(name, component...);
 		}
 
 		/**
 		* Adds an entity to the spawn buffer from a vector of type-erased components
 		*/
-		EntityID SpawnEntity(std::string name, std::vector<ag::Component>& components)
+		EntityID SpawnEntity(std::vector<ag::Component>& components)
 		{
-			return InstantiateEntity(name, components);
+			return InstantiateEntity(components);
 		}
 
 		/**
@@ -80,6 +77,7 @@ namespace ag
 			}
 
 			/// TODO: is this check too intensive to do a gazillion times a second? can we cache this some way idk
+			/// TODO: Consider a SIMD compare. Since ComponentTypeID is 1byte, should be SUPER easy
 			auto componentTypeIter = std::find(ComponentTypes.begin(), ComponentTypes.end(), ag::ComponentInfo::GetID<C>());
 			if (componentTypeIter == ComponentTypes.end())
 			{
@@ -87,7 +85,6 @@ namespace ag
 				throw std::runtime_error("Attempted to get component of type " + std::string(typeid(C).name()));
 			}
 
-			/// TODO: should this be a hash map? benchmark
 			auto componentTypeIndex = componentTypeIter - ComponentTypes.begin();
             
 			// Return a reference to the component
@@ -140,12 +137,11 @@ namespace ag
 	private:
 
 		template <typename... Cs>
-		EntityID InstantiateEntity(std::string name, Cs... component)
+		EntityID InstantiateEntity(Cs... component)
 		{
 			EntityID newEntityID = GetNextID();
 			EntityInfo entityData;
 			entityData.ID = newEntityID;
-			entityData.name = name;
 			entitiesToSpawn.push_back(entityData);
 
 			int i = 0;
@@ -156,12 +152,11 @@ namespace ag
 		}
 
 
-		EntityID InstantiateEntity(std::string name, std::vector<ag::Component>& components)
+		EntityID InstantiateEntity(std::vector<ag::Component>& components)
 		{
 			EntityID newEntityID = GetNextID();
 			EntityInfo entityData;
 			entityData.ID = newEntityID;
-			entityData.name = name;
 			entitiesToSpawn.push_back(entityData);
 
 			for (int i = 0; i < components.size(); i++)

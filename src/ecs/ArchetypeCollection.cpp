@@ -68,10 +68,11 @@ void ag::ArchetypeCollection::DestroyEntityByID(EntityID id)
 
 void ag::ArchetypeCollection::ResolveSpawnBuffer()
 {
-	/// TODO: reserve the amount of space required first
 	// Insert data from spawn buffers into component array
 	for (size_t i = 0; i < ComponentTypes.size(); i++)
 	{
+		/// TODO: Verify this is correct
+		data[i].reserve(data[i].size() + spawnBuffer[i].size());
 		data[i].insert(data[i].end(), spawnBuffer[i].begin(), spawnBuffer[i].end());
 		spawnBuffer[i].clear();
 	}

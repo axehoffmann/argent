@@ -47,7 +47,6 @@ namespace ag
 
 	private:
 		static std::atomic<ComponentTypeID> nextComponentID;
-		/// TODO: Evaluate if this map is necessary.
 		static std::vector<int> componentSize;
 	};
 
