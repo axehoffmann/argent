@@ -13,7 +13,7 @@ namespace agt
 	{
 	public:
 
-		int size()
+		int size() const
 		{
 			return count;
 		}
