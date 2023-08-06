@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+
 namespace agt
 {
 	template <typename T>
@@ -35,7 +37,19 @@ namespace agt
 			return i + 1 < size();
 		}
 
-		/// TODO: construct/insert elements
+		void sort()
+		{
+			std::sort(begin_p, end_p);
+		}
+
+		void insert(const T& value)
+		{
+			if (count == capacity)
+				return;
+
+			*(begin_p + count) = value;
+			count++;
+		}
 
 	protected:
 		ordinal_set(int n, T* begin, T* end) : begin_p(begin), end_p(end), capacity(n), count(0) {}
