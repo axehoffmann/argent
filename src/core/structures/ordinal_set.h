@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <memory>
 
 namespace agt
 {
@@ -51,13 +52,26 @@ namespace agt
 			count++;
 		}
 
+		~ordinal_set()
+		{
+			if (dynamic)
+				delete[] begin_p;
+		}
+
+		/// TODO: does end_p need +1?
+		/**
+		* Create a dynamically-allocated ordinal set.
+		*/
+		ordinal_set(int n) : begin_p(new T[n]), end_p(begin_p + n), capacity(n), count(0), dynamic(true) {}
+
 	protected:
-		ordinal_set(int n, T* begin, T* end) : begin_p(begin), end_p(end), capacity(n), count(0) {}
+		ordinal_set(int n, T* begin, T* end) : begin_p(begin), end_p(end), capacity(n), count(0), dynamic(false) {}
 	private:
 		T* begin_p;
 		T* end_p;
 		int capacity;
 		int count;
+		bool dynamic;
 
 		T& at(int index) const
 		{
@@ -66,13 +80,13 @@ namespace agt
 
 			return *(begin_p + index);
 		}
-	}
+	};
 
 	template <typename T, int N>
-	class ordinal_set : public ordinal_set<T>
+	class ordinal_setn : public ordinal_set<T>
 	{
 	public:
-		ordinal_set() : ordinal_set<T>(N, (T*)buffer, (T*)buffer) {}
+		ordinal_setn() : ordinal_set<T>(N, (T*)buffer, (T*)buffer) {}
 
 	private:
 		char buffer[sizeof(T) * N];

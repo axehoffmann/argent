@@ -1,1 +1,1 @@
-target_sources(tests PRIVATE "svector_UTest.cpp")
+target_sources(tests PRIVATE "svector_UTest.cpp" "ordinal_set_UTest.cpp")

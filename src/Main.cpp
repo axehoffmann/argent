@@ -2,6 +2,6 @@
 
 int main()
 {
-	ag::Engine* e = new ag::Engine();
+	std::unique_ptr<ag::Engine> e = std::make_unique<ag::Engine>();
 	e->Run();
 }
