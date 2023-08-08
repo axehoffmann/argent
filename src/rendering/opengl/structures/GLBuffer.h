@@ -81,12 +81,12 @@ namespace ag
 			size_t subSize = sizeof(T) * data.size();
 			if (subSize + offset > size)
 			{
-				/// TODO: throw error about allocating outside buffer memory
+				Log::Error("Reallocating buffer memory. Slow operation.");
 			}
 
 			if (staticBuffer)
 			{
-				/// TODO: throw error about modifying static buffer data
+				Log::Error("Updating static buffer data. Slow operation.");
 			}
 
 			glBindBuffer((GLenum)type, handle);

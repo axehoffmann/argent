@@ -23,9 +23,9 @@ namespace ag
 		{
 			using json = nlohmann::json;
 			json ob = {
-				{ "volume", volume },
-				{ "pitch", pitch },
-				{ "distance", distance }
+				{ "volume", a.volume },
+				{ "pitch", a.pitch },
+				{ "distance", a.distance }
 				/// TODO: this doesn't re-serialise the paths of the resources
 			};
 		}

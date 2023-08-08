@@ -23,7 +23,6 @@ namespace ag
 	class GLShader
 	{
 	public:
-		/// TODO: build a GLShader from a shader resource
 		GLShader(std::string vpath, std::string fpath);
 		~GLShader();
 
@@ -40,7 +39,9 @@ namespace ag
 		}
 
 		template <typename T>
-		void Uniform(std::string name, T val) { // TODO: throw error 
+		void Uniform(std::string name, T val) 
+		{
+			Log::Error("Invalid Uniform type");
 		}
 
 		template <>
@@ -73,7 +74,9 @@ namespace ag
 
 
 		template <typename T>
-		void Uniform(std::string name, const T& val, bool transpose) { /// TODO: throw error 
+		void Uniform(std::string name, const T& val, bool transpose) 
+		{
+			Log::Error("Invalid Uniform type");
 		}
 
 		template <>
