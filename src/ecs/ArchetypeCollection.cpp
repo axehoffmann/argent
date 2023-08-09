@@ -17,7 +17,7 @@ ag::ArchetypeCollection::ArchetypeCollection(ComponentSet components) : ID(++nex
 
 ag::ArchetypeCollection::~ArchetypeCollection()
 {
-
+	//archetypes.erase(ID);
 }
 
 void ag::ArchetypeCollection::AddComponent(byte* bytes, int i, int n, std::vector<ComponentArray>& target)
@@ -121,13 +121,13 @@ size_t ag::ArchetypeCollection::GetIndexByID(EntityID id) const
 	{
 		size_t mid = (lo + hi) / 2;
 
-		if (id == entities[mid].ID)
+		if (id == entities[mid])
 			return mid;
 
-		else if (id < entities[mid].ID)
+		else if (id < entities[mid])
 			hi = mid - 1;
 
-		else if (id > entities[mid].ID)
+		else if (id > entities[mid])
 			lo = mid + 1;
 	}
 

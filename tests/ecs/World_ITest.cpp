@@ -64,7 +64,7 @@ namespace world_test
     {
         // Test valid query with 1 populated archetype
         for (int i = 0; i < 5; i++)
-            cA->SpawnEntity("", ComponentA(i));
+            cA->SpawnEntity(ComponentA(i));
         cA->ResolveBuffers();
 
         auto query = ag::Query<ComponentA>(wrld);
@@ -76,11 +76,11 @@ namespace world_test
     {
         // Test valid query with 2 populated archetypes
         for (int i = 0; i < 5; i++)
-            cA->SpawnEntity("", ComponentA(i));
+            cA->SpawnEntity(ComponentA(i));
         cA->ResolveBuffers();
 
         for (int i = 0; i < 5; i++)
-            cAB->SpawnEntity("", ComponentA(i + 5), ComponentB());
+            cAB->SpawnEntity(ComponentA(i + 5), ComponentB());
         cAB->ResolveBuffers();
 
         std::vector<int> expected { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };

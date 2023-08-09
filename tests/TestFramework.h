@@ -1,12 +1,5 @@
 #pragma once
 
-#include <string>
-#include <vector>
-#include <format>
-#include <iostream>
-#include <unordered_map>
-#include <windows.h>
-
 #define INTERNAL_CONCAT__(a, b) a##b
 #define INTERNAL_CONCAT(a, b) INTERNAL_CONCAT__(a, b)
 
@@ -41,6 +34,12 @@
 
 #define ag_expect(val, ...) case__hide->Expect(val, __LINE__, __VA_ARGS__)
 
+#include <string>
+#include <vector>
+#include <format>
+#include <iostream>
+#include <unordered_map>
+#include <windows.h>
 
 namespace agtest
 {

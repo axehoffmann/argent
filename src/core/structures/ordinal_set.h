@@ -25,7 +25,7 @@ namespace agt
 			/// We should be able to make an early exit in some cases
 			while (i < size() && j < other.size())
 			{
-				if (at(i) == other.at(index_in_other))
+				if (at(i) == other.at(j))
 				{
 					i++;
 					j++;
@@ -75,8 +75,8 @@ namespace agt
 
 		T& at(int index) const
 		{
-			if (index < 0 || index >= count)
-				throw std::out_of_range("index out of range");
+			//if (index < 0 || index >= count)
+			//	throw std::out_of_range("index out of range");
 
 			return *(begin_p + index);
 		}
@@ -90,5 +90,5 @@ namespace agt
 
 	private:
 		char buffer[sizeof(T) * N];
-	}
+	};
 }

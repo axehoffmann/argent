@@ -147,9 +147,9 @@ void ag::GLRenderEngine::UseTransform(const ag::Transform& tr, const ag::Transfo
 	glm::mat4 model = ag::Utility::ModelMatrix(tr);
 	glm::mat4 view = ag::Utility::ViewMatrix(camTr);
 	glm::mat4 projection = ag::Utility::ProjectionMatrix(cam);
-	shader.Uniform<glm::mat4>("model", model);
-	shader.Uniform<glm::mat4>("view", view);
-	shader.Uniform<glm::mat4>("projection", projection);
+	shader.Uniform("model", model, false);
+	shader.Uniform("view", view, false);
+	shader.Uniform("projection", projection, false);
 
 	//glm::mat4 modelView = ag::Utility::ViewMatrix(camTr) * ag::Utility::ModelMatrix(tr);
 

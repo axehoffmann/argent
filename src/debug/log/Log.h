@@ -17,14 +17,12 @@ namespace ag
 	public:
 		static void Write(const std::vector<csw::ColourSegment>& text, bool endl = true)
 		{
-//#if AG_LOGGING_CONSOLE == 1
 
 			std::cout << csw::ColourText(text);
 			if (endl)
 				std::cout << std::endl;
 			else
 				std::cout << std::flush;
-//#endif
 		}
 
 		static std::string cut_fluff_directory(const std::string& path)
@@ -85,11 +83,13 @@ namespace ag
 		{
 			LogMessage(message, "ERROR", csw::Colour::BrightRed, loc);
 		}
-
+		/*
 		class Progress
 		{
 		public:
-			Progress(const std::string& t, float m) : title(t), max(m) { Update(0); }
+			Progress(const std::string& t, float m) : 
+				title(t), max(m), progress(0.0f), width(20) 
+			{ Update(0); }
 			void Update(float prog)
 			{
 				progress = prog;
@@ -103,11 +103,11 @@ namespace ag
 				bar.insert(bar.end(), fullAmount, '#');
 				bar.insert(bar.end(), width - fullAmount, '-');
 
-				/*csw::Colour barCol = ratio < 0.3f ? csw::Colour::Yellow :
-									 ratio < 0.5f ? csw::Colour::BrightYellow :
-									 ratio < 0.75f ? csw::Colour::BrightGreen :
-									 csw::Colour::Green;
-									 */
+				//csw::Colour barCol = ratio < 0.3f ? csw::Colour::Yellow :
+				//					 ratio < 0.5f ? csw::Colour::BrightYellow :
+				//					 ratio < 0.75f ? csw::Colour::BrightGreen :
+				//					 csw::Colour::Green;
+									 
 
 				std::string ratioStr = sfmt("{}/{}", (int)progress, (int)max);
 
@@ -125,9 +125,10 @@ namespace ag
 
 			std::string title;
 			float max;
-			float progress = 0;
-			int width = 20;
+			float progress;
+			int width;
 		};
+		*/
 
  	};
 }

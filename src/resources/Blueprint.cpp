@@ -43,6 +43,6 @@ void ag::Blueprint::SetWorld(std::shared_ptr<ag::World> w)
 
 ag::EntityRef ag::Blueprint::Instantiate()
 {
-	EntityID id = archetype->SpawnEntity("", components);
+	EntityID id = archetype->SpawnEntity(components);
 	return ag::EntityRef(id);
 }

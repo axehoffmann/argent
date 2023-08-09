@@ -144,8 +144,8 @@ namespace ag
 		static Component Create(T data)
 		{
 			RawData<T>* wrapper = new RawData<T>(data);
-			std::unique_ptr<IRawData> genericWrapper = std::unique_ptr<IRawData>(wrapper);
-			return ag::Component(ComponentInfo::GetID<T>(), std::move(genericWrapper), (void*)&wrapper->value);
+			std::shared_ptr<IRawData> genericWrapper = std::shared_ptr<IRawData>(wrapper);
+			return ag::Component(ComponentInfo::GetID<T>(), genericWrapper, (void*)&wrapper->value);
 		}
 
 		/**
@@ -160,10 +160,10 @@ namespace ag
 		};
 
 		ComponentTypeID id;
-		std::unique_ptr<IRawData> data;
+		std::shared_ptr<IRawData> data;
 		void* dataRaw;
 
-		Component(ComponentTypeID i, std::unique_ptr<IRawData> d, void* raw) : id(i), data(std::move(d)), dataRaw(raw) {}
+		Component(ComponentTypeID i, std::shared_ptr<IRawData> d, void* raw) : id(i), data(d), dataRaw(raw) {}
 	};
 }
 

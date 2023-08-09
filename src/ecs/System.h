@@ -72,6 +72,4 @@ namespace ag
 
 		std::shared_ptr<ag::World> world;
 	};
-
-	
 }

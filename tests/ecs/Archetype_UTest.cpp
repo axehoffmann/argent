@@ -2,10 +2,12 @@
 #include "ecs/ECS.h"
 #include "ecs/EntityRef.h"
 
+#include <memory>
+
 namespace archetype_test {
 
-    ag::ArchetypeCollection* collection1;
-    ag::ArchetypeCollection* collection2;
+    std::unique_ptr<ag::ArchetypeCollection> collection1;
+    std::unique_ptr<ag::ArchetypeCollection> collection2;
 
     struct ComponentA
     {
@@ -29,20 +31,20 @@ namespace archetype_test {
 
     $Init(archetype)
     {
-        collection1 = new ag::ArchetypeCollection({ ag::ComponentInfo::GetID<ComponentA>() });
-        collection2 = new ag::ArchetypeCollection({ ag::ComponentInfo::GetID<ComponentA>(), ag::ComponentInfo::GetID<ComponentB>() });
+        collection1 = std::make_unique<ag::ArchetypeCollection>(ComponentSet{ ag::ComponentInfo::GetID<ComponentA>() });
+        collection2 = std::make_unique<ag::ArchetypeCollection>(ComponentSet{ ag::ComponentInfo::GetID<ComponentA>(), ag::ComponentInfo::GetID<ComponentB>() });
     }
 
     $Cleanup(archetype)
     {
-        delete collection1;
-        delete collection2;
+        collection1.reset();
+        collection2.reset();
     }
 
     // Entity Creation and Destruction
     $Case(create_destroy, archetype)
     {
-        collection1->SpawnEntity("e1", ComponentA(100));
+        collection1->SpawnEntity(ComponentA(100));
 
         ag_expect(collection1->GetEntityCount() == 0, "Entity creation should have been buffered");
         collection1->ResolveBuffers();
@@ -50,7 +52,7 @@ namespace archetype_test {
 
         for (int i = 0; i < 5; i++)
         {
-            collection1->SpawnEntity("e2", ComponentA(i));
+            collection1->SpawnEntity(ComponentA(i));
         }
 
         ag_expect(collection1->GetEntityCount() == 1, "Expected 1 entity before resolving spawn buffer, instead found {}", collection1->GetEntityCount());
@@ -73,7 +75,7 @@ namespace archetype_test {
         EntityID lastEntity;
         for (int i = 0; i < 5; i++)
         {
-            lastEntity = collection2->SpawnEntity("entity", ComponentA(100 + i), ComponentB(i));
+            lastEntity = collection2->SpawnEntity(ComponentA(100 + i), ComponentB(i));
         }
 
         bool err = false;
@@ -110,11 +112,12 @@ namespace archetype_test {
         EntityID lastEntity;
         for (int i = 0; i < 5; i++)
         {
-            lastEntity = collection2->SpawnEntity("entity", ComponentA(100 + i), ComponentB(i));
+            lastEntity = collection2->SpawnEntity(ComponentA(100 + i), ComponentB(i));
         }
         collection2->ResolveBuffers();
 
         ag::EntityRef entityA(lastEntity);
+        entityA.Refresh();
 
         ag_expect(entityA.GetID() == lastEntity, "Expected entity ID to be {}, instead found {}", lastEntity, entityA.GetID());
 

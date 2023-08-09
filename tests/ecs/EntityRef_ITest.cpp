@@ -32,12 +32,12 @@ namespace entityref_test
     {
         for (size_t i = 0; i < 10; i++)
         {
-            collection1->SpawnEntity("", ComponentA(i));
+            collection1->SpawnEntity(ComponentA(i));
         }
-        ag::EntityRef precious = ag::EntityRef(collection1->SpawnEntity("my_precious", ComponentA(420)));
+        ag::EntityRef precious = ag::EntityRef(collection1->SpawnEntity(ComponentA(420)));
         for (size_t i = 0; i < 5; i++)
         {
-            collection1->SpawnEntity("", ComponentA(i + 10));
+            collection1->SpawnEntity(ComponentA(i + 10));
         }
 
         // Expect that no matter what we delete, EntityRef will always point to the correct entity

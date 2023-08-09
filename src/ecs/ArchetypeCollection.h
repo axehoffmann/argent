@@ -13,10 +13,13 @@
 
 namespace ag
 {
+	using EntityInfo = EntityID;
+	/*
 	struct EntityInfo
 	{
 		EntityID ID{0};
 	};
+	*/
 
 	/**
 	 * A collection that stores entities of a specific archetype, determined by the collection's ComponentTypes.
@@ -33,7 +36,7 @@ namespace ag
 		template <typename... Cs>
 		EntityID SpawnEntity(Cs... component)
 		{
-			return InstantiateEntity(name, component...);
+			return InstantiateEntity(component...);
 		}
 
 		/**
@@ -54,7 +57,7 @@ namespace ag
 			if (i >= entities.size() || i < 0)
 			{
 				Log::Error(sfmt("ArchetypeCollection GetEntityInfo index {} out of range ({})", i, entities.size()));
-				throw std::out_of_range("ArchetypeCollection GetEntityInfo index out of range");
+				return EntityInfo{};
 			}
 
 			return entities[i];
@@ -140,9 +143,7 @@ namespace ag
 		EntityID InstantiateEntity(Cs... component)
 		{
 			EntityID newEntityID = GetNextID();
-			EntityInfo entityData;
-			entityData.ID = newEntityID;
-			entitiesToSpawn.push_back(entityData);
+			entitiesToSpawn.push_back(newEntityID);
 
 			int i = 0;
 			// We assume the components are in the order matching the archetype and add them to each component array (in the spawn buffer)
@@ -155,9 +156,7 @@ namespace ag
 		EntityID InstantiateEntity(std::vector<ag::Component>& components)
 		{
 			EntityID newEntityID = GetNextID();
-			EntityInfo entityData;
-			entityData.ID = newEntityID;
-			entitiesToSpawn.push_back(entityData);
+			entitiesToSpawn.push_back(newEntityID);
 
 			for (int i = 0; i < components.size(); i++)
 			{
@@ -196,4 +195,3 @@ namespace ag
 		static std::atomic<ArchetypeID> nextArchetypeID;
 	};
 }
-

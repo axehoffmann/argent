@@ -16,11 +16,11 @@ namespace ag
 
 		bool Refresh()
 		{
-            if (archetype->GetEntityInfo(index).ID == id)
+            if (archetype->GetEntityInfo(index) == id)
                 return true;
 
 			index = archetype->GetIndexByID(id);
-			return index >= 0;
+			return index >= 0 && index < archetype->GetEntityCount();
 		}
 
         /**
