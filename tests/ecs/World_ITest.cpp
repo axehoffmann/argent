@@ -41,6 +41,7 @@ namespace world_test
     $Cleanup(world)
     {
         delete wrld;
+        delete cAC;
     }
 
 

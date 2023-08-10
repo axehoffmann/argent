@@ -53,5 +53,7 @@ namespace entityref_test
                 ag_expect(precious.Get<ComponentA>().value == 420, "Expected ComponentA::value of 420, instead found {}", precious.Get<ComponentA>().value);
             }
         }
+
+        std::cout << "yuhhh\n";
     }
 }

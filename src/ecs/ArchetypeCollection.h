@@ -125,7 +125,8 @@ namespace ag
 		*/
 		void DestroyEntityByID(EntityID id);
 
-		ArchetypeCollection(ComponentSet components);
+		ArchetypeCollection(ComponentSet components, std::source_location loc = std::source_location::current());
+		ArchetypeCollection(ArchetypeCollection& other) = delete;
 		~ArchetypeCollection();
 
 		/**

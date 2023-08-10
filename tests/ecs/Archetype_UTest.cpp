@@ -37,8 +37,8 @@ namespace archetype_test {
 
     $Cleanup(archetype)
     {
-        collection1.reset();
-        collection2.reset();
+        // collection1.reset();
+        // collection2.reset();
     }
 
     // Entity Creation and Destruction

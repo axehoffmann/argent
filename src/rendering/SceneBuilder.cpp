@@ -22,7 +22,7 @@ void ag::SceneBuilder::Update()
 
     for (auto entity : staticQuery)
     {
-        EntityID id = entity.Info().ID;
+        EntityID id = entity.Info();
 
         graph->statics.emplace_back(id, 
             entity.Get<StaticRenderable>().materialID, 

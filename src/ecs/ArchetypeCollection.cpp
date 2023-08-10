@@ -3,7 +3,7 @@
 std::unordered_map<ArchetypeID, ag::ArchetypeCollection*> ag::ArchetypeCollection::archetypes{};
 std::atomic<ArchetypeID> ag::ArchetypeCollection::nextArchetypeID(0);
 
-ag::ArchetypeCollection::ArchetypeCollection(ComponentSet components) : ID(++nextArchetypeID)
+ag::ArchetypeCollection::ArchetypeCollection(ComponentSet components, std::source_location loc) : ID(++nextArchetypeID)
 {
 	std::sort(components.begin(), components.end());
 	RegisterArchetype(this);
@@ -13,11 +13,19 @@ ag::ArchetypeCollection::ArchetypeCollection(ComponentSet components) : ID(++nex
 	ComponentTypes = components;
 	data.resize(ComponentTypes.size());
 	spawnBuffer.resize(ComponentTypes.size());
+
+	Log::Trace(sfmt("cr {}", ID), loc);
 }
 
 ag::ArchetypeCollection::~ArchetypeCollection()
 {
-	//archetypes.erase(ID);
+	Log::Trace("aaa");
+	for (auto& [k, v] : archetypes)
+	{
+		Log::Trace(sfmt("{}", v->ID));
+	}
+	DeregisterArchetype(ID);
+	Log::Trace(sfmt("de {}", ID));
 }
 
 void ag::ArchetypeCollection::AddComponent(byte* bytes, int i, int n, std::vector<ComponentArray>& target)
@@ -117,7 +125,7 @@ size_t ag::ArchetypeCollection::GetIndexByID(EntityID id) const
 	size_t lo = 0;
 	size_t hi = entities.size() - 1;
 
-	while (lo <= hi)
+	while (lo <= hi && hi < entities.size())
 	{
 		size_t mid = (lo + hi) / 2;
 
