@@ -5,7 +5,7 @@
 
 namespace entityref_test
 {
-    ag::ArchetypeCollection* collection1;
+    std::shared_ptr<ag::ArchetypeCollection> collection1;
 
     struct ComponentA
     {
@@ -20,12 +20,12 @@ namespace entityref_test
 
     $Init(entity_ref)
     {
-        collection1 = new ag::ArchetypeCollection({ ag::ComponentInfo::GetID<ComponentA>() });
+        collection1 = std::make_shared<ag::ArchetypeCollection>(ComponentSet{ ag::ComponentInfo::GetID<ComponentA>() });
     }
 
     $Cleanup(entity_ref)
     {
-        delete collection1;
+        collection1.reset();
     }
 
     $Case(basic, entity_ref)
@@ -53,7 +53,5 @@ namespace entityref_test
                 ag_expect(precious.Get<ComponentA>().value == 420, "Expected ComponentA::value of 420, instead found {}", precious.Get<ComponentA>().value);
             }
         }
-
-        std::cout << "yuhhh\n";
     }
 }

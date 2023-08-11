@@ -57,7 +57,7 @@ namespace ag
 
 	private:
 		EntityID id;
-		std::shared_ptr<ag::ArchetypeCollection> archetype;
+		ag::ArchetypeCollection* archetype;
 		size_t index;
 	};
 }

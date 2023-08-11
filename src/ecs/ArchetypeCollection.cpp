@@ -3,7 +3,7 @@
 std::unordered_map<ArchetypeID, ag::ArchetypeCollection*> ag::ArchetypeCollection::archetypes{};
 std::atomic<ArchetypeID> ag::ArchetypeCollection::nextArchetypeID(0);
 
-ag::ArchetypeCollection::ArchetypeCollection(ComponentSet components, std::source_location loc) : ID(++nextArchetypeID)
+ag::ArchetypeCollection::ArchetypeCollection(ComponentSet components) : ID(++nextArchetypeID)
 {
 	std::sort(components.begin(), components.end());
 	RegisterArchetype(this);
@@ -14,18 +14,11 @@ ag::ArchetypeCollection::ArchetypeCollection(ComponentSet components, std::sourc
 	data.resize(ComponentTypes.size());
 	spawnBuffer.resize(ComponentTypes.size());
 
-	Log::Trace(sfmt("cr {}", ID), loc);
 }
 
 ag::ArchetypeCollection::~ArchetypeCollection()
 {
-	Log::Trace("aaa");
-	for (auto& [k, v] : archetypes)
-	{
-		Log::Trace(sfmt("{}", v->ID));
-	}
 	DeregisterArchetype(ID);
-	Log::Trace(sfmt("de {}", ID));
 }
 
 void ag::ArchetypeCollection::AddComponent(byte* bytes, int i, int n, std::vector<ComponentArray>& target)
@@ -106,7 +99,8 @@ void ag::ArchetypeCollection::RegisterArchetype(ArchetypeCollection* archetype)
 
 void ag::ArchetypeCollection::DeregisterArchetype(ArchetypeID id)
 {
-	archetypes.erase(id);
+	if (archetypes.find(id) != archetypes.end())
+		archetypes.erase(id);
 }
 
 ag::ArchetypeCollection* ag::ArchetypeCollection::GetArchetypeFromEntityID(EntityID id)
