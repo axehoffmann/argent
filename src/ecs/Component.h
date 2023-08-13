@@ -25,7 +25,10 @@ namespace ag
 			// Generates a unique ID for each type
 			// trick from @nice_byte
 			static ComponentTypeID id = nextComponentID++;
-			componentSize.push_back(sizeof(T));
+
+			if (id == componentSize.size())
+				componentSize.push_back(sizeof(T));
+
 			return id;
 		}
 		static int GetSize(ComponentTypeID id);

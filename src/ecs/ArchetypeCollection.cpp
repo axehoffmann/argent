@@ -18,7 +18,7 @@ ag::ArchetypeCollection::ArchetypeCollection(ComponentSet components) : ID(++nex
 
 ag::ArchetypeCollection::~ArchetypeCollection()
 {
-	DeregisterArchetype(ID);
+	// DeregisterArchetype(ID);
 }
 
 void ag::ArchetypeCollection::AddComponent(byte* bytes, int i, int n, std::vector<ComponentArray>& target)

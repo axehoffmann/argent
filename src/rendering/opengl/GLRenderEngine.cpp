@@ -14,7 +14,10 @@ void CheckError()
 ag::GLRenderEngine::GLRenderEngine() : 
 	screen(),
 	shader(ag::GLShader::FromResource(ag::AssetManager::Load<ag::Shader>(SHADER_PATH))),
-	msh(GLMesh::FromResource(ag::AssetManager::Load<ag::Mesh>(MESH_PATH)))
+	//msh(GLMesh::FromResource(ag::AssetManager::Load<ag::Mesh>(MESH_PATH)))
+	msh(GLMesh::FromData({{-0.5f, -0.5f, 0.0f},
+						  { 0.5f, -0.5f, 0.0f},
+						  { 0.0f,  0.5f, 0.0f }}))
 {
 	
 	// glEnable(GL_DEPTH_TEST);
@@ -31,7 +34,7 @@ void ag::GLRenderEngine::Render(const ag::SceneGraph& graph)
 {
 	shader.Bind();
 	msh.Bind();
-	UseTransform(ag::Transform({ 0,0,0 }), ag::Transform({ 0,0,2 }), ag::Camera(90.f, 1280.0f / 720.0f, 0.001f, 10.0f));
+	// UseTransform(ag::Transform({ 0,0,0 }), ag::Transform({ 0,0,2 }), ag::Camera(90.f, 1280.0f / 720.0f, 0.001f, 10.0f));
 
 	CheckError();
 
