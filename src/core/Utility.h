@@ -1,6 +1,7 @@
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
 
 #include "Transform.h"
@@ -14,9 +15,12 @@ namespace ag
         {
             glm::quat rot = tr.GetRotation();
 
-            glm::mat4 out = glm::scale(out, tr.GetScale());
-            out = glm::rotate(out, rot.w, glm::vec3(rot.x, rot.y, rot.z));
-            out = glm::translate(glm::mat4(), tr.GetPosition());
+            glm::mat4 out = glm::translate(glm::mat4(1.0f), tr.GetPosition());
+            //out = glm::rotate(out, rot.w, glm::vec3(rot.x, rot.y, rot.z));
+            out = (tr.GetRotation().operator glm::mat<4, 4, glm::f32, glm::packed_highp>()) * out;
+            out = glm::scale(out, tr.GetScale());
+            Log::Trace(sfmt("{} {} {} {}", rot.x, rot.y, rot.z, rot.w));
+
 
             return out;
 

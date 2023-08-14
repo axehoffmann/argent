@@ -6,23 +6,23 @@ ag::Component::Serialiser<ag::Transform> ag::Transform::serialiser("transform");
 ag::Transform::Transform(glm::vec3 pos)
 {
     position = pos;
-    rotation = glm::quat();
-    scale = glm::vec3(1.0f);
+    rotation = glm::quat(0.0f, 0.0f, 0.0f, 1.0f);
+    scale = glm::vec3(1.0f, 1.0f, 1.0f);
     hasChanged = false;
 }
 
 ag::Transform::Transform(glm::vec3 pos, glm::vec3 rot)
 {
     position = pos;
-    rotation = glm::quat(rot);
-    scale = glm::vec3(1.0f);
+    rotation = glm::quat(glm::radians(rot));
+    scale = glm::vec3(1.0f, 1.0f, 1.0f);
     hasChanged = false;
 }
 
 ag::Transform::Transform(glm::vec3 pos, glm::vec3 rot, glm::vec3 sc)
 {
     position = pos;
-    rotation = glm::quat(rot);
+    rotation = glm::quat(glm::radians(rot));
     scale = sc;
     hasChanged = false;
 }

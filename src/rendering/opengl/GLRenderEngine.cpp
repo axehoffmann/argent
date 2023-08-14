@@ -13,11 +13,8 @@ void CheckError()
 
 ag::GLRenderEngine::GLRenderEngine() : 
 	screen(),
-	shader(ag::GLShader::FromResource(ag::AssetManager::Load<ag::Shader>(SHADER_PATH))),
-	//msh(GLMesh::FromResource(ag::AssetManager::Load<ag::Mesh>(MESH_PATH)))
-	msh(GLMesh::FromData({{-0.5f, -0.5f, 0.0f},
-						  { 0.5f, -0.5f, 0.0f},
-						  { 0.0f,  0.5f, 0.0f }}))
+	shader(GLShader::FromResource(ag::AssetManager::Load<ag::Shader>(SHADER_PATH))),
+	msh(GLMesh::FromResource(ag::AssetManager::Load<ag::Mesh>(MESH_PATH)))
 {
 	
 	// glEnable(GL_DEPTH_TEST);
@@ -34,12 +31,12 @@ void ag::GLRenderEngine::Render(const ag::SceneGraph& graph)
 {
 	shader.Bind();
 	msh.Bind();
-	// UseTransform(ag::Transform({ 0,0,0 }), ag::Transform({ 0,0,2 }), ag::Camera(90.f, 1280.0f / 720.0f, 0.001f, 10.0f));
+	UseTransform(ag::Transform({ 0,0,0 }, { 45, 20, 45 }, {0.3f, 0.3f, 0.3f}), ag::Transform({ 0,0,2 }), ag::Camera(90.f, 1280.0f / 720.0f, 0.001f, 10.0f));
 
 	CheckError();
 
-	glDrawArrays(GL_TRIANGLES, 0, 3);
 	glClear(GL_COLOR_BUFFER_BIT);
+	glDrawArrays(GL_TRIANGLES, 0, msh.indexCount);
 	/*
 	/// TODO: instanced rendering
 
@@ -151,8 +148,8 @@ void ag::GLRenderEngine::UseTransform(const ag::Transform& tr, const ag::Transfo
 	glm::mat4 view = ag::Utility::ViewMatrix(camTr);
 	glm::mat4 projection = ag::Utility::ProjectionMatrix(cam);
 	shader.Uniform("model", model, false);
-	shader.Uniform("view", view, false);
-	shader.Uniform("projection", projection, false);
+	// shader.Uniform("view", view, false);
+	// shader.Uniform("projection", projection, false);
 
 	//glm::mat4 modelView = ag::Utility::ViewMatrix(camTr) * ag::Utility::ModelMatrix(tr);
 
