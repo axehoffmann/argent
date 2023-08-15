@@ -1,7 +1,9 @@
 #include "GLTexture.h"
 
-ag::GLTexture::GLTexture(std::shared_ptr<ag::Texture> tex, ag::TextureType type, ag::TextureFormat format, bool mipmap)
+ag::GLTexture::GLTexture(uint32_t resourceID, ag::TextureType type, ag::TextureFormat format, bool mipmap)
 {
+	std::shared_ptr<ag::Texture> tex = ag::AssetManager::Fetch<ag::Texture>(resourceID).lock();
+	/// TODO: should get textureformat from source texture resource
 	texType = type;
 
 	glGenTextures(1, &handle);

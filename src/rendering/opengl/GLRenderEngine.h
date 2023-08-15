@@ -78,6 +78,7 @@ namespace ag
 		ag::GLScreen screen;
 		ag::GLShader shader;
 
+		ag::GLTexture tex;
 		ag::GLMesh msh;
 	};
 }

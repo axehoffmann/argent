@@ -2,6 +2,7 @@
 
 static std::string SHADER_PATH = "assets/default.shader";
 static std::string MESH_PATH = "assets/cube.obj";
+static std::string TEXTURE_PATH = "assets/pepe.png";
 
 
 void CheckError()
@@ -14,6 +15,7 @@ void CheckError()
 ag::GLRenderEngine::GLRenderEngine() : 
 	screen(),
 	shader(GLShader::FromResource(ag::AssetManager::Load<ag::Shader>(SHADER_PATH))),
+	tex(GLTexture(ag::AssetManager::Load<ag::Texture>(TEXTURE_PATH), ag::TextureType::Tex2D, TextureFormat::RGBA)),
 	msh(GLMesh::FromResource(ag::AssetManager::Load<ag::Mesh>(MESH_PATH)))
 {
 	
@@ -31,6 +33,8 @@ void ag::GLRenderEngine::Render(const ag::SceneGraph& graph)
 {
 	shader.Bind();
 	msh.Bind();
+	shader.Uniform<int>("albedo", 0);
+	tex.Bind(0);
 	UseTransform(ag::Transform({ 0,0,0 }, { 45, 20, 45 }, {0.3f, 0.3f, 0.3f}), ag::Transform({ 0,0,2 }), ag::Camera(90.f, 1280.0f / 720.0f, 0.001f, 10.0f));
 
 	CheckError();

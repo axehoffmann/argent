@@ -1,6 +1,7 @@
 #pragma once
 
 #include "resources/Texture.h"
+#include "resources/AssetManager.h"
 #include "rendering/opengl/GL.h"
 
 #include <memory>
@@ -21,7 +22,7 @@ namespace ag
 	{
 	public:
 
-		GLTexture(std::shared_ptr<ag::Texture> tex, ag::TextureType type, ag::TextureFormat format, bool mipmap = false);
+		GLTexture(uint32_t resourceID, ag::TextureType type, ag::TextureFormat format, bool mipmap = false);
 		~GLTexture();
 
 		void Bind(int slot);
