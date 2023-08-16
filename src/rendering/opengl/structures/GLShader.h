@@ -59,14 +59,14 @@ namespace ag
 		}
 
 		template <>
-		void Uniform(std::string name, const glm::vec3& val)
+		void Uniform(std::string name, glm::vec3 val)
 		{
 			int location = UniformLocation(name);
 			glUniform3f(location, val.x, val.y, val.z);
 		}
 
 		template <>
-		void Uniform(std::string name, const glm::vec4& val)
+		void Uniform(std::string name, glm::vec4 val)
 		{
 			int location = UniformLocation(name);
 			glUniform4f(location, val.x, val.y, val.z, val.w);

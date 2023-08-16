@@ -19,11 +19,8 @@ namespace ag
             //out = glm::rotate(out, rot.w, glm::vec3(rot.x, rot.y, rot.z));
             out = (tr.GetRotation().operator glm::mat<4, 4, glm::f32, glm::packed_highp>()) * out;
             out = glm::scale(out, tr.GetScale());
-            Log::Trace(sfmt("{} {} {} {}", rot.x, rot.y, rot.z, rot.w));
-
 
             return out;
-
         }
 
         static glm::mat4 ProjectionMatrix(const ag::Camera& camera)

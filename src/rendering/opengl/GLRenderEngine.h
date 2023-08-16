@@ -79,6 +79,10 @@ namespace ag
 		ag::GLShader shader;
 
 		ag::GLTexture tex;
+		ag::GLTexture tex2;
+		ag::GLTexture tex3;
+		ag::GLTexture tex4;
+
 		ag::GLMesh msh;
 	};
 }

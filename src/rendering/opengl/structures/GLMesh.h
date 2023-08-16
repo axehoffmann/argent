@@ -59,9 +59,9 @@ namespace ag
 		{
 			vao.InitialiseAttribute(0, 3, GL_FLOAT, false, 14 * sizeof(float), 0);
 			vao.InitialiseAttribute(1, 2, GL_FLOAT, false, 14 * sizeof(float), 3 * sizeof(float));
-			// vao.InitialiseAttribute(2, 3, GL_FLOAT, false, 14 * sizeof(float), 5 * sizeof(float));
-			// vao.InitialiseAttribute(3, 3, GL_FLOAT, false, 14 * sizeof(float), 8 * sizeof(float));
-			// vao.InitialiseAttribute(4, 3, GL_FLOAT, false, 14 * sizeof(float), 11 * sizeof(float));
+			vao.InitialiseAttribute(2, 3, GL_FLOAT, false, 14 * sizeof(float), 5 * sizeof(float));
+			vao.InitialiseAttribute(3, 3, GL_FLOAT, false, 14 * sizeof(float), 8 * sizeof(float));
+			vao.InitialiseAttribute(4, 3, GL_FLOAT, false, 14 * sizeof(float), 11 * sizeof(float));
 		}
 
 	private:
