@@ -19,6 +19,10 @@ namespace ag
 
 		size_t indexCount;
 
+		/**
+		* Generates a GLMesh from a set of vertices
+		* @param positions The set of vertices
+		*/
 		static GLMesh FromData(std::vector<glm::vec3> positions)
 		{
 			GLMesh mesh = GLMesh(BufferAccessType::StaticDraw);
@@ -31,6 +35,10 @@ namespace ag
 			return mesh;
 		}
 
+		/**
+		* Generates a GLMest from a Mesh resource
+		* @param resourceID The ID of the Mesh resource
+		*/
 		static GLMesh FromResource(uint32_t resourceID)
 		{
 			std::weak_ptr<ag::Mesh> wresource = ag::AssetManager::Fetch<ag::Mesh>(resourceID);
@@ -50,11 +58,17 @@ namespace ag
 			throw std::runtime_error("Couldn't get Mesh resource");
 		}
 
+		/**
+		* Binds the mesh, using it in the next draw call
+		*/
 		void Bind()
 		{
 			vao.Bind();
 		}
-
+		
+		/**
+		* Initialises the attributes of the mesh's VAO
+		*/
 		void InitialiseAttributes()
 		{
 			vao.InitialiseAttribute(0, 3, GL_FLOAT, false, 14 * sizeof(float), 0);
