@@ -9,7 +9,7 @@ namespace agt
 	template <typename value>
 	struct grid
 	{
-		grid(int x, int y) : width(x), height(y)
+		grid(int x, int y, float cell_size) : width(x), height(y), cellsize(cell_size)
 		{
 			data = new std::vector<node>*[x];
 			for (size_t i = 0; i < x; i++)
@@ -27,6 +27,15 @@ namespace agt
 			delete[] data;
 		}
 
+		std::vector<value> query_box(glm::vec2 p1, glm::vec2 p2)
+		{
+
+		}
+
+		std::vector<value> query_circle(glm::vec2 p, float r)
+		{
+
+		}
 
 	private:
 		struct node
@@ -38,5 +47,17 @@ namespace agt
 		std::vector<node>** data;
 		int width;
 		int height;
+		float cellsize;
+
+		bool in_bounds(glm::vec2 pos)
+		{
+			return (pos.x < 0 || pos.x > width ||
+				pos.y < 0 || pos.y > height)
+		}
+
+		glm::ivec2 to_grid_coords(glm::vec2 pos)
+		{
+			return { (int)(pos.x / cellsize), (int)(pos.y / cellsize) };
+		}
 	};
 }
