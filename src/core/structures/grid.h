@@ -29,7 +29,20 @@ namespace agt
 
 		std::vector<value> query_box(glm::vec2 p1, glm::vec2 p2)
 		{
+			glm::ivec2 p1_grid = to_grid_coords(p1);
+			glm::ivec2 p2_grid = to_grid_coords(p2);
+			if (p1_grid.x > p2_grid.x) std::swap(p1_grid.x, p2_grid.x);
+			if (p1_grid.y > p2_grid.y) std::swap(p1_grid.y, p2_grid.y);
 
+			std::vector<value> out;
+			for (size_t x = p1_grid.x; x < p2_grid.x; x++)
+			{
+				for (size_t y = p1_grid.y; y < p2_grid.y; y++)
+				{
+					out.insert(std::end(out), std::begin(data[x][y]), std::end(data[x][y]));
+				}
+			}
+			return out;
 		}
 
 		std::vector<value> query_circle(glm::vec2 p, float r)
@@ -57,7 +70,10 @@ namespace agt
 
 		glm::ivec2 to_grid_coords(glm::vec2 pos)
 		{
-			return { (int)(pos.x / cellsize), (int)(pos.y / cellsize) };
+			glm::ivec2 out = { (int)(pos.x / cellsize), (int)(pos.y / cellsize) };
+			out.x = out.x < 0 ? 0 : (out.x > width ? width : out.x);
+			out.y = out.y < 0 ? 0 : (out.y > height ? height : out.y);
+			return out;
 		}
 	};
 }
