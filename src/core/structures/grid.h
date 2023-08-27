@@ -3,6 +3,8 @@
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
+#include <algorithm>
+#include <iterator>
 
 namespace agt
 {
@@ -34,20 +36,15 @@ namespace agt
 			if (p1_grid.x > p2_grid.x) std::swap(p1_grid.x, p2_grid.x);
 			if (p1_grid.y > p2_grid.y) std::swap(p1_grid.y, p2_grid.y);
 
-			std::vector<value> out;
-			for (size_t x = p1_grid.x; x < p2_grid.x; x++)
-			{
-				for (size_t y = p1_grid.y; y < p2_grid.y; y++)
-				{
-					out.insert(std::end(out), std::begin(data[x][y]), std::end(data[x][y]));
-				}
-			}
-			return out;
+			return query_box_filtered(p1_grid, p2_grid, [](node x) { return true; })
 		}
 
 		std::vector<value> query_circle(glm::vec2 p, float r)
 		{
+			glm::ivec2 p1_grid = to_grid_coords({ p.x - r, p.y - r });
+			glm::ivec2 p2_grid = to_grid_coords({ p.x + r, p.y + r });
 
+			return query_box_filtered(p1_grid, p2_grid, [](node x) { return glm::length(x.pos - p) <= r })
 		}
 
 	private:
@@ -56,6 +53,24 @@ namespace agt
 			glm::vec2 pos;
 			value val;
 		};
+
+		std::vector<value> query_box_filtered(glm::ivec2 p1_grid, glm::ivec2 p2_grid, bool(*predicate)(node))
+		{
+			std::vector<value> out;
+			for (size_t x = p1_grid.x; x < p2_grid.x; x++)
+			{
+				for (size_t y = p1_grid.y; y < p2_grid.y; y++)
+				{
+					/// TODO: can this be simplified?
+					for (size_t i = 0; i < data[x][y].size(); i++)
+					{
+						if (predicate(data[x][y][i]))
+							out.push_back(data[x][y][i].val);
+					}
+				}
+			}
+			return out;
+		}
 
 		std::vector<node>** data;
 		int width;
