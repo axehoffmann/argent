@@ -47,6 +47,12 @@ namespace agt
 			return query_box_filtered(p1_grid, p2_grid, [](node x) { return glm::length(x.pos - p) <= r })
 		}
 
+		void insert(value val, glm::vec2 pos)
+		{
+			glm::ivec2 pos = to_grid_coords(pos);
+			data[pos.x][pos.y].push_back(node{ pos, val });
+		}
+
 	private:
 		struct node
 		{
