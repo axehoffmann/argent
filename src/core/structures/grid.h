@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <iterator>
 
+#include <functional>
+
 namespace agt
 {
 	template <typename value>
@@ -29,22 +31,22 @@ namespace agt
 			delete[] data;
 		}
 
-		std::vector<value> query_box(glm::vec2 p1, glm::vec2 p2)
+		std::vector<value> query_box(glm::vec2 p1, glm::vec2 p2, std::function<bool(grid<value>::node)> predicate = [](node x) -> bool { return true; })
 		{
 			glm::ivec2 p1_grid = to_grid_coords(p1);
 			glm::ivec2 p2_grid = to_grid_coords(p2);
 			if (p1_grid.x > p2_grid.x) std::swap(p1_grid.x, p2_grid.x);
 			if (p1_grid.y > p2_grid.y) std::swap(p1_grid.y, p2_grid.y);
 
-			return query_box_filtered(p1_grid, p2_grid, [](node x) { return true; })
+			return query_box_filtered(p1_grid, p2_grid, predicate)
 		}
 
-		std::vector<value> query_circle(glm::vec2 p, float r)
+		std::vector<value> query_circle(glm::vec2 p, float r, std::function<bool(grid<value>::node)> predicate = [](node x) { return true; })
 		{
 			glm::ivec2 p1_grid = to_grid_coords({ p.x - r, p.y - r });
 			glm::ivec2 p2_grid = to_grid_coords({ p.x + r, p.y + r });
 
-			return query_box_filtered(p1_grid, p2_grid, [](node x) { return glm::length(x.pos - p) <= r })
+			return query_box_filtered(p1_grid, p2_grid, [=](node x) { return (glm::length(x.pos - p) <= r) && predicate(x) })
 		}
 
 		void insert(value val, glm::vec2 pos)
@@ -60,7 +62,7 @@ namespace agt
 			value val;
 		};
 
-		std::vector<value> query_box_filtered(glm::ivec2 p1_grid, glm::ivec2 p2_grid, bool(*predicate)(node))
+		std::vector<value> query_box_filtered(glm::ivec2 p1_grid, glm::ivec2 p2_grid, auto predicate)
 		{
 			std::vector<value> out;
 			for (size_t x = p1_grid.x; x < p2_grid.x; x++)
