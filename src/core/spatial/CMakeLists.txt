@@ -1,1 +1,1 @@
-add_library(spatial "BoundingBox.h" "BoundingBox.cpp" "Grid.h")
+add_library(spatial "BoundingBox.h" "BoundingBox.cpp" )

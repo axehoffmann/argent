@@ -13,8 +13,6 @@ namespace agt
 	template <typename value>
 	struct grid
 	{
-		using predicate_ptr = bool(*)(value, glm::vec2);
-
 		grid(int x, int y, float cell_size) : width(x), height(y), cellsize(cell_size)
 		{
 			data = new std::vector<node>*[x];
@@ -33,43 +31,54 @@ namespace agt
 			delete[] data;
 		}
 
-		std::vector<value> query_box(glm::vec2 p1, glm::vec2 p2, predicate_ptr predicate = static_cast<predicate_ptr>(default_predicate))
+		template <typename Predicate = decltype(default_predicate)>
+		std::vector<value> query_box(glm::vec2 p1, glm::vec2 p2, Predicate predicate = default_predicate)
 		{
+			if (p1.x > p2.x) std::swap(p1.x, p2.x);
+			if (p1.y > p2.y) std::swap(p1.y, p2.y);
 			glm::ivec2 p1_grid = to_grid_coords(p1);
 			glm::ivec2 p2_grid = to_grid_coords(p2);
-			if (p1_grid.x > p2_grid.x) std::swap(p1_grid.x, p2_grid.x);
-			if (p1_grid.y > p2_grid.y) std::swap(p1_grid.y, p2_grid.y);
 
-			return query_box_filtered(p1_grid, p2_grid, predicate);
+			return query_box_filtered(p1_grid, p2_grid, 
+				[=](node x) 
+				{ 
+					return (x.pos.x >= p1.x && x.pos.y >= p1.y) 
+						&& (x.pos.x <= p2.x && x.pos.y <= p2.y) 
+						&& predicate(x); 
+				}
+			);
 		}
 
-		std::vector<value> query_circle(glm::vec2 p, float r, predicate_ptr predicate = static_cast<predicate_ptr>(default_predicate))
+		template <typename Predicate = decltype(default_predicate)>
+		std::vector<value> query_circle(glm::vec2 p, float r, Predicate predicate = default_predicate)
 		{
 			glm::ivec2 p1_grid = to_grid_coords({ p.x - r, p.y - r });
 			glm::ivec2 p2_grid = to_grid_coords({ p.x + r, p.y + r });
 
-			return query_box_filtered(p1_grid, p2_grid, [=](value v, glm::vec2 pos) { return (glm::length(pos - p) <= r) && predicate(v, pos); });
+			return query_box_filtered(p1_grid, p2_grid, 
+				[=](node x)
+				{
+					return (glm::length(x.pos - p) <= r) && predicate(x); 
+				}
+			);
 		}
 
 		void insert(value val, glm::vec2 pos)
 		{
-			glm::ivec2 pos = to_grid_coords(pos);
-			data[pos.x][pos.y].push_back(node{ pos, val }); 
+			glm::ivec2 pos_grid = to_grid_coords(pos);
+			data[pos_grid.x][pos_grid.y].push_back(node{ pos, val });
 		}
 
 	private:
-		bool default_predicate(value val, glm::vec2 pos)
-		{
-			return true;
-		}
-
 		struct node
 		{
 			glm::vec2 pos;
 			value val;
 		};
 
-		std::vector<value> query_box_filtered(glm::ivec2 p1_grid, glm::ivec2 p2_grid, std::function<bool(value, glm::vec2)> predicate)
+		static inline const auto default_predicate = [](typename grid<value>::node x) -> bool { return true; };
+
+		std::vector<value> query_box_filtered(glm::ivec2 p1_grid, glm::ivec2 p2_grid, auto predicate)
 		{
 			std::vector<value> out;
 			for (size_t x = p1_grid.x; x < p2_grid.x; x++)

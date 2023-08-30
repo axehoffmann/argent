@@ -100,8 +100,17 @@ void agtest::Test::Run()
 	PrintReportLine(successTally, failTally, name);
 	for (std::string& fm : failMsgs)
 	{
-		std::cout << fm << "\n";
+		csw::print({
+				{ csw::Colour::BrightWhite, " (" },
+				{ csw::Colour::BrightRed, "x" },
+				{ csw::Colour::BrightWhite, ") " },
+				{ csw::Colour::White, fm },
+
+
+			});
 	}
+	if (failMsgs.size() > 0)
+		std::cout << "\n";
 }
 
 agtest::Case::CaseRegister::CaseRegister(const std::string& name, const std::string& suite, void(*f)(agtest::Case*))
