@@ -37,6 +37,17 @@ namespace ag
             throw std::exception("NOT IMPLEMENTED");
         }
 
+        void SpawnEntity(const std::vector<ComponentTypeID>& set, const std::vector<Component>& components)
+        {
+            auto arch = FindArchetype(set);
+            arch->SpawnEntity(components);
+        }
+
+        void SpawnEntity(std::shared_ptr<ArchetypeCollection> arch, const std::vector<Component>& components)
+        {
+            arch->SpawnEntity(components);
+        }
+
         /**
         * Adds an archetype to the world collection.
         * @param arch The archetype to add. 

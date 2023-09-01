@@ -12,17 +12,23 @@ namespace ag
 	class LogImpl
 	{
 	private:
-		std::vector<csw::colour_text> buffer;
+		static std::vector<csw::colour_text> buffer;
 		static const std::string repository_name;
+
 	public:
+		static inline bool buffered = true;
 		static void Write(const std::vector<csw::ColourSegment>& text, bool endl = true)
 		{
+			buffer.push_back(text);
 
-			std::cout << csw::ColourText(text);
+			if (!buffered)
+				Flush();
+			/*
 			if (endl)
 				std::cout << std::endl;
 			else
 				std::cout << std::flush;
+			*/
 		}
 
 		static std::string cut_fluff_directory(const std::string& path)
@@ -32,6 +38,20 @@ namespace ag
 				return path;
 
 			return path.substr(index + repository_name.size(), path.size());
+		}
+
+		static void Flush()
+		{
+			for (auto& text : buffer)
+			{
+				std::cout << csw::ColourText(text);
+			}
+			buffer.clear();
+		}
+
+		static void Clear()
+		{
+			buffer.clear();
 		}
 	};
 
@@ -82,6 +102,21 @@ namespace ag
 			const std::source_location loc = std::source_location::current())
 		{
 			LogMessage(message, "ERROR", csw::Colour::BrightRed, loc);
+		}
+
+		static void Flush()
+		{
+			LogImpl::Flush();
+		}
+
+		static void ClearBuffer()
+		{
+			LogImpl::Clear();
+		}
+
+		static void SetBuffered(bool b)
+		{
+			LogImpl::buffered = b;
 		}
 		/*
 		class Progress

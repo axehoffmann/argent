@@ -1,5 +1,6 @@
 #include "TestFramework.h"
 #include "debug/log/ConsoleWriter.h"
+#include "debug/log/Log.h"
 
 using namespace agtest;
 
@@ -74,12 +75,21 @@ void agtest::Test::Run()
 	std::vector<CaseResult> results;
 	results.reserve(cases.size());
 
+	ag::Log::SetBuffered(true);
+
 	for (Case& c : cases)
 	{
 		if (init) init();
 		results.push_back(c.Execute());
 		if (cleanup) cleanup();
+
+		if (results.back().failures.size() > 0)
+			ag::Log::Flush();
+		else
+			ag::Log::ClearBuffer();
 	}
+
+	ag::Log::SetBuffered(false);
 
 	int successTally = 0, failTally = 0;
 	std::vector<std::string> failMsgs;
