@@ -24,6 +24,7 @@ namespace ordinal_set_test
 		stc.sort();
 
 		ag_expect(stc.subset_of(dyn), "Expected stc to be a subset of dyn");
+		ag_expect(!dyn.subset_of(stc), "Expected dyn to not be a subset of stc");
 
 		stc.insert(1);
 		stc.sort();

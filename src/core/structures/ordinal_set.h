@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <memory>
 
+#include <iostream>
+
 namespace agt
 {
 	template <typename T>
@@ -21,8 +23,6 @@ namespace agt
 
 			int i = 0, j = 0;
 
-			/// TODO: reevaluate when not about to fall asleep
-			/// We should be able to make an early exit in some cases
 			while (i < size() && j < other.size())
 			{
 				if (at(i) == other.at(j))
@@ -35,12 +35,12 @@ namespace agt
 				j++;
 			}
 			
-			return i + 1 < size();
+			return j <= size();
 		}
 
 		void sort()
 		{
-			std::sort(begin_p, end_p);
+			std::sort(begin_p, begin_p + count);
 		}
 
 		void insert(const T& value)
