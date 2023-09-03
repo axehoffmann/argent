@@ -2,6 +2,7 @@
 
 #include "ECS.h"
 #include "ArchetypeCollection.h"
+#include "Entity.h"
 
 namespace ag
 {
@@ -14,32 +15,26 @@ namespace ag
 			archetype(ag::ArchetypeCollection::GetArchetypeFromEntityID(entityID)),
 			index(-1) {}
 
-		bool Refresh()
-		{
+        /**
+        * Returns whether this entity still exists
+        */
+        bool Exists()
+        {
             if (archetype->GetEntityInfo(index) == id)
                 return true;
 
-			index = archetype->GetIndexByID(id);
-			return index >= 0 && index < archetype->GetEntityCount();
-		}
-
-        /**
-        * Get a reference to a component from this entity.
-        * @tparam The type of component to get.
-        * @return A reference to the selected component
-        */
-        template <typename C>
-        C& Get()
-        {
-            return archetype->GetComponent<C>(index);
+            index = archetype->GetIndexByID(id);
+            return index >= 0 && index < archetype->GetEntityCount();
         }
 
-        /**
-        * Get a copy of the info struct of the entity.
-        */
-        EntityInfo Info() const
+        template <typename functor>
+        bool Operate(functor f)
         {
-            return archetype->GetEntityInfo(index);
+            if (!Exists())
+                return false;
+
+            f(Entity(archetype, index));
+            return true;
         }
 
         /**
@@ -47,7 +42,8 @@ namespace ag
         */
         void Destroy()
         {
-            archetype->DestroyEntity(index);
+            if (Exists())
+                archetype->DestroyEntity(index);
         }
 
         EntityID GetID()

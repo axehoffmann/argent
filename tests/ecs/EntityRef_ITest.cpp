@@ -41,17 +41,17 @@ namespace entityref_test
         }
 
         // Expect that no matter what we delete, EntityRef will always point to the correct entity
-        // Once we delete precious, we should never enter a ag::EntityRef::Refresh() clause.
+        // Once we delete precious, we should never enter a ag::EntityRef::Operate() clause.
         std::array<int, 15> indices = { 0, 1, 2, 10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         for (int index : indices)
         {
             collection1->DestroyEntity(index);
             collection1->ResolveBuffers();
 
-            if (precious.Refresh())
+            precious.Operate([&](auto en)
             {
-                ag_expect(precious.Get<ComponentA>().value == 420, "Expected ComponentA::value of 420, instead found {}", precious.Get<ComponentA>().value);
-            }
+                ag_expect(en.Get<ComponentA>().value == 420, "Expected ComponentA::value of 420, instead found {}", en.Get<ComponentA>().value);
+            });
         }
     }
 }

@@ -3,6 +3,7 @@
 #include "ECSTypes.h"
 #include "World.h"
 #include "ArchetypeCollection.h"
+#include "Entity.h"
 
 #include <vector>
 #include <tuple>
@@ -15,6 +16,7 @@
 namespace ag
 {
     class World;
+
     class IQuery
     {
     public:
@@ -75,9 +77,9 @@ namespace ag
             friend class Query;
 
         public:
-            Query::Entity operator*()
+            StaticEntity<Cs...> operator*()
             {
-                return Query::Entity(currentArchetype.get(), index);
+                return StaticEntity<Cs...>(currentArchetype.get(), index);
             }
 
             bool operator!=(const Iterator& other) const
@@ -119,68 +121,18 @@ namespace ag
             size_t currentArchetypeSize; // We cache this so we don't go through 3 function calls to get the archetype's size every time we iterate.
             Query<Cs...>* query;
 
-            template<typename... Cs> using TempEntityPointer = Query<Cs...>::Entity;
+            template<typename... Cs> using TempEntityPointer = StaticEntity<Cs...>;
 
         };
-        
-        /**
-        * An indexer object used to conveniently access the properties of entities in a query.
-        */
-        struct Entity
-        {
-            friend class Query::Iterator;
-            friend class Query;
 
-            /**
-            * Get a reference to a component from this entity.
-            * @tparam The type of component to get. Must be a type in the query.
-            * @return A reference to the selected component
-            */
-            template <typename C>
-            C& Get()
-            {
-                // Component we are getting must be one of the types from the Query this entity is from
-                static_assert((std::is_same_v<C, Cs> || ...));
-                return archetype->GetComponent<C>(index);
-            }
-
-            /**
-            * Get a copy of the info struct of the entity.
-            */
-            EntityInfo Info() const
-            {
-                return archetype->GetEntityInfo(index);
-            }
-
-            /**
-            * Mark the entity to be destroyed next update.
-            */
-            void Destroy() 
-            {
-                archetype->DestroyEntity(index);
-            }
-
-            // This should not be copyable and cannot persist outside of a Query iteration
-            // because after entities are added or deleted this may no longer point to
-            // the same entity.
-            Query::Entity(const Query::Entity&) = delete;
-            Query::Entity& operator=(const Query::Entity&) = delete;
-
-        private:
-            Entity(ag::ArchetypeCollection* a, size_t i) : archetype(a), index(i) {}
-
-            ag::ArchetypeCollection* archetype;
-            size_t index;
-        };
-
-        std::optional<Entity> ByID(EntityID id)
+        std::optional<StaticEntity<Cs...>> ByID(EntityID id)
         {
             ag::ArchetypeCollection* archetype = ag::ArchetypeCollection::GetArchetypeFromEntityID(id);
             size_t index = archetype->GetIndexByID(id);
             if (index >= 0)
-                return Entity(archetype, index);
+                return StaticEntity(archetype, index);
 
-            return std::optional<Entity>();
+            return std::optional<StaticEntity<Cs...>>();
         }
 
         /**
@@ -188,12 +140,12 @@ namespace ag
         * @param i The index of the Entity to get within this Query's bounds
         * @return An entity indexer
         */
-        Entity at(size_t i) const
+        StaticEntity<Cs...> at(size_t i) const
         {
             // We won't bounds check as that is done in FindArchetypeAndLocalIndex and within the Archetype itself
             auto[archetype, localIndex] = FindArchetypeAndLocalIndex(i);
 
-            return Entity(archetype.get(), localIndex);
+            return StaticEntity<Cs...>(archetype.get(), localIndex);
         }
 
         Iterator begin()
