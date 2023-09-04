@@ -118,11 +118,12 @@ namespace archetype_test {
 
         ag::EntityRef entityA(lastEntity);
 
+        ag_expect(entityA.GetID() == lastEntity, "Expected entity ID to be {}, instead found {}", lastEntity, entityA.GetID());
+
         bool operated = false;
-        entityA.Operate([&](auto en) 
+        entityA.Operate([&](ag::Entity en) 
         {
             operated = true;
-            // ag_expect(en.GetID() == lastEntity, "Expected entity ID to be {}, instead found {}", lastEntity, en.GetID());
 
             ag_expect(en.Get<ComponentA>().value == 104, "Expected entity's A value to be 104, instead found {}", en.Get<ComponentA>().value);
             ag_expect(en.Get<ComponentB>().partner == 4, "Expected entity's B value to be 4, instead found {}", en.Get<ComponentB>().partner);

@@ -73,4 +73,25 @@ namespace grid_test
 
 		gr.insert(1, { 2.0f, 2.5f });
 	}
+
+	$Case(circle_query_with_predicate, grid)
+	{
+		agt::grid<int> gr(5, 5, 1);
+
+		size_t count;
+
+		// Miss
+		gr.insert(1, { 1.8f, 1.2f });
+		// 5 in zone, 3 expected Hits
+		gr.insert(11, { 0.5f, 2.5f });
+		gr.insert(12, { 1.0f, 1.5f });
+		gr.insert(11, { 0.5f, 2.0f });
+		gr.insert(5, { 1.2f, 1.0f });
+		gr.insert(6, { 0.8f, 2.0f });
+		count = gr.query_circle(glm::vec2{ 1.0f, 2.0f }, 1,
+			[](auto x) { return x.val > 10; })
+			.size();
+
+		ag_expect(count == 3, "Expected 3 results querying with a predicate an occupied grid, found {}", count);
+	}
 }
