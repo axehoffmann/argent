@@ -125,6 +125,14 @@ namespace ag
 		*/
 		void DestroyEntityByID(EntityID id);
 
+		/**
+		 * Determines if this Archetype contains a component of the matching type. 
+		*/
+		bool HasComponent(ComponentTypeID ctype)
+		{
+			return std::find(ComponentTypes.begin(), ComponentTypes.end(), ctype) != ComponentTypes.end();
+		}
+
 		ArchetypeCollection(ComponentSet components);
 		ArchetypeCollection(ArchetypeCollection& other) = delete;
 		~ArchetypeCollection();

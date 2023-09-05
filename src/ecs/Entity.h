@@ -51,6 +51,12 @@ namespace ag
             return archetype->GetComponent<C>(index);
         }
 
+        template <typename C>
+        bool HasComponent()
+        {
+            return archetype->HasComponent(ag::ComponentInfo::GetID<C>());
+        }
+
         Entity(ag::ArchetypeCollection* a, size_t i) : IEntity(a, i) {}
     };
 
