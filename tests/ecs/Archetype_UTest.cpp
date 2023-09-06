@@ -121,7 +121,7 @@ namespace archetype_test {
         ag_expect(entityA.GetID() == lastEntity, "Expected entity ID to be {}, instead found {}", lastEntity, entityA.GetID());
 
         bool operated = false;
-        entityA.Operate([&](ag::Entity en) 
+        entityA.Operate<ComponentA, ComponentB>([&](auto en) 
         {
             operated = true;
 

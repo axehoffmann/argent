@@ -27,13 +27,16 @@ namespace ag
             return index >= 0 && index < archetype->GetEntityCount();
         }
 
-        template <typename functor>
-        bool Operate(functor f)
+        template <typename... Cs>
+        bool Operate(auto f)
         {
             if (!Exists())
                 return false;
 
-            f(Entity(archetype, index));
+            if (!(archetype->HasComponent(ag::ComponentInfo::GetID<Cs>()) && ...))
+                return false;
+
+            f(Entity<Cs...>(archetype, index));
             return true;
         }
 

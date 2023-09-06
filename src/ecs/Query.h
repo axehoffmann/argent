@@ -77,9 +77,9 @@ namespace ag
             friend class Query;
 
         public:
-            StaticEntity<Cs...> operator*()
+            Entity<Cs...> operator*()
             {
-                return StaticEntity<Cs...>(currentArchetype.get(), index);
+                return Entity<Cs...>(currentArchetype.get(), index);
             }
 
             bool operator!=(const Iterator& other) const
@@ -121,18 +121,18 @@ namespace ag
             size_t currentArchetypeSize; // We cache this so we don't go through 3 function calls to get the archetype's size every time we iterate.
             Query<Cs...>* query;
 
-            template<typename... Cs> using TempEntityPointer = StaticEntity<Cs...>;
+            template<typename... Cs> using TempEntityPointer = Entity<Cs...>;
 
         };
 
-        std::optional<StaticEntity<Cs...>> ByID(EntityID id)
+        std::optional<Entity<Cs...>> ByID(EntityID id)
         {
             ag::ArchetypeCollection* archetype = ag::ArchetypeCollection::GetArchetypeFromEntityID(id);
             size_t index = archetype->GetIndexByID(id);
             if (index >= 0)
-                return StaticEntity(archetype, index);
+                return Entity(archetype, index);
 
-            return std::optional<StaticEntity<Cs...>>();
+            return std::optional<Entity<Cs...>>();
         }
 
         /**
@@ -140,12 +140,12 @@ namespace ag
         * @param i The index of the Entity to get within this Query's bounds
         * @return An entity indexer
         */
-        StaticEntity<Cs...> at(size_t i) const
+        Entity<Cs...> at(size_t i) const
         {
             // We won't bounds check as that is done in FindArchetypeAndLocalIndex and within the Archetype itself
             auto[archetype, localIndex] = FindArchetypeAndLocalIndex(i);
 
-            return StaticEntity<Cs...>(archetype.get(), localIndex);
+            return Entity<Cs...>(archetype.get(), localIndex);
         }
 
         Iterator begin()

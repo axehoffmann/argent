@@ -48,8 +48,11 @@ namespace entityref_test
             collection1->DestroyEntity(index);
             collection1->ResolveBuffers();
 
-            precious.Operate([&](ag::Entity en)
+            precious.Operate<ComponentA>([&](auto en)
             {
+                ag_expect(en.HasComponent<ComponentA>(), "Expected entity to have ComponentA");
+                ag_expect(en.HasComponent<int>(), "Expected entity to not have int component");
+
                 ag_expect(en.Get<ComponentA>().value == 420, "Expected ComponentA::value of 420, instead found {}", en.Get<ComponentA>().value);
             });
         }

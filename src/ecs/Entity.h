@@ -22,6 +22,12 @@ namespace ag
             archetype->DestroyEntity(index);
         }
 
+        template <typename C>
+        bool HasComponent()
+        {
+            return archetype->HasComponent(ag::ComponentInfo::GetID<C>());
+        }
+
         // This should not be copyable and cannot persist outside of an operation/transaction
         // because after entities are added or deleted this may no longer point to
         // the same entity.
@@ -34,34 +40,12 @@ namespace ag
         ag::ArchetypeCollection* archetype;
         size_t index;
     };
-    /**
+
+   /**
     * An indexer object used to conveniently access the properties of entities in a query.
     */
-    struct Entity : IEntity
-    {
-        /**
-        * Get a reference to a component from this entity.
-        * @tparam The type of component to get. Must be a type in the query.
-        * @return A reference to the selected component
-        */
-        template <typename C>
-        C& Get()
-        {
-            /// TODO: implement safety check
-            return archetype->GetComponent<C>(index);
-        }
-
-        template <typename C>
-        bool HasComponent()
-        {
-            return archetype->HasComponent(ag::ComponentInfo::GetID<C>());
-        }
-
-        Entity(ag::ArchetypeCollection* a, size_t i) : IEntity(a, i) {}
-    };
-
     template <typename... Cs>
-    struct StaticEntity : IEntity
+    struct Entity : IEntity
     {
         /**
         * Get a reference to a component from this entity.
@@ -76,6 +60,6 @@ namespace ag
             return archetype->GetComponent<C>(index);
         }
 
-        StaticEntity(ag::ArchetypeCollection* a, size_t i) : IEntity(a, i) {}
+        Entity(ag::ArchetypeCollection* a, size_t i) : IEntity(a, i) {}
     };
 }
