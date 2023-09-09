@@ -44,7 +44,7 @@ namespace ag
 		{
 			for (auto& text : buffer)
 			{
-				std::cout << csw::ColourText(text);
+				std::cout << csw::ColourText(text) << "\n";
 			}
 			buffer.clear();
 		}
@@ -75,7 +75,7 @@ namespace ag
 
 			std::string filename = LogImpl::cut_fluff_directory(loc.file_name());
 			LogImpl::Write({
-					{ csw::Colour::BrightWhite, "["							},
+					{ csw::Colour::BrightWhite, " ["						},
 					{ logTypeColour,			logType						},
 					{ csw::Colour::BrightWhite, "] "						},
 					{ csw::Colour::BrightWhite, filename					},

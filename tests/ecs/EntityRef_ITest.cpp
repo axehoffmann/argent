@@ -16,6 +16,8 @@ namespace entityref_test
         }
     };
 
+    struct Corona {};
+
 	$ITest(entity_ref, {});
 
     $Init(entity_ref)
@@ -51,7 +53,7 @@ namespace entityref_test
             precious.Operate<ComponentA>([&](auto en)
             {
                 ag_expect(en.HasComponent<ComponentA>(), "Expected entity to have ComponentA");
-                ag_expect(en.HasComponent<int>(), "Expected entity to not have int component");
+                ag_expect(en.HasComponent<Corona>(), "Expected entity to not have Corona component");
 
                 ag_expect(en.Get<ComponentA>().value == 420, "Expected ComponentA::value of 420, instead found {}", en.Get<ComponentA>().value);
             });
