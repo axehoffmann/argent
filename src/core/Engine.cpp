@@ -55,7 +55,7 @@ void ag::Engine::Run()
 	}
 }
 
-void ag::Engine::RegisterSystem(ag::System* s)
+void ag::Engine::RegisterSystem(ag::ISystem* s)
 {
 	systems.push_back(s);
 	s->SetWorld(std::shared_ptr<ag::World>(ecsWorld));

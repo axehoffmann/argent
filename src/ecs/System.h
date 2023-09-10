@@ -6,7 +6,7 @@
 
 namespace ag
 {
-	class System
+	class ISystem
 	{
 	public:
 		void SetWorld(std::shared_ptr<ag::World> w);
@@ -29,7 +29,7 @@ namespace ag
 
 
 
-		using factory_func = std::unique_ptr<ag::System>();
+		using factory_func = std::unique_ptr<ag::ISystem>();
 
 		/**
 		* Static registry of system factory functions.
@@ -54,10 +54,10 @@ namespace ag
 		public:
 			SystemRegister()
 			{
-				ag::System::Register(Create);
+				ag::ISystem::Register(Create);
 			}
 
-			static std::unique_ptr<ag::System> Create()
+			static std::unique_ptr<ag::ISystem> Create()
 			{
 				return std::make_unique<T>();
 			}
@@ -71,5 +71,11 @@ namespace ag
 		}
 
 		std::shared_ptr<ag::World> world;
+	};
+
+	template <class SysType>
+	class System : public ISystem
+	{
+		inline static ag::ISystem::SystemRegister<SysType> _reg = ag::ISystem::SystemRegister<SysType>();
 	};
 }

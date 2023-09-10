@@ -29,7 +29,7 @@ namespace ag
 		/**
 		* Registers a system to the ECS world.
 		*/
-		void RegisterSystem(ag::System* s);
+		void RegisterSystem(ag::ISystem* s);
 
 		void End();
 
@@ -42,7 +42,7 @@ namespace ag
 		std::shared_ptr<ag::SceneBuilder> sceneBuilder;
 		std::shared_ptr<ag::World> ecsWorld;
 
-		std::vector<ag::System*> systems;
+		std::vector<ag::ISystem*> systems;
 
 		bool active;
 	};
