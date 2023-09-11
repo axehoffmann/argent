@@ -137,13 +137,6 @@ namespace ag
 		ArchetypeCollection(ArchetypeCollection& other) = delete;
 		~ArchetypeCollection();
 
-		/**
-		 * Finds the collection an entity belongs to by its ID.
-		 * @param id The ID of the entity to find.
-		 * @return A pointer to the collection the entity belongs to, or nullptr if a collection could not be found.
-		*/
-		static ArchetypeCollection* GetArchetypeFromEntityID(EntityID id);
-
 		ComponentSet GetComponentSet() const;
 
 	private:
@@ -197,10 +190,6 @@ namespace ag
 
 		void AddComponent(byte* bytes, int i, int n, std::vector<ComponentArray>& target);
 
-		static void RegisterArchetype(ArchetypeCollection* archetype);
-		static void DeregisterArchetype(ArchetypeID id);
-
-		static std::unordered_map<ArchetypeID, ArchetypeCollection*> archetypes;
 		static std::atomic<ArchetypeID> nextArchetypeID;
 	};
 }

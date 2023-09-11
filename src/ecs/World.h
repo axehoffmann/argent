@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
+#include <unordered_map>
 
 namespace ag
 {
@@ -62,10 +63,40 @@ namespace ag
             queries.erase(std::remove(queries.begin(), queries.end(), query), queries.end());
         }
 
+
+
         ~World();
+
+
+        /**
+         * Finds the collection an entity belongs to by its ID.
+         * @param id The ID of the entity to find.
+         * @return A pointer to the collection the entity belongs to, or nullptr if a collection could not be found.
+         */
+        ag::ArchetypeCollection* GetArchetypeFromEntityID(EntityID id) 
+        {
+            ArchetypeID archID = id >> EPARTSIZE;
+
+            if (archetypeIDMap.find(archID) == archetypeIDMap.end())
+                return nullptr;
+
+            return archetypeIDMap[archID];
+        }
 
     private:
         std::vector<std::shared_ptr<ag::ArchetypeCollection>> archetypes;
+        std::unordered_map<ArchetypeID, ArchetypeCollection*> archetypeIDMap;
         std::vector<ag::IQuery*> queries;
+
+        void RegisterArchetype(ArchetypeCollection* archetype)
+        {
+            archetypeIDMap.insert(std::pair<ArchetypeID, ArchetypeCollection*>(archetype->GetID(), archetype));
+        }
+
+        void DeregisterArchetype(ArchetypeID id)
+        {
+            if (archetypeIDMap.find(id) != archetypeIDMap.end())
+                archetypeIDMap.erase(id);
+        }
     };
 }

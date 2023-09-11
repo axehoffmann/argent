@@ -1,12 +1,10 @@
 #include "ArchetypeCollection.h"
 
-std::unordered_map<ArchetypeID, ag::ArchetypeCollection*> ag::ArchetypeCollection::archetypes{};
 std::atomic<ArchetypeID> ag::ArchetypeCollection::nextArchetypeID(0);
 
 ag::ArchetypeCollection::ArchetypeCollection(ComponentSet components) : ID(++nextArchetypeID)
 {
 	std::sort(components.begin(), components.end());
-	RegisterArchetype(this);
 	// Initialises the first entity's ID by mapping the archetype ID into the upper bits
 	NextEntityID = ((EntityID)ID) << EPARTSIZE;
 
@@ -18,7 +16,6 @@ ag::ArchetypeCollection::ArchetypeCollection(ComponentSet components) : ID(++nex
 
 ag::ArchetypeCollection::~ArchetypeCollection()
 {
-	// DeregisterArchetype(ID);
 }
 
 void ag::ArchetypeCollection::AddComponent(byte* bytes, int i, int n, std::vector<ComponentArray>& target)
@@ -90,27 +87,6 @@ EntityID ag::ArchetypeCollection::GetNextID()
 ComponentSet ag::ArchetypeCollection::GetComponentSet() const
 {
 	return ComponentTypes;
-}
-
-void ag::ArchetypeCollection::RegisterArchetype(ArchetypeCollection* archetype)
-{
-	archetypes.insert(std::pair<ArchetypeID, ArchetypeCollection*>(archetype->GetID(), archetype));
-}
-
-void ag::ArchetypeCollection::DeregisterArchetype(ArchetypeID id)
-{
-	if (archetypes.find(id) != archetypes.end())
-		archetypes.erase(id);
-}
-
-ag::ArchetypeCollection* ag::ArchetypeCollection::GetArchetypeFromEntityID(EntityID id)
-{
-	ArchetypeID archID = id >> EPARTSIZE;
-
-	if (archetypes.find(archID) == archetypes.end())
-		return nullptr;
-		
-	return archetypes[archID];
 }
 
 size_t ag::ArchetypeCollection::GetIndexByID(EntityID id) const

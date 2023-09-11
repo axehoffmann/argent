@@ -10,9 +10,9 @@ namespace ag
 	class EntityRef
 	{
 	public:
-		EntityRef(EntityID entityID) : 
+		EntityRef(EntityID entityID, World* world) : 
 			id(entityID), 
-			archetype(ag::ArchetypeCollection::GetArchetypeFromEntityID(entityID)),
+			archetype(world->GetArchetypeFromEntityID(entityID)),
 			index(-1) {}
 
         /**

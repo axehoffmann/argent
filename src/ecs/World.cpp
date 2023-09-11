@@ -3,7 +3,7 @@
 void ag::World::AddArchetype(ag::ArchetypeCollection* arch)
 {
     archetypes.push_back(std::shared_ptr<ag::ArchetypeCollection>(arch));
-
+    archetypeIDMap[arch->GetID()] = arch;
     for (ag::IQuery* q : queries)
     {
         q->AddIfMatch(std::shared_ptr<ag::ArchetypeCollection>(arch));
