@@ -5,7 +5,8 @@
 
 namespace entityref_test
 {
-    std::shared_ptr<ag::ArchetypeCollection> collection1;
+    std::shared_ptr<ag::World> world;
+    ag::ArchetypeCollection* collection1;
 
     struct ComponentA
     {
@@ -22,12 +23,14 @@ namespace entityref_test
 
     $Init(entity_ref)
     {
-        collection1 = std::make_shared<ag::ArchetypeCollection>(ComponentSet{ ag::ComponentInfo::GetID<ComponentA>() });
+        world = std::make_shared<ag::World>();
+        collection1 = new ag::ArchetypeCollection(ComponentSet{ ag::ComponentInfo::GetID<ComponentA>() });
+        world->AddArchetype(collection1);
     }
 
     $Cleanup(entity_ref)
     {
-        collection1.reset();
+        world.reset();
     }
 
     $Case(basic, entity_ref)
@@ -36,7 +39,7 @@ namespace entityref_test
         {
             collection1->SpawnEntity(ComponentA(i));
         }
-        ag::EntityRef precious = ag::EntityRef(collection1->SpawnEntity(ComponentA(420)));
+        ag::EntityRef precious = ag::EntityRef(collection1->SpawnEntity(ComponentA(420)), world.get());
         for (size_t i = 0; i < 5; i++)
         {
             collection1->SpawnEntity(ComponentA(i + 10));

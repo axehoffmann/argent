@@ -21,5 +21,5 @@ void ag::World::InitialiseQuery(ag::IQuery* query)
 
 ag::World::~World()
 {
-	std::vector<std::shared_ptr<ag::ArchetypeCollection>>().swap(archetypes);
+
 }

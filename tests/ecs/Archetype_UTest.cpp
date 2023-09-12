@@ -106,35 +106,4 @@ namespace archetype_test {
         ComponentA& partnerComponentA = collection2->GetComponent<ComponentA>(partnerIndex);
         ag_expect(partnerComponentA.value == 104, "Expected last entity to have ComponentA.value of 104, instead found {}", partnerComponentA.value);
     }
-
-    $Case(entity_class, archetype)
-    {
-        EntityID lastEntity;
-        for (int i = 0; i < 5; i++)
-        {
-            lastEntity = collection2->SpawnEntity(ComponentA(100 + i), ComponentB(i));
-        }
-        collection2->ResolveBuffers();
-
-        ag::EntityRef entityA(lastEntity);
-
-        ag_expect(entityA.GetID() == lastEntity, "Expected entity ID to be {}, instead found {}", lastEntity, entityA.GetID());
-
-        bool operated = false;
-        entityA.Operate<ComponentA, ComponentB>([&](auto en) 
-        {
-            operated = true;
-
-            ag_expect(en.Get<ComponentA>().value == 104, "Expected entity's A value to be 104, instead found {}", en.Get<ComponentA>().value);
-            ag_expect(en.Get<ComponentB>().partner == 4, "Expected entity's B value to be 4, instead found {}", en.Get<ComponentB>().partner);
-
-            en.Get<ComponentA>().value = -10;
-
-            ag_expect(en.Get<ComponentA>().value == -10, "Expected entity's A value to be -10, instead found {}", en.Get<ComponentA>().value);
-        });
-
-        ag_expect(operated, "Expected to operate on the valid entity");
-
-
-    }
 }
