@@ -12,7 +12,7 @@ namespace ag::event
 
 	};
 
-	template <typename T>
+	template <EventType T>
 	struct Event
 	{
 
