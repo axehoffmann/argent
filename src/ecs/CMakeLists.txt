@@ -1,1 +1,10 @@
-add_library(ecs "ArchetypeCollection.cpp" "ArchetypeCollection.h" "Component.h" "ECS.h" "ECSTypes.h" "Query.h" "Component.cpp"  "World.cpp" "World.h" "System.cpp" "System.h"  "Query.cpp" "EntityRef.h" "Datastore.h" "Entity.h" "events/EventQueue.h" "events/Event.h" "events/EventManager.h")
+add_library(ecs "ArchetypeCollection.cpp" "ArchetypeCollection.h" 
+				"Component.cpp" "Component.h"
+				"ECS.h" "ECSTypes.h" 
+				"Query.cpp" "Query.h"
+				"World.cpp" "World.h" 
+				"System.cpp" "System.h" 
+				"EntityRef.h" 
+				"Entity.h")
+
+add_subdirectory(events)
