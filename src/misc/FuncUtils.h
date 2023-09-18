@@ -3,7 +3,7 @@
 
 namespace {
 	template <typename Ret, typename Arg>
-	Arg unary_func_arg_helper(Ret(*)(Arg));
+	Arg unary_func_arg_helper(Ret(*)(const Arg&));
 
 	template <typename F>
 	decltype(unary_func_arg_helper(&F::operator())) unary_func_arg_helper(F);

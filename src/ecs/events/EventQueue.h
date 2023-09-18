@@ -14,15 +14,15 @@ namespace ag::event
 		{
 			return count;
 		}
-	private:
+	protected:
 		size_t count;
 	};
 	/**
 	* When an event is sent, it is added to its respective event queue. 
 	* Each event listener gets to read the queue at the end of a frame. (read-only)
 	*/
-	template <EventType T>
-	class EventQueue : IEventQueue
+	template <typename T>
+	class EventQueue : public IEventQueue
 	{
 	public:
 		void push(const T& event)
