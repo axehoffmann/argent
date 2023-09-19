@@ -27,6 +27,15 @@ namespace ag::event
 
 			t_queue->iterate(func);
 		}
+
+		template <typename T>
+		void clearEvents()
+		{
+			EventQueue<T>* t_queue = getQueue<T>();
+
+			t_queue->clear();
+		}
+
 		/// TODO: Event clearing - this is tough because we can't be templated + virtual = blegh?
 		/// TODO: Event listener registering
 
@@ -48,7 +57,7 @@ namespace ag::event
 				event_queues.resize(event_queues.size() + 1);
 
 			if (!event_queues.at(id))
-				event_queues.at(id) = std::unique_ptr<IEventQueue>(new EventQueue<T>());
+				event_queues.at(id) = std::unique_ptr<IEventQueue>(new EventQueue<T>);
 
 			EventQueue<T>* t_queue = static_cast<EventQueue<T>*>(event_queues.at(id).get());
 
