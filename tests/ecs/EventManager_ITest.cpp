@@ -28,12 +28,14 @@ namespace eventmanager_test
 			count += event.i;
 		};
 
-		em.readEvents(tally);
+		em.registerListener(tally);
+
+		em.alertAll();
 		ag_expect(count == expected, "Expected to read {} total value of events, instead found {}", expected, count);
 
-		em.clearEvents<TestEvent>();
+		em.clearAll();
 		count = 0;
-		em.readEvents(tally);
+		em.alertAll();
 		ag_expect(count == 0, "Expected to count 0 after clearing event list, instead found {}", count);
 	}
 }

@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <type_traits>
 
 #include "EventQueue.h"
 #include "misc/FuncUtils.h"
@@ -10,6 +11,7 @@ namespace ag::event
 {
 	class EventManager
 	{
+
 	public:
 		template <typename T>
 		void pushEvent(T event)
@@ -19,25 +21,31 @@ namespace ag::event
 			t_queue->push(event);
 		}
 
-		template <typename Functor>
-		void readEvents(Functor func)
+		void alertAll()
 		{
-			using Event_T = unary_func_argument<Functor>;
-			EventQueue<Event_T>* t_queue = getQueue<Event_T>();
-
-			t_queue->iterate(func);
+			for (auto& queue : event_queues)
+			{
+				queue->alert();
+			}
 		}
 
-		template <typename T>
-		void clearEvents()
+		void clearAll()
 		{
+			for (auto& queue : event_queues)
+			{
+				queue->clear();
+			}
+		}
+
+		template <typename Func>
+		void registerListener(Func callback)
+		{
+			using T = unary_func_argument<Func>;
 			EventQueue<T>* t_queue = getQueue<T>();
 
-			t_queue->clear();
+			std::function<void(const T&)> func_wrap(callback);
+			t_queue->register_listener(func_wrap);
 		}
-
-		/// TODO: Event clearing - this is tough because we can't be templated + virtual = blegh?
-		/// TODO: Event listener registering
 
 	private:
 		template <typename T>

@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <mutex>
+#include <functional>
 
 #include "Event.h"
 
@@ -14,8 +15,26 @@ namespace ag::event
 		{
 			return count;
 		}
+
+		void clear()
+		{
+			clear_ptr(this);
+		}
+
+		void alert()
+		{
+			alert_ptr(this);
+		}
+
 	protected:
+		using ErasedFunc = void(*)(IEventQueue*);
+
+		IEventQueue(ErasedFunc cl_ptr, ErasedFunc al_ptr) : clear_ptr(cl_ptr), alert_ptr(al_ptr) {}
+
 		size_t count;
+
+		ErasedFunc clear_ptr;
+		ErasedFunc alert_ptr;
 	};
 	/**
 	* When an event is sent, it is added to its respective event queue. 
@@ -25,6 +44,8 @@ namespace ag::event
 	class EventQueue : public IEventQueue
 	{
 	public:
+		EventQueue() : IEventQueue(clear_events, read_events) {}
+
 		void push(const T& event)
 		{
 			std::lock_guard<std::mutex> lock(events_mutex);
@@ -33,25 +54,43 @@ namespace ag::event
 			count++;
 		}
 
-		void clear()
+		static void clear_events(IEventQueue* queue)
 		{
-			std::lock_guard<std::mutex> lock(events_mutex);
+			EventQueue<T>* t_queue = static_cast<EventQueue<T>*>(queue);
+			std::lock_guard<std::mutex> lock(t_queue->events_mutex);
 
-			events.clear();
-			count = 0;
+			t_queue->events.clear();
+			t_queue->count = 0;
 		}
 
-		template <typename Functor>
-		void iterate(Functor func)
+		static void read_events(IEventQueue* queue)
+		{
+			EventQueue<T>* t_queue = static_cast<EventQueue<T>*>(queue);
+
+			for (auto& listener : t_queue->listeners)
+			{
+				t_queue->iterate(listener);
+			}
+		}
+
+		void register_listener(const std::function<void(const T&)>& func)
+		{
+			listeners.push_back(func);
+		}
+
+	private:
+		std::vector<T> events;
+		std::mutex events_mutex;
+		
+		// TODO: may have to synchronise this
+		std::vector<std::function<void(const T&)>> listeners;
+
+		void iterate(auto& func)
 		{
 			for (const T& event : events)
 			{
 				func(event);
 			}
 		}
-
-	private:
-		std::vector<T> events;
-		std::mutex events_mutex;
 	};
 }

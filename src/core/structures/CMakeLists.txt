@@ -1,1 +1,1 @@
-add_library(structures "svector.h" "svector.cpp" "dependency_graph.h" "grid.h")
+add_library(structures "svector.h" "svector.cpp" "dependency_graph.h" "grid.h" "functor.h")
