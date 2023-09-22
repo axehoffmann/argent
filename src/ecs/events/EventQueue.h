@@ -31,11 +31,12 @@ namespace ag::event
 
 		IEventQueue(ErasedFunc cl_ptr, ErasedFunc al_ptr) : clear_ptr(cl_ptr), alert_ptr(al_ptr) {}
 
-		size_t count;
+		size_t count{ 0 };
 
 		ErasedFunc clear_ptr;
 		ErasedFunc alert_ptr;
 	};
+
 	/**
 	* When an event is sent, it is added to its respective event queue. 
 	* Each event listener gets to read the queue at the end of a frame. (read-only)
