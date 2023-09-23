@@ -35,6 +35,11 @@ namespace eventmanager_test
 			expected += i;
 		}
 
+		for (size_t i = 0; i < 5; i++)
+		{
+			em.pushEvent<EventB>(EventB{ .flag = false });
+		}
+
 		size_t count = 0;
 		auto tally = [&count](const EventA& event) 
 		{
@@ -44,12 +49,12 @@ namespace eventmanager_test
 		em.registerListener(tally);
 
 		em.alertAll();
-		ag_expect(count == expected, "Expected to read {} total value of events, instead found {}", expected, count);
+		ag_expect(count == expected, "Expected to read {} total value of A events, instead found {}", expected, count);
 
 		em.clearAll();
 		count = 0;
 		em.alertAll();
-		ag_expect(count == 0, "Expected to count 0 after clearing event list, instead found {}", count);
+		ag_expect(count == 0, "Expected to count 0 A's after clearing event list, instead found {}", count);
 	}
 
 	$Case(stress_test, events)

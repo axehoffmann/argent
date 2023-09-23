@@ -4,6 +4,8 @@
 #include <vector>
 #include <type_traits>
 
+#include <iostream>
+
 #include "EventQueue.h"
 #include "misc/FuncUtils.h"
 
@@ -61,17 +63,23 @@ namespace ag::event
 			// Generate a queue for each registered event type
 			int id = eventTypeID<T>();
 
-			if (id >= event_queues.size())
+			if (id >= event_queues.size() - 1)
 			{
+				auto new_ptr = std::unique_ptr<IEventQueue>(new EventQueue<T>);
+				std::cout << "yuh " << id << "\n";
 				std::lock_guard<std::mutex> lock(event_queue_mutex);
-				event_queues.reserve(event_queues.size() + 1);
-			}
+				std::cout << "unh " << id << "\n";
 
+				event_queues.reserve(id + 1);
+				event_queues.at(id) = std::move(new_ptr);
+			}
 			// TODO: may cause issues if generating same event T multiple times concurrently?
-			if (!event_queues.at(id))
+			else if (!event_queues.at(id))
 			{
+				auto new_ptr = std::unique_ptr<IEventQueue>(new EventQueue<T>);
+
 				std::lock_guard<std::mutex> lock(event_queue_mutex);
-				event_queues.at(id) = std::unique_ptr<IEventQueue>(new EventQueue<T>);
+				event_queues.at(id) = std::move(new_ptr);
 			}
 
 			EventQueue<T>* t_queue = static_cast<EventQueue<T>*>(event_queues.at(id).get());
