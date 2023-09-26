@@ -5,6 +5,7 @@ add_library(ecs "ArchetypeCollection.cpp" "ArchetypeCollection.h"
 				"World.cpp" "World.h" 
 				"System.cpp" "System.h" 
 				"EntityRef.h" 
-				"Entity.h")
+				"Entity.h" 
+				"EntityManager.h")
 
 add_subdirectory(events)

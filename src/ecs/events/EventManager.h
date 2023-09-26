@@ -66,9 +66,7 @@ namespace ag::event
 			if (id >= event_queues.size() - 1)
 			{
 				auto new_ptr = std::unique_ptr<IEventQueue>(new EventQueue<T>);
-				std::cout << "yuh " << id << "\n";
 				std::lock_guard<std::mutex> lock(event_queue_mutex);
-				std::cout << "unh " << id << "\n";
 
 				event_queues.reserve(id + 1);
 				event_queues.at(id) = std::move(new_ptr);
