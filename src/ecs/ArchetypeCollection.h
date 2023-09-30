@@ -133,7 +133,7 @@ namespace ag
 			return std::find(ComponentTypes.begin(), ComponentTypes.end(), ctype) != ComponentTypes.end();
 		}
 
-		ArchetypeCollection(ComponentSet components);
+		ArchetypeCollection(const ComponentSet& components);
 		ArchetypeCollection(ArchetypeCollection& other) = delete;
 		~ArchetypeCollection();
 
