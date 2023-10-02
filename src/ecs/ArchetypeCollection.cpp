@@ -2,16 +2,15 @@
 
 std::atomic<ArchetypeID> ag::ArchetypeCollection::nextArchetypeID(0);
 
-ag::ArchetypeCollection::ArchetypeCollection(ComponentSet components) : ID(++nextArchetypeID)
+ag::ArchetypeCollection::ArchetypeCollection(const ComponentSet& components) : ID(++nextArchetypeID)
 {
-	std::sort(components.begin(), components.end());
 	// Initialises the first entity's ID by mapping the archetype ID into the upper bits
 	NextEntityID = ((EntityID)ID) << EPARTSIZE;
 
 	ComponentTypes = components;
+	std::sort(ComponentTypes.begin(), ComponentTypes.end());
 	data.resize(ComponentTypes.size());
 	spawnBuffer.resize(ComponentTypes.size());
-
 }
 
 ag::ArchetypeCollection::~ArchetypeCollection()
