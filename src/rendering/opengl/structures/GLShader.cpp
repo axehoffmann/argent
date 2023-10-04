@@ -63,7 +63,6 @@ void ag::GLShader::CompileShader(std::string source, GLHandle dest)
 {
 	GLint result = GL_FALSE;
 	int logLength;
-	std::cout << source << std::endl;
 	const char* sourceStr = source.c_str();
 	glShaderSource(dest, 1, &sourceStr, NULL);
 	glCompileShader(dest);

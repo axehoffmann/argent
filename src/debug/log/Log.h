@@ -16,7 +16,7 @@ namespace ag
 		static const std::string repository_name;
 
 	public:
-		static inline bool buffered = true;
+		static inline bool buffered = false;
 		static void Write(const std::vector<csw::ColourSegment>& text, bool endl = true)
 		{
 			buffer.push_back(text);
