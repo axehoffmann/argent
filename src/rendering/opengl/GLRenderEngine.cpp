@@ -54,7 +54,7 @@ void ag::GLRenderEngine::Render(const ag::SceneGraph& graph)
 	shader.Uniform<glm::vec4>("pointLights[0].colour", { 0, 0, 1.0f, 0.0f });
 
 
-	UseTransform(ag::Transform({ 0,0,0 }, { 45, 20, 45 }, {1.0f, 1.0f, 1.0f}), ag::Transform({ 0,0,3 }, {0,180,0}), ag::Camera(90.f, 1280.0f / 720.0f, 0.001f, 10.0f));
+	UseTransform(ag::Transform({ 0,0,0 }, { 45, 20, 45 }, {1.0f, 1.0f, 1.0f}), ag::Transform({ 0,1,-3 }, {0,0,0}), ag::Camera(90.f, 1280.0f / 720.0f, 0.001f, 10.0f));
 
 	CheckError();
 
