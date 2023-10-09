@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Entity.h"
 #include "ArchetypeCollection.h"
 #include <memory>
 
@@ -50,6 +51,12 @@ namespace ag
 			if (arch != nullptr)
 				arch->DestroyEntityByID(id);
 		}
+
+		template <typename ... Cs>
+		void forEach(std::function<void(Entity<Cs...>)> op)
+		{
+
+		}
 	
 	private:
 
@@ -65,5 +72,6 @@ namespace ag
 
 		std::vector<std::shared_ptr<ArchetypeCollection>> archetypes;
 		std::unordered_map<ArchetypeID, ArchetypeCollection*> id_to_archetype;
+		std::unordered_map<>
 	};
 }
