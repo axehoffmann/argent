@@ -16,6 +16,18 @@ namespace ag
 				idx++;
 			};
 			(pack(componentID<Ctype>), ...);
+		} 
+
+		constexpr bool operator==(const component_set<N>& other) const
+		{
+			for (int i = 0; i < N; i++)
+			{
+				if (ids[i] != other.ids[i])
+				{
+					return false;
+				}
+			}
+			return true;
 		}
 
 	private:

@@ -72,6 +72,5 @@ namespace ag
 
 		std::vector<std::shared_ptr<ArchetypeCollection>> archetypes;
 		std::unordered_map<ArchetypeID, ArchetypeCollection*> id_to_archetype;
-		std::unordered_map<>
 	};
 }
