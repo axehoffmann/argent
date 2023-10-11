@@ -24,7 +24,7 @@ ag::GLRenderEngine::GLRenderEngine() :
 	tex3(GLTexture(ag::AssetManager::Load<ag::Texture>(TEXTURE_PATH3), ag::TextureType::Tex2D, TextureFormat::RGBA)),
 	tex4(GLTexture(ag::AssetManager::Load<ag::Texture>(TEXTURE_PATH4), ag::TextureType::Tex2D, TextureFormat::RGBA)),
 	msh(GLMesh::FromResource(ag::AssetManager::Load<ag::Mesh>(MESH_PATH)))
-{
+	{
 	
 	// glEnable(GL_DEPTH_TEST);
 	glClearColor(0.3f, 0.3f, 0.4f, 1.0f);
@@ -51,7 +51,7 @@ void ag::GLRenderEngine::Render(const ag::SceneGraph& graph)
 
 	shader.Uniform<int>("numPointLights", 1);
 	shader.Uniform<glm::vec3>("pointLights[0].position", { 0.0f, 0.5f, 0.0f });
-	shader.Uniform<glm::vec4>("pointLights[0].colour", { 0, 0, 1.0f, 0.0f });
+	shader.Uniform<glm::vec4>("pointLights[0].colour", { 0, 0, 3.0f, 3.0f });
 
 
 	UseTransform(ag::Transform({ 0,0,0 }, { 45, 20, 45 }, {1.0f, 1.0f, 1.0f}), ag::Transform({ 0,1,-3 }, {0,0,0}), ag::Camera(90.f, 1280.0f / 720.0f, 0.001f, 10.0f));

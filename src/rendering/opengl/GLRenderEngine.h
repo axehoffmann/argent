@@ -57,6 +57,7 @@ namespace ag
 		ag::GLTexture tex3;
 		ag::GLTexture tex4;
 
+
 		ag::GLMesh msh;
 	};
 }
