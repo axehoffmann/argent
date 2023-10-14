@@ -1,6 +1,9 @@
 #include <memory>
 #include <type_traits>
 
+template <typename T>
+struct ptr;
+
 /**
  * A non-owning temporary pointer
  */
@@ -8,7 +11,7 @@ template <typename T>
 struct temp_ptr
 {
 	template <typename C>
-	friend struct ptr<C>;
+	friend struct ::ptr<C>;
 
 	T& operator->()
 	{

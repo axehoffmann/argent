@@ -4,9 +4,12 @@
 template <typename ... Args>
 using functor = std::function<void(Args&...)>;
 
+template <typename ... Args>
+using reader_func = std::function<void(const Args&...)>;
+ 
 namespace agt
 {
-	template<typename ... Args, int size>
+	template<int size, typename ... Args>
 	struct functor 
 	{
 	public:

@@ -6,6 +6,9 @@
 
 #include "Event.h"
 
+#include "lib/vector.h"
+#include "lib/functor.h"
+
 namespace ag::event
 {
 	class IEventQueue 
@@ -80,11 +83,11 @@ namespace ag::event
 		}
 
 	private:
-		std::vector<T> events;
+		vector<T> events;
 		std::mutex events_mutex;
 		
 		// TODO: may have to synchronise this
-		std::vector<std::function<void(const T&)>> listeners;
+		vector<reader_func<T>> listeners;
 
 		void iterate(auto& func)
 		{

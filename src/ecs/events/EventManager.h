@@ -9,6 +9,9 @@
 #include "EventQueue.h"
 #include "misc/FuncUtils.h"
 
+#include "lib/functor.h"
+#include "lib/vector.h"
+
 namespace ag::event
 {
 	class EventManager
@@ -45,7 +48,7 @@ namespace ag::event
 			using T = unary_func_argument<Func>;
 			EventQueue<T>* t_queue = getQueue<T>();
 
-			std::function<void(const T&)> func_wrap(callback);
+			reader_func<T> func_wrap(callback);
 			t_queue->register_listener(func_wrap);
 		}
 
@@ -85,7 +88,7 @@ namespace ag::event
 			return t_queue;
 		}
 
-		std::vector<std::unique_ptr<IEventQueue>> event_queues;
+		vector<std::unique_ptr<IEventQueue>> event_queues;
 		std::mutex event_queue_mutex;
 		inline static std::atomic<int> next_event_id{0};
 	};
