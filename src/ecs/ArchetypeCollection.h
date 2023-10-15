@@ -3,6 +3,8 @@
 #include "ECSTypes.h"
 #include "Component.h"
 
+#include "lib/vector.h"
+
 #include <unordered_map>
 #include <algorithm>
 #include <atomic>
@@ -42,7 +44,7 @@ namespace ag
 		/**
 		* Adds an entity to the spawn buffer from a vector of type-erased components
 		*/
-		EntityID SpawnEntity(std::vector<ag::Component>& components)
+		EntityID SpawnEntity(vector<ag::Component>& components)
 		{
 			return InstantiateEntity(components);
 		}
@@ -155,7 +157,7 @@ namespace ag
 		}
 
 
-		EntityID InstantiateEntity(std::vector<ag::Component>& components)
+		EntityID InstantiateEntity(vector<ag::Component>& components)
 		{
 			EntityID newEntityID = GetNextID();
 			entitiesToSpawn.push_back(newEntityID);
@@ -172,23 +174,23 @@ namespace ag
 		// The component types that make up this archetype
 		ComponentSet ComponentTypes;
 		// The entity data stored in this archetype. Each component array is a byte array of a specific component type.
-		std::vector<ComponentArray> data;
+		vector<ComponentArray> data;
 
 		EntityID GetNextID();
 		// The ID of the next entity to spawn
 		EntityID NextEntityID;
 
 		// Entity creation/destruction buffers
-		std::vector<ComponentArray> spawnBuffer;
-		std::vector<EntityInfo> entitiesToSpawn;
+		vector<ComponentArray> spawnBuffer;
+		vector<EntityInfo> entitiesToSpawn;
 		void ResolveSpawnBuffer();
-		std::vector<size_t> entitiesToDestroy;
+		vector<size_t> entitiesToDestroy;
 		void ResolveDestroyBuffer();
 
 		// Core entity data (a component that every entity has)
-		std::vector<EntityInfo> entities;
+		vector<EntityInfo> entities;
 
-		void AddComponent(byte* bytes, int i, int n, std::vector<ComponentArray>& target);
+		void AddComponent(byte* bytes, int i, int n, vector<ComponentArray>& target);
 
 		static std::atomic<ArchetypeID> nextArchetypeID;
 	};

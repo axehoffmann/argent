@@ -12,5 +12,5 @@ void ag::AudioClip::Load()
 
 void ag::AudioClip::Unload()
 {
-	std::vector<uint16_t>().swap(data);
+	vector<uint16_t>().swap(data);
 }

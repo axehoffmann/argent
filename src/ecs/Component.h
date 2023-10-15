@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ECSTypes.h"
+#include "lib/vector.h"
+
 #include <atomic>
 #include <unordered_map>
 #include <stdexcept>
@@ -50,7 +52,7 @@ namespace ag
 
 	private:
 		static std::atomic<ComponentTypeID> nextComponentID;
-		static std::vector<int> componentSize;
+		static vector<int> componentSize;
 	};
 
 	/**

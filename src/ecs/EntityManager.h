@@ -2,6 +2,9 @@
 
 #include "Entity.h"
 #include "ArchetypeCollection.h"
+
+#include "lib/vector.h"
+
 #include <memory>
 
 namespace ag
@@ -21,7 +24,7 @@ namespace ag
 
 			for (size_t i = 0; i < archetypes.size(); i++)
 			{
-				std::vector<ComponentTypeID> currentSet = archetypes[i]->GetComponentSet();
+				vector<ComponentTypeID> currentSet = archetypes[i]->GetComponentSet();
 
 				if (set == currentSet)
 					return archetypes[i];
@@ -34,13 +37,13 @@ namespace ag
 			return arch;
 		}
 
-		void spawnEntity(const ComponentSet& set, const std::vector<Component>& components)
+		void spawnEntity(const ComponentSet& set, const vector<Component>& components)
 		{
 			auto arch = findArchetype(set);
 			arch->SpawnEntity(components);
 		}
 
-		void spawnEntity(std::shared_ptr<ArchetypeCollection> arch, const std::vector<Component>& components)
+		void spawnEntity(std::shared_ptr<ArchetypeCollection> arch, const vector<Component>& components)
 		{
 			arch->SpawnEntity(components);
 		}
@@ -70,7 +73,7 @@ namespace ag
 			return id_to_archetype[archID];
 		}
 
-		std::vector<std::shared_ptr<ArchetypeCollection>> archetypes;
+		vector<std::shared_ptr<ArchetypeCollection>> archetypes;
 		std::unordered_map<ArchetypeID, ArchetypeCollection*> id_to_archetype;
 	};
 }

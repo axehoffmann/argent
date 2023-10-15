@@ -32,7 +32,7 @@ void ag::Blueprint::Load()
 
 void ag::Blueprint::Unload()
 {
-	std::vector<ag::Component>().swap(components);
+	vector<ag::Component>().swap(components);
 }
 
 void ag::Blueprint::SetWorld(std::shared_ptr<ag::World> w)

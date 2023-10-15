@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Resource.h"
-#include <vector>
+#include "lib/vector.h"
 
 namespace ag
 {
@@ -11,7 +11,7 @@ namespace ag
         AudioClip(std::string path) : Resource(path) {}
         ~AudioClip() { Unload(); }
 
-        std::vector<uint16_t> data;
+        vector<uint16_t> data;
 
         bool IsReady() const override;
         void Load() override;

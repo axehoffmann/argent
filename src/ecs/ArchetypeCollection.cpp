@@ -17,7 +17,7 @@ ag::ArchetypeCollection::~ArchetypeCollection()
 {
 }
 
-void ag::ArchetypeCollection::AddComponent(byte* bytes, int i, int n, std::vector<ComponentArray>& target)
+void ag::ArchetypeCollection::AddComponent(byte* bytes, int i, int n, vector<ComponentArray>& target)
 {
 	target[i].insert(target[i].end(), bytes, bytes + n);
 }

@@ -42,7 +42,7 @@ namespace ag
 		std::shared_ptr<ag::SceneBuilder> sceneBuilder;
 		std::shared_ptr<ag::World> ecsWorld;
 
-		std::vector<ag::ISystem*> systems;
+		vector<ag::ISystem*> systems;
 
 		bool active;
 	};

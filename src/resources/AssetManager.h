@@ -1,12 +1,13 @@
 #pragma once
 
 #include <type_traits>
-#include <vector>
 #include <unordered_map>
 #include <string>
 #include <memory>
 
 #include "Resource.h"
+
+#include "lib/vector.h"
 
 #include <fstream>
 #include <nlohmann/json.hpp>
@@ -78,7 +79,7 @@ namespace ag
 			{
 				resources[i]->Unload();
 			}
-			std::vector<std::shared_ptr<ag::Resource>>().swap(resources);
+			vector<std::shared_ptr<ag::Resource>>().swap(resources);
 			pathToID.clear();
 		}
 
@@ -89,7 +90,7 @@ namespace ag
 		}
 
 	private:
-		static std::vector<std::shared_ptr<ag::Resource>> resources;
+		static vector<std::shared_ptr<ag::Resource>> resources;
 		static std::unordered_map<std::string, uint32_t> pathToID;
 	};
 }

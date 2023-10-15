@@ -4,7 +4,8 @@
 #include "Resource.h"
 #include "../ecs/Component.h"
 #include <nlohmann/json.hpp>
-#include <vector>
+
+#include "lib/vector.h"
 
 #include "ecs/World.h"
 #include "ecs/EntityRef.h"
@@ -27,8 +28,8 @@ namespace ag
 		ag::EntityRef Instantiate();
 
 	private:
-		std::vector<ComponentTypeID> types;
-		std::vector<ag::Component> components;
+		vector<ComponentTypeID> types;
+		vector<ag::Component> components;
 
 		// Stores the targeted ECS world and archetype.
 		std::shared_ptr<ag::World> world;
