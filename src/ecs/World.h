@@ -4,6 +4,8 @@
 #include "ArchetypeCollection.h"
 #include "Query.h"
 
+#include "lib/map.h"
+
 #include <memory>
 #include <vector>
 #include <algorithm>
@@ -84,9 +86,9 @@ namespace ag
         }
 
     private:
-        std::vector<std::shared_ptr<ag::ArchetypeCollection>> archetypes;
-        std::unordered_map<ArchetypeID, ArchetypeCollection*> archetypeIDMap;
-        std::vector<ag::IQuery*> queries;
+        vector<std::shared_ptr<ag::ArchetypeCollection>> archetypes;
+        map<ArchetypeID, ArchetypeCollection*> archetypeIDMap;
+        vector<ag::IQuery*> queries;
 
         void RegisterArchetype(ArchetypeCollection* archetype)
         {

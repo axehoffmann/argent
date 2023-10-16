@@ -6,6 +6,8 @@
 #include "../core/Transform.h"
 #include "../ecs/ECSTypes.h"
 
+#include "lib/map.h"
+
 namespace ag
 {
     /**
@@ -44,7 +46,7 @@ namespace ag
     struct SceneGraph
     {
         std::vector<StaticRenderInstance> statics;
-        std::unordered_map<EntityID, DynamicRenderInstance> dynamics;
+        map<EntityID, DynamicRenderInstance> dynamics;
 
         /// TODO: should this directly point to the PL components in the scene?
         std::vector<ag::PointLight*> pointLights;

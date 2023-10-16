@@ -4,6 +4,7 @@
 #include "ArchetypeCollection.h"
 
 #include "lib/vector.h"
+#include "lib/map.h"
 
 #include <memory>
 
@@ -74,6 +75,6 @@ namespace ag
 		}
 
 		vector<std::shared_ptr<ArchetypeCollection>> archetypes;
-		std::unordered_map<ArchetypeID, ArchetypeCollection*> id_to_archetype;
+		map<ArchetypeID, ArchetypeCollection*> id_to_archetype;
 	};
 }

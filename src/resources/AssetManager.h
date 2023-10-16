@@ -8,6 +8,7 @@
 #include "Resource.h"
 
 #include "lib/vector.h"
+#include "lib/map.h"
 
 #include <fstream>
 #include <nlohmann/json.hpp>
@@ -91,6 +92,6 @@ namespace ag
 
 	private:
 		static vector<std::shared_ptr<ag::Resource>> resources;
-		static std::unordered_map<std::string, uint32_t> pathToID;
+		static map<std::string, uint32_t> pathToID;
 	};
 }
