@@ -2,9 +2,11 @@
 
 #include <string>
 #include <atomic>
-#include <unordered_map>
-#include <vector>
 #include <functional>
+
+#include "lib/string.h"
+#include "lib/map.h"
+#include "lib/vector.h"
 
 #include "debug/log/Log.h"
 
@@ -34,13 +36,13 @@ namespace ag
 	{
 		friend class resrc_manager;
 
-		resrc_specifier(std::string fpath)
+		resrc_specifier(string fpath)
 		{
 			path = fpath;
 		}
 
 	private:
-		std::string path;
+		string path;
 	};
 
 	template <resource_t T>
@@ -96,15 +98,15 @@ namespace ag
 
 	private:
 		using resrc_callback = std::function<void(void*)>;
-
+		/// TODO: status ints won't have consistent position depending on map implementation
 		struct entry
 		{
 			std::atomic<uint8_t> status;
 			void* data;
 			resrc_id_t typeID;
-			std::vector<resrc_callback> waitingCallbacks;
+			vector<resrc_callback> waitingCallbacks;
 		};
 		/// TODO: map not synchronised
-		std::unordered_map<std::string, entry> resources;
+		map<string, entry> resources;
 	};
 }

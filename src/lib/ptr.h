@@ -10,8 +10,10 @@ struct ptr;
 template <typename T>
 struct temp_ptr
 {
+	/*
 	template <typename C>
 	friend struct ::ptr<C>;
+	*/
 
 	T& operator->()
 	{
@@ -41,6 +43,7 @@ struct ptr
 		return *object;
 	}
 
+	/*
 	template <typename new_T>
 	temp_ptr<new_T> convert() const
 	{
@@ -48,6 +51,7 @@ struct ptr
 
 		return temp_ptr<new_T>(static_cast<new_T*>(object));
 	}
+	*/
 
 	ptr(const ptr&) = delete;
 	ptr& operator=(const ptr&) = delete;
