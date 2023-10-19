@@ -10,12 +10,18 @@ namespace ptr_test
 		{
 			*target = 1;
 		}
-		~TestObject()
+		virtual ~TestObject()
 		{
 			*target = 2;
 		}
 	private:
 		int* target;
+	};
+
+	struct TestSubObject : public TestObject
+	{
+		TestSubObject(int* tr) : TestObject(tr) {}
+		~TestSubObject() override {}
 	};
 
 	$Test(ptr_test);
@@ -31,5 +37,20 @@ namespace ptr_test
 		}
 
 		ag_expect(test == 2, "Expected ptr to destruct the object");
+	}
+
+	$Case(conversion, ptr_test)
+	{
+		int test = 0;
+
+		{
+			ptr<TestSubObject> ob = make<TestSubObject>(&test);
+
+			{
+				auto casted = ob.convert<TestObject>();
+			}
+
+			ag_expect(test == 1, "Temp ptr should not have destructed object");
+		}
 	}
 }
