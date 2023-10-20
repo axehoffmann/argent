@@ -89,7 +89,7 @@ namespace ag::event
 		// TODO: may have to synchronise this
 		vector<reader_func<T>> listeners;
 
-		void iterate(auto& func)
+		void iterate(auto& func) const
 		{
 			for (const T& event : events)
 			{
