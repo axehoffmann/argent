@@ -3,7 +3,7 @@
 #include "basic.h"
 
 template <typename T, u64 size>
-using array = std::array<T, size>;
+using arr = std::array<T, size>;
 
 template <typename T>
 using vector = std::vector<T>;
@@ -16,6 +16,7 @@ template <typename T>
 struct range
 {
 	constexpr range(vector<T> arr) : ptr(arr.data()), size(arr.size()) {}
+	constexpr range(T* data, u64 len) : ptr(data), size(len) {}
 
 	constexpr T* begin() const noexcept
 	{
@@ -25,6 +26,11 @@ struct range
 	constexpr T* end() const noexcept
 	{
 		return ptr + size;
+	}
+
+	constexpr u64 width() const noexcept
+	{
+		return size;
 	}
 
 	range(const range<T>& other) = delete;
