@@ -6,6 +6,9 @@
 
 using ComponentTypes = typelist<>;
 
+using component_count_t = u8;
+constexpr component_count_t MAX_COMPONENTS = 32;
+
 namespace ag
 {
 	/**
@@ -24,10 +27,7 @@ namespace ag
 	{
 		return _componentSizes[id];
 	}
-
-
 	
-
 	/**
 	 * A type-erased non-owning component data reference
 	*/
@@ -58,6 +58,7 @@ namespace ag
 	constexpr id_t _componentCount = type_count<ComponentTypes>();
 
 	constinit arr<u16, _componentCount> _componentSizes = _componentSizesInit<ComponentTypes>();
+
 	template <template <typename ... Ts> typename TL>
 	constexpr arr<u16, _componentCount> _componentSizesInit() noexcept
 	{

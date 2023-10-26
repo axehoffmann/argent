@@ -5,6 +5,8 @@
 #include "lib/basic.h"
 #include "lib/vector.h"
 
+#include <limits>
+
 namespace ag
 {
 	template <u8 N>
@@ -43,6 +45,42 @@ namespace ag
 				}
 			}
 			return true;
+		}
+
+		constexpr bool contains(id_t id) const
+		{
+			for (const id_t i : ids)
+			{
+				if (i == id)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		constexpr u8 find(id_t id) const
+		{
+			for (const id_t i : ids)
+			{
+				if (i == id)
+				{
+					return true;
+				}
+			}
+
+			return std::numeric_limits<u8>::max();
+		}
+
+		constexpr id_t* begin() const
+		{
+			return ids;
+		}
+
+		constexpr id_t* end() const
+		{
+			return ids + N;
 		}
 
 	private:

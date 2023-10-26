@@ -71,10 +71,9 @@ struct ptr
 
 private:
 	template <typename ... Params>
-	ptr(Params... params)
-	{
-		object = new T(params...);
-	}
+	ptr(Params... params) : object(new T(params...)) {}
+
+	ptr(T* ob) : object(ob) {}
 
 	T* object;
 };
@@ -83,4 +82,10 @@ template <typename T, typename ... Params>
 ptr<T> make(Params... params)
 {
 	return ptr<T>(params...);
+}
+
+template <typename T, typename Base, typename ... Params>
+ptr<Base> make(Params... params)
+{
+	return ptr<Base>(static_cast<Base*>(new T(params...)));
 }

@@ -26,7 +26,7 @@ namespace ag
 			assert(idx <= size);
 			assert(componentID<T> == componentType);
 
-			return *(static_cast<T*>(ptr) + idx);
+			return *(static_cast<T*>(data) + idx);
 		}
 
 		/**
@@ -41,7 +41,20 @@ namespace ag
 			assert(idx <= size);
 			assert(componentID<T> == componentType);
 
-			return *(static_cast<T*>(ptr) + idx);
+			return *(static_cast<T*>(data) + idx);
+		}
+
+		/**
+		 * Gets a pointer to the first object in the array
+		 * @tparam T	the type to fetch. Must be equal to the underlying type of the array
+		 * @return		a pointer to the first component in the array
+		*/
+		template <typename T>
+		T* begin() const
+		{
+			assert(componentID<T> == componentType);
+
+			return static_cast<T*>(data)
 		}
 
 		/**
