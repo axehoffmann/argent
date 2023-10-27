@@ -15,9 +15,9 @@ struct temp_ptr
 	friend struct ptr;
 	
 
-	T& operator->() const
+	T* operator->() const
 	{
-		return *object;
+		return object;
 	}
 
 private:
@@ -38,9 +38,9 @@ struct ptr
 	template <typename T, typename ... Params>
 	friend ptr<T> make(Params... params);
 
-	T& operator->() const
+	T* operator->() const
 	{
-		return *object;
+		return object;
 	}
 
 	

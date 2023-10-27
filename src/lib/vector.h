@@ -2,7 +2,10 @@
 
 #include <vector>
 #include <array>
+#include <cassert>
+
 #include "basic.h"
+
 
 template <typename T, u64 size>
 using arr = std::array<T, size>;
@@ -35,6 +38,13 @@ struct range
 		return size;
 	}
 
+	constexpr T& operator[](u64 idx) const noexcept
+	{
+		assert(idx < size);
+		return *(ptr + idx);
+	}
+
+	/*
 	range(const range<T>& other) = delete;
 	range<T>& operator=(const range<T>& other) = delete;
 
@@ -49,6 +59,7 @@ struct range
 		std::swap(ptr, other.ptr);
 		std::swap(size, other.size);
 	}
+	*/
 
 
 private:
