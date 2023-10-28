@@ -13,18 +13,6 @@ namespace ag
 	class component_set
 	{
 	public:
-		template <typename ... Ctype>
-		constexpr component_set() noexcept
-		{
-			int idx = 0;
-			auto pack = [&idx, &ids](id_t value)
-			{
-				ids[idx] = value;
-				idx++;
-			};
-			(pack(componentID<Ctype>), ...);
-		}
-
 		constexpr component_set<N>(const component_set<N>& other)
 		{
 			std::copy(other.ids, other.ids + N, ids);
@@ -86,4 +74,13 @@ namespace ag
 	private:
 		id_t ids[N];
 	};
+
+	template <int N, typename ... Ctype>
+	constexpr component_set<N> make_component_set() noexcept
+	{
+		int idx = 0;
+		vector<id_t> ids{};
+		(ids.push_back(componentID<Ctype>), ...);
+		return component_set<N>(ids);
+	}
 }
