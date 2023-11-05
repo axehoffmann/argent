@@ -21,10 +21,7 @@ struct temp_ptr
 	}
 
 private:
-	temp_ptr(T* data) : object(data)
-	{
 
-	}
 
 	T* object;
 };

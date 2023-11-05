@@ -15,7 +15,7 @@ namespace ag
 		/**
 		 * Static registry for systems
 		*/
-		static auto registers()
+		static auto& registers()
 		{
 			static vector<pair<component_set<max_query>, factory_func>> reg;
 			return reg;
