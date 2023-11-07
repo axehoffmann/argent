@@ -60,6 +60,11 @@ namespace ag
 
 			return std::numeric_limits<u8>::max();
 		}
+		
+		constexpr id_t at(u8 idx) const
+		{
+			return ids[idx];
+		}
 
 		constexpr id_t* begin() const
 		{
@@ -80,7 +85,7 @@ namespace ag
 	{
 		int idx = 0;
 		vector<id_t> ids{};
-		(ids.push_back(componentID<Ctype>), ...);
+		(ids.push_back(componentID<std::remove_cv_t<Ctype>>), ...);
 		return component_set<N>(ids);
 	}
 }

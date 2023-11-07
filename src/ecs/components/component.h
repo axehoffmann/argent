@@ -55,14 +55,14 @@ namespace ag
 	};
 
 
-	constexpr id_t _componentCount = type_count<ComponentTypes>();
+	constexpr id_t componentCount = type_count<ComponentTypes>();
 
-	constinit arr<u16, _componentCount> _componentSizes = _componentSizesInit<ComponentTypes>();
+	constinit arr<u16, componentCount> _componentSizes = _componentSizesInit<ComponentTypes>();
 
 	template <template <typename ... Ts> typename TL>
-	constexpr arr<u16, _componentCount> _componentSizesInit() noexcept
+	constexpr arr<u16, componentCount> _componentSizesInit() noexcept
 	{
-		arr<u16, _componentCount> ar{};
+		arr<u16, componentCount> ar{};
 		(ar[componentID<Ts>] = sizeof(Ts), ...);
 		return ar;
 	}

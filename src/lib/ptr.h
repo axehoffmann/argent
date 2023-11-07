@@ -13,7 +13,6 @@ struct temp_ptr
 	
 	template <typename C>
 	friend struct ptr;
-	
 
 	T* operator->() const
 	{
@@ -46,7 +45,12 @@ struct ptr
 	{
 		static_assert(std::is_convertible_v<T, new_T>);
 
-		return temp_ptr<new_T>(static_cast<new_T*>(object));
+		return temp_ptr<new_T>{.object = static_cast<new_T*>(object)};
+	}
+
+	temp_ptr<T> get_temp() const
+	{
+		return temp_ptr<T>{.object = object};
 	}
 	
 
@@ -62,8 +66,7 @@ struct ptr
 
 	~ptr()
 	{
-		if (object != nullptr)
-			delete object;
+		delete object;
 	}
 
 private:

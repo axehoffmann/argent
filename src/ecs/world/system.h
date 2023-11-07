@@ -17,7 +17,7 @@ namespace ag
 		*/
 		static auto& registers()
 		{
-			static vector<pair<component_set<max_query>, factory_func>> reg;
+			static vector<pair<query_set, factory_func>> reg;
 			return reg;
 		}
 
@@ -46,7 +46,7 @@ template <class Impl, typename ... Cs>
 class system<Impl, query<Cs...>> : public ag::isystem
 {
 public:
-	constexpr ag::component_set<max_query> query_types = ag::make_component_set<Cs...>();
+	constexpr ag::query_set query_types = ag::make_query_set<Cs...>();
 private:
 	static inline auto reg = ag::isystem::sys_regiser<Impl>();
 };

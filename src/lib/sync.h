@@ -19,16 +19,18 @@ using atomic = std::atomic<T>;
 template <typename T>
 class locked
 {
-	locked(T&& x) : mt(), data(x) {}
+public:
+	locked() = default;
+	// locked(T&& x) : mt(), data(x) {}
 
 	/**
 	 * 
 	*/
 	template <typename Func>
-	void operate(Func f)
+	auto operate(Func f)
 	{
 		lock_guard<mutex> lock(mt);
-		f(data);
+		return f(data);
 	}
 
 private:

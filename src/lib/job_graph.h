@@ -11,6 +11,21 @@ template <typename T>
 class job_graph
 {
 public:
+	 
+	job_graph(vector<node>&& nds)
+		: nodes(nds),
+		  completed(0)
+	{
+		for (u32 i = 0; node& n : nodes)
+		{
+			if (n.dependencies == 0)
+				start_nodes.push_back(i);
+
+			n.waiting_on = n.dependencies;
+
+			i++;
+		}
+	}
 
 	/**
 	 * Repeatedly consumes tasks from the graph until all tasks are completed.
@@ -20,21 +35,21 @@ public:
 	{
 		while (completed != nodes.size())
 		{
-			u32 node;
+			u32 n;
 
 			// Try grab a node from the queue
 			{
 				lock_guard<mutex> lock(queue_mutex);
 				if (job_queue.empty()) continue;
 
-				node = job_queue.pop();
+				n = job_queue.pop();
 			}
 
-			f(nodes[node].object);
+			f(nodes[n].object.get_temp());
 
 			// Advance the graph
 			completed.fetch_add(1);
-			for (u32 ch : nodes[node].children)
+			for (u32 ch : nodes[n].children)
 			{
 				if (ch.waiting_on.fetch_add(-1) == 1)
 				{
@@ -44,24 +59,55 @@ public:
 			}
 		}
 	}
-	
 
-private:
-
-	struct job_node
+	/**
+	 * Resets the job graph to its initial state. Assumes that no threads are currently consuming the graph.
+	*/
+	void reset()
 	{
-		T* object;
+		for (node& n : nodes)
+		{
+			n.waiting_on = n.dependencies.size();
+		}
+
+		job_queue.clear();
+
+		for (u32 s : start_nodes)
+		{
+			job_queue.push(s);
+		}
+	}
+	
+	struct node
+	{
+		node(ptr<T>&& data, vector<u32>&& ch, u16 deps, u32 idx)
+			: object(data), id(idx), children(ch), dependencies(deps), waiting_on(0) {}
+
+		node(node&& other)
+			: object(other.object), id(other.id), children(other.children), dependencies(other.dependencies), waiting_on(other.waiting_on) {}
+		node& operator=(node&& other)
+		{
+			object = std::move(other.object);
+			id = other.id;
+			children = std::move(other.children);
+			dependencies = other.dependencies;
+			waiting_on = other.waiting_on;
+		}
+
+		ptr<T> object;
 		u32 id;
 		vector<u32> children;
-		vector<u32> dependencies;
+		u16 dependencies;
 		atomic<u16> waiting_on;
 	};
+
+private:
 
 	mutex queue_mutex;
 	queue<u32> job_queue; // queue of nodes ready to be consumed
 
 	atomic<u32> completed; // total count of consumed nodes
 
-	vector<job_node> nodes;
+	vector<node> nodes;
 	vector<u32> start_nodes; // nodes that can be consumed immediately (no dependencies)
 };

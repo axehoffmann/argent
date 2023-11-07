@@ -8,3 +8,5 @@ using tuple = std::tuple;
 
 template <typename T1, typename T2>
 using pair = std::pair;
+
+using std::tie;

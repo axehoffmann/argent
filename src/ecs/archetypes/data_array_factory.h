@@ -22,12 +22,12 @@ namespace ag
 		return out;
 	}
 
-	constinit arr<data_array_factory_func, _componentCount> _dataArrayFactoryFuncs = _dataArrayFactoryInit<ComponentTypes>();
+	constinit arr<data_array_factory_func, componentCount> _dataArrayFactoryFuncs = _dataArrayFactoryInit<ComponentTypes>();
 
 	template <template <typename ... Ts> typename TL>
-	constexpr arr<data_array_factory_func, _componentCount> _dataArrayFactoryInit() noexcept
+	constexpr arr<data_array_factory_func, componentCount> _dataArrayFactoryInit() noexcept
 	{
-		arr<data_array_factory_func, _componentCount> ar{};
+		arr<data_array_factory_func, componentCount> ar{};
 		(ar[componentID<Ts>] = []()
 			{
 				return make<data_array<Ts>, data_array>();
