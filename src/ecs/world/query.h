@@ -34,6 +34,11 @@ namespace ag
 			return len;
 		}
 
+		const component_set<max_query>& read() const
+		{
+			return types;
+		}
+
 	private:
 		u8 len;
 		component_set<max_query> types;

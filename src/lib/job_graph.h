@@ -16,7 +16,7 @@ public:
 		: nodes(nds),
 		  completed(0)
 	{
-		for (u32 i = 0; node& n : nodes)
+		for (u16 i = 0; node& n : nodes)
 		{
 			if (n.dependencies == 0)
 				start_nodes.push_back(i);
@@ -35,7 +35,7 @@ public:
 	{
 		while (completed != nodes.size())
 		{
-			u32 n;
+			u16 n;
 
 			// Try grab a node from the queue
 			{
@@ -49,7 +49,7 @@ public:
 
 			// Advance the graph
 			completed.fetch_add(1);
-			for (u32 ch : nodes[n].children)
+			for (u16 ch : nodes[n].children)
 			{
 				if (ch.waiting_on.fetch_add(-1) == 1)
 				{
@@ -67,12 +67,12 @@ public:
 	{
 		for (node& n : nodes)
 		{
-			n.waiting_on = n.dependencies.size();
+			n.waiting_on = n.dependencies;
 		}
 
 		job_queue.clear();
 
-		for (u32 s : start_nodes)
+		for (u16 s : start_nodes)
 		{
 			job_queue.push(s);
 		}
@@ -80,7 +80,7 @@ public:
 	
 	struct node
 	{
-		node(ptr<T>&& data, vector<u32>&& ch, u16 deps, u32 idx)
+		node(ptr<T>&& data, vector<u16>&& ch, u16 deps, u16 idx)
 			: object(data), id(idx), children(ch), dependencies(deps), waiting_on(0) {}
 
 		node(node&& other)
@@ -95,8 +95,8 @@ public:
 		}
 
 		ptr<T> object;
-		u32 id;
-		vector<u32> children;
+		u16 id;
+		vector<u16> children;
 		u16 dependencies;
 		atomic<u16> waiting_on;
 	};
@@ -104,10 +104,10 @@ public:
 private:
 
 	mutex queue_mutex;
-	queue<u32> job_queue; // queue of nodes ready to be consumed
+	queue<u16> job_queue; // queue of nodes ready to be consumed
 
-	atomic<u32> completed; // total count of consumed nodes
+	atomic<u16> completed; // total count of consumed nodes
 
 	vector<node> nodes;
-	vector<u32> start_nodes; // nodes that can be consumed immediately (no dependencies)
+	vector<u16> start_nodes; // nodes that can be consumed immediately (no dependencies)
 };
