@@ -42,6 +42,7 @@ namespace ag
     private:
         
         ag::Query<Transform, StaticRenderable> staticQuery;
+        ag::Query<Transform, PointLightComp> lightQuery;
 
         // Chooses the location of the next graph to construct and updates atomic indices
         int ChooseGraph();

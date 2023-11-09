@@ -15,7 +15,7 @@ namespace ag
         uint32_t meshID;
         uint32_t materialID;
 
-        static ag::Component::Serialiser<StaticRenderable> serialiser;
+        static inline auto serialiser = ag::Component::Serialiser<StaticRenderable>("static_renderable");
 
         static nlohmann::json ToJSON(StaticRenderable t);
         static StaticRenderable FromJSON(nlohmann::json& ob);

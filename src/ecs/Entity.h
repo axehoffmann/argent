@@ -9,7 +9,7 @@ namespace ag
         /**
         * Get a copy of the info struct of the entity.
         */
-        EntityInfo Info() const
+        EntityID Info() const
         {
             return archetype->GetEntityInfo(index);
         }

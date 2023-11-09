@@ -27,7 +27,7 @@ namespace ag
         void AddIfMatch(std::shared_ptr<ag::ArchetypeCollection> archetype)
         {
             if (Matches(archetype->GetComponentSet()))
-                matches.push_back(archetype);
+                matches.push_back(std::move(archetype));
         }
 
         IQuery(ag::World* w, const ComponentSet& set);

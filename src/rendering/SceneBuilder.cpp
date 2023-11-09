@@ -3,6 +3,7 @@
 
 ag::SceneBuilder::SceneBuilder(std::shared_ptr<ag::World> w) : 
     staticQuery(w.get()),
+    lightQuery(w.get()),
     world(w),
     graphUnderConstruction(-1),
     graphReadByRenderer(-1),
@@ -28,6 +29,13 @@ void ag::SceneBuilder::Update()
             entity.Get<StaticRenderable>().materialID, 
             entity.Get<StaticRenderable>().meshID, 
             entity.Get<Transform>());
+    }
+
+    graph->pointLights.clear();
+    graph->pointLights.reserve(lightQuery.Size());
+    for (auto entity : lightQuery)
+    {
+        graph->pointLights.push_back(PointLight{ entity.Get<Transform>().GetPosition(), entity.Get<PointLightComp>().colour, 1 });
     }
 
     graphReady = lockedGraph;

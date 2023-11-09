@@ -1,7 +1,5 @@
 #include "StaticRenderable.h"
 
-ag::Component::Serialiser<ag::StaticRenderable> ag::StaticRenderable::serialiser("static_renderable");
-
 nlohmann::json ag::StaticRenderable::ToJSON(StaticRenderable t)
 {
     nlohmann::json ob;

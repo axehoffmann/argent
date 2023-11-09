@@ -48,8 +48,7 @@ namespace ag
         std::vector<StaticRenderInstance> statics;
         map<EntityID, DynamicRenderInstance> dynamics;
 
-        /// TODO: should this directly point to the PL components in the scene?
-        std::vector<ag::PointLight*> pointLights;
+        std::vector<ag::PointLight> pointLights;
 
     };
 }

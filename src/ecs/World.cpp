@@ -1,12 +1,12 @@
 #include "World.h"
 
-void ag::World::AddArchetype(ag::ArchetypeCollection* arch)
+void ag::World::AddArchetype(std::shared_ptr<ArchetypeCollection>&& arch)
 {
-    archetypes.push_back(std::shared_ptr<ag::ArchetypeCollection>(arch));
-    archetypeIDMap[arch->GetID()] = arch;
+    archetypes.push_back(arch);
+    archetypeIDMap[arch->GetID()] = arch.get();
     for (ag::IQuery* q : queries)
     {
-        q->AddIfMatch(std::shared_ptr<ag::ArchetypeCollection>(arch));
+        q->AddIfMatch(arch);
     }
 }
 

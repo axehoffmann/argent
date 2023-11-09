@@ -28,7 +28,6 @@ auto build_system_schedule() -> ptr<job_graph<isystem>>
 	vector<node> nodes(systems.size());
 	for (u16 i = 0; const pair<query_set, isystem::factory_func>& x : systems)
 	{
-		// Generate unconnected graph
 		nodes.emplace_back(std::move(x.second()), vector(), 0, i);
 		to_process(i);
 
@@ -46,9 +45,6 @@ auto build_system_schedule() -> ptr<job_graph<isystem>>
 		i++;
 	}
 
-	// All the nodes already emplaced in the job graph
-	set<u16> emplaced(systems.size());
-
 	// Sort with the least-constraining queries first ie. AB, ACD, A -> A, AB, ACD
 	std::sort(std::begin(to_process), std::end(to_process), [](u16 a, u16 b) -> bool
 		{
@@ -60,8 +56,6 @@ auto build_system_schedule() -> ptr<job_graph<isystem>>
 
 	for (u16 sys : to_process)
 	{
-		emplaced.insert(sys);
-		
 		for (id_t ctype : systems[sys].first.read())
 		{
 			// We depend on a system already placed in the graph

@@ -1,5 +1,7 @@
 #include "Engine.h"
 
+#include "resources/Blueprint.h"
+
 ag::Engine::Engine()
 {
 	active = true;
@@ -8,6 +10,17 @@ ag::Engine::Engine()
 	sceneBuilder = std::make_shared<ag::SceneBuilder>(ecsWorld);
 
 	renderer = std::make_unique<ag::Renderer>(std::make_unique<ag::GLRenderEngine>(), sceneBuilder);
+
+	uint32_t cube = AssetManager::Load<Blueprint>("assets/entities/cube.json");
+	uint32_t l1 = AssetManager::Load<Blueprint>("assets/entities/l1.json");
+
+	auto cb = AssetManager::Fetch<Blueprint>(cube).lock();
+	cb->SetWorld(ecsWorld);
+	cb->Instantiate();
+
+	auto l = AssetManager::Fetch<Blueprint>(l1).lock();
+	l->SetWorld(ecsWorld);
+	l->Instantiate();
 }
 
 ag::Engine::~Engine()
@@ -18,6 +31,7 @@ ag::Engine::~Engine()
 void ag::Engine::Run()
 {
 	using namespace std::chrono_literals;
+	namespace stc = std::chrono;
 	/// TODO: may want to research MT loops in future, don't block frames behind physics etc
 
 	Update(0);
@@ -25,16 +39,16 @@ void ag::Engine::Run()
 	Log::Trace("Starting loop... ");
 
 	// Based on Fix your Timestep! by Glenn Fiedler
-	std::chrono::nanoseconds t(0);
+	stc::nanoseconds t(0);
 	// TODO: proper 1/60? research better chrono stuff
-	std::chrono::nanoseconds dt = std::chrono::milliseconds(167);
+	stc::nanoseconds dt = stc::milliseconds(167);
 
-	auto currentTime = std::chrono::steady_clock::now();
-	std::chrono::nanoseconds accumulator(0);
+	auto currentTime = stc::steady_clock::now();
+	stc::nanoseconds accumulator(0);
 
 	while (active)
 	{
-		auto newTime = std::chrono::steady_clock::now();
+		auto newTime = stc::steady_clock::now();
 		auto frameTime = newTime - currentTime;
 
 		if (frameTime > 250ms)
@@ -45,13 +59,13 @@ void ag::Engine::Run()
 
 		while (accumulator >= dt)
 		{
-			Update(std::chrono::duration<double>(dt).count());
+			Update(stc::duration<double>(dt).count());
 			accumulator -= dt;
 			t += dt;
 		}
 
 		/// TODO: is frame time correct step here? unsure
-		FrameUpdate(std::chrono::duration<double>(frameTime).count());
+		FrameUpdate(stc::duration<double>(frameTime).count());
 	}
 }
 
@@ -74,6 +88,8 @@ void ag::Engine::Update(double dt)
 	}
 
 	sceneBuilder->Update();
+
+	ecsWorld->ResolveBuffers();
 }
 
 void ag::Engine::FrameUpdate(double dt)

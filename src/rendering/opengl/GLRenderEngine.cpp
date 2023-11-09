@@ -2,9 +2,9 @@
 
 static std::string SHADER_PATH = "assets/default.shader";
 static std::string MESH_PATH = "assets/cube.obj";
-static std::string TEXTURE_PATH  = "assets/brick/alb.jpg";
-static std::string TEXTURE_PATH2 = "assets/brick/smooth.jpg";
-static std::string TEXTURE_PATH3 = "assets/brick/metal.jpg";
+static std::string TEXTURE_PATH  = "assets/brick/alb.png";
+static std::string TEXTURE_PATH2 = "assets/brick/smooth.png";
+static std::string TEXTURE_PATH3 = "assets/brick/metal.png";
 static std::string TEXTURE_PATH4 = "assets/brick/norm.png";
 
 
@@ -49,12 +49,20 @@ void ag::GLRenderEngine::Render(const ag::SceneGraph& graph)
 	tex3.Bind(2);
 	tex4.Bind(4);
 
-	shader.Uniform<int>("numPointLights", 1);
-	shader.Uniform<glm::vec3>("pointLights[0].position", { 0.0f, 0.5f, 0.0f });
-	shader.Uniform<glm::vec4>("pointLights[0].colour", { 0, 0, 3.0f, 3.0f });
+	shader.Uniform<int>("numPointLights", graph.pointLights.size());
+	for (u64 i = 0; auto l : graph.pointLights)
+	{
+		shader.Uniform<glm::vec3>("pointLights["+std::to_string(i)+"].position", l.position);
+		shader.Uniform<glm::vec4>("pointLights[" + std::to_string(i) + "].colour", l.colour);
 
+		i++;
+	}
 
-	UseTransform(ag::Transform({ 0,0,0 }, { 45, 20, 45 }, {1.0f, 1.0f, 1.0f}), ag::Transform({ 0,1,-3 }, {0,0,0}), ag::Camera(90.f, 1280.0f / 720.0f, 0.001f, 10.0f));
+	for (auto r : graph.statics)
+	{
+		UseTransform(r.transform, ag::Transform({ 0,1,-3 }, { 0,0,0 }), ag::Camera(90.f, 1280.0f / 720.0f, 0.001f, 10.0f));
+	}
+
 
 	CheckError();
 

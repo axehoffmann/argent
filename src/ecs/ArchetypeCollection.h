@@ -15,7 +15,6 @@
 
 namespace ag
 {
-	using EntityInfo = EntityID;
 	/*
 	struct EntityInfo
 	{
@@ -54,12 +53,12 @@ namespace ag
 		 * @param i The index of the entity in the collection.
 		 * @return A copy of the EntityInfo struct of the entity
 		*/
-		EntityInfo GetEntityInfo(size_t i) const
+		EntityID GetEntityInfo(size_t i) const
 		{
 			if (i >= entities.size() || i < 0)
 			{
 				Log::Error(sfmt("ArchetypeCollection GetEntityInfo index {} out of range ({})", i, entities.size()));
-				return EntityInfo{};
+				return EntityID{};
 			}
 
 			return entities[i];
@@ -137,6 +136,7 @@ namespace ag
 
 		ArchetypeCollection(const ComponentSet& components);
 		ArchetypeCollection(ArchetypeCollection& other) = delete;
+		ArchetypeCollection& operator= (const ArchetypeCollection&) = delete;
 		~ArchetypeCollection();
 
 		ComponentSet GetComponentSet() const;
@@ -182,13 +182,13 @@ namespace ag
 
 		// Entity creation/destruction buffers
 		vector<ComponentArray> spawnBuffer;
-		vector<EntityInfo> entitiesToSpawn;
+		vector<EntityID> entitiesToSpawn;
 		void ResolveSpawnBuffer();
 		vector<size_t> entitiesToDestroy;
 		void ResolveDestroyBuffer();
 
 		// Core entity data (a component that every entity has)
-		vector<EntityInfo> entities;
+		vector<EntityID> entities;
 
 		void AddComponent(byte* bytes, int i, int n, vector<ComponentArray>& target);
 

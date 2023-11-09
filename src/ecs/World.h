@@ -24,7 +24,7 @@ namespace ag
         * @param set    A vector of ComponentTypeIDs (expected to be sorted ascendingly) to query
         * @returns      An ArchetypeCollection with an exactly matching component set.
         */
-        std::shared_ptr<ag::ArchetypeCollection> FindArchetype(const std::vector<ComponentTypeID>& set) const
+        std::shared_ptr<ag::ArchetypeCollection> FindArchetype(const std::vector<ComponentTypeID>& set)
         {
             /// TODO: benchmark... maybe could use a search tree
 
@@ -36,8 +36,8 @@ namespace ag
                     return archetypes[i];
             }
 
-            /// TODO: should create an archetype if it doesn't already exist
-            throw std::exception("NOT IMPLEMENTED");
+            AddArchetype(std::make_shared<ArchetypeCollection>(set));
+            return archetypes.back();
         }
 
         void SpawnEntity(const std::vector<ComponentTypeID>& set, const std::vector<Component>& components)
@@ -53,9 +53,9 @@ namespace ag
 
         /**
         * Adds an archetype to the world collection.
-        * @param arch The archetype to add. 
+        * @param arch The archetype to add.
         */
-        void AddArchetype(ag::ArchetypeCollection* arch);
+        void AddArchetype(std::shared_ptr<ArchetypeCollection>&& arch);
 
         void InitialiseQuery(ag::IQuery* query);
 
@@ -63,6 +63,12 @@ namespace ag
         void DeleteQuery(ag::IQuery* query)
         {
             queries.erase(std::remove(queries.begin(), queries.end(), query), queries.end());
+        }
+
+        void ResolveBuffers()
+        {
+            for (auto arch : archetypes)
+                arch->ResolveBuffers();
         }
 
 
