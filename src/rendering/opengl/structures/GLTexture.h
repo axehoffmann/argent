@@ -23,6 +23,7 @@ namespace ag
 	public:
 
 		GLTexture(uint32_t resourceID, ag::TextureType type, ag::TextureFormat format, bool mipmap = false);
+		GLTexture(GLTexture&& other);
 		~GLTexture();
 
 		void Bind(int slot);

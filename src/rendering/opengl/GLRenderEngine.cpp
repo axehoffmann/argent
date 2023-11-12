@@ -19,12 +19,8 @@ void CheckError()
 ag::GLRenderEngine::GLRenderEngine() : 
 	screen(),
 	shader(GLShader::FromResource(ag::AssetManager::Load<ag::Shader>(SHADER_PATH))),
-	tex(GLTexture(ag::AssetManager::Load<ag::Texture>(TEXTURE_PATH), ag::TextureType::Tex2D, TextureFormat::RGBA)),
-	tex2(GLTexture(ag::AssetManager::Load<ag::Texture>(TEXTURE_PATH2), ag::TextureType::Tex2D, TextureFormat::RGBA)),
-	tex3(GLTexture(ag::AssetManager::Load<ag::Texture>(TEXTURE_PATH3), ag::TextureType::Tex2D, TextureFormat::RGBA)),
-	tex4(GLTexture(ag::AssetManager::Load<ag::Texture>(TEXTURE_PATH4), ag::TextureType::Tex2D, TextureFormat::RGBA)),
 	msh(GLMesh::FromResource(ag::AssetManager::Load<ag::Mesh>(MESH_PATH)))
-	{
+{
 	
 	// glEnable(GL_DEPTH_TEST);
 	glClearColor(0.3f, 0.3f, 0.4f, 1.0f);
@@ -44,22 +40,22 @@ void ag::GLRenderEngine::Render(const ag::SceneGraph& graph)
 	shader.Uniform<int>("material.roughness", 1);
 	shader.Uniform<int>("material.metallic", 2);
 	shader.Uniform<int>("material.normal", 4);
-	tex.Bind(0);
-	tex2.Bind(1);
-	tex3.Bind(2);
-	tex4.Bind(4);
 
 	shader.Uniform<int>("numPointLights", graph.pointLights.size());
-	for (u64 i = 0; auto l : graph.pointLights)
+	for (u64 i = 0; const auto& l : graph.pointLights)
 	{
-		shader.Uniform<glm::vec3>("pointLights["+std::to_string(i)+"].position", l.position);
+		shader.Uniform<glm::vec3>("pointLights[" + std::to_string(i) + "].position", l.position);
 		shader.Uniform<glm::vec4>("pointLights[" + std::to_string(i) + "].colour", l.colour);
 
 		i++;
 	}
 
-	for (auto r : graph.statics)
+	for (const auto& r : graph.statics)
 	{
+		if (materials.find(r.materialID) == std::end(materials))
+			materials.insert({ r.materialID, GLMaterial(r.materialID) });
+
+		materials.at(r.materialID).Bind({ 0, 1, 2, 4 });
 		UseTransform(r.transform, ag::Transform({ 0,1,-3 }, { 0,0,0 }), ag::Camera(90.f, 1280.0f / 720.0f, 0.001f, 10.0f));
 	}
 
@@ -68,20 +64,7 @@ void ag::GLRenderEngine::Render(const ag::SceneGraph& graph)
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLES, 0, msh.indexCount);
-	/*
-	/// TODO: instanced rendering
 
-	for (size_t i = 0; i < graph->statics.size(); i++)
-	{
-		StaticRenderInstance instance = graph->statics[i];
-
-		UseMaterial(instance.materialID);
-		UseMesh(instance.meshID);
-		UseTransform(instance.transform, Transform({0, 0, -10}), Camera(90, 1920.0f/1080.0f, 0.01f, 100.0f));
-
-		ag::GL::DrawIndexed(GL_TRIANGLES, meshes[instance.meshID].indexCount, GL_UNSIGNED_INT, 0);
-	}
-	*/
 	screen.SwapBuffers();
 	screen.PollEvents();
 }

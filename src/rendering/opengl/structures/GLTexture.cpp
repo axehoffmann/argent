@@ -1,4 +1,5 @@
 #include "GLTexture.h"
+#include "GLTexture.h"
 
 ag::GLTexture::GLTexture(uint32_t resourceID, ag::TextureType type, ag::TextureFormat format, bool mipmap)
 {
@@ -20,6 +21,11 @@ ag::GLTexture::GLTexture(uint32_t resourceID, ag::TextureType type, ag::TextureF
 		glGenerateMipmap((GLEnum)type);
 }
 
+ag::GLTexture::GLTexture(GLTexture&& other) : handle(other.handle)
+{
+	other.handle = GLHandle(-1);
+}
+
 void ag::GLTexture::Bind(int slot)
 {
 	glActiveTexture(GL_TEXTURE0 + slot);
@@ -28,5 +34,6 @@ void ag::GLTexture::Bind(int slot)
 
 ag::GLTexture::~GLTexture()
 {
-	glDeleteTextures(1, &handle);
+	if (handle != GLHandle(-1))
+		glDeleteTextures(1, &handle);
 }

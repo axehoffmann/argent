@@ -15,23 +15,19 @@
 #include "core/Utility.h"
 #include "core/Stats.h"
 
+#include "lib/map.h"
+
 #include "GL.h"
 
 #include "rendering/opengl/structures/GLShader.h"
 #include "rendering/opengl/structures/GLMesh.h"
-#include "rendering/opengl/structures/GLTexture.h"
+#include "rendering/opengl/structures/GLMaterial.h"
 #include "rendering/opengl/structures/GLBuffer.h"
 
 
 
 namespace ag
 {
-	struct GLMaterial
-	{
-		std::vector<std::shared_ptr<ag::GLTexture>> textures;
-		std::vector<float> parameters;
-	};
-
 	class GLRenderEngine : public RenderEngine
 	{
 	public:
@@ -52,11 +48,7 @@ namespace ag
 		ag::GLScreen screen;
 		ag::GLShader shader;
 
-		ag::GLTexture tex;
-		ag::GLTexture tex2;
-		ag::GLTexture tex3;
-		ag::GLTexture tex4;
-
+		map<u32, GLMaterial> materials;
 
 		ag::GLMesh msh;
 	};
