@@ -1,4 +1,4 @@
-add_executable(engine "Main.cpp" "audio/AudioSource.h" "misc/FuncUtils.h" "lib/vector.h" "lib/ptr.h")
+add_executable(engine "Main.cpp" "audio/AudioSource.h" "misc/FuncUtils.h" "lib/vector.h" "lib/ptr.h" "engine.h")
 
 add_subdirectory(debug)
 add_subdirectory(core)

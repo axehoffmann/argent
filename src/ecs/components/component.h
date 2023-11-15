@@ -4,7 +4,11 @@
 
 #include "debug/log/Log.h"
 
-using ComponentTypes = typelist<>;
+#include "core/Transform.h"
+
+using ComponentTypes = typelist<
+	ag::Transform
+>;
 
 using component_count_t = u8;
 constexpr component_count_t MAX_COMPONENTS = 32;

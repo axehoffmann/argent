@@ -26,8 +26,8 @@ void ag::SceneBuilder::Update()
         EntityID id = entity.Info();
 
         graph->statics.emplace_back(id, 
-            entity.Get<StaticRenderable>().materialID, 
             entity.Get<StaticRenderable>().meshID, 
+            entity.Get<StaticRenderable>().materialID,
             entity.Get<Transform>());
     }
 

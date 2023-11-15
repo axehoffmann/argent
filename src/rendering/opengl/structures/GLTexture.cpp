@@ -21,7 +21,7 @@ ag::GLTexture::GLTexture(uint32_t resourceID, ag::TextureType type, ag::TextureF
 		glGenerateMipmap((GLEnum)type);
 }
 
-ag::GLTexture::GLTexture(GLTexture&& other) : handle(other.handle)
+ag::GLTexture::GLTexture(GLTexture&& other) : handle(other.handle), texType(other.texType)
 {
 	other.handle = GLHandle(-1);
 }

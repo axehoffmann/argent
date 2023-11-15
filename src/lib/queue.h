@@ -3,4 +3,4 @@
 #include <queue>
 
 template <typename T>
-using queue = std::queue;
+using queue = std::queue<T>;

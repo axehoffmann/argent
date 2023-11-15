@@ -2,6 +2,8 @@
 
 #include "resources/Material.h"
 
+#include "debug/log/Log.h"
+
 ag::GLMaterial::GLMaterial(uint32_t material)
 {
 	auto mat = AssetManager::Fetch<Material>(material).lock();
