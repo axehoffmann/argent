@@ -8,5 +8,5 @@
 
 namespace ag
 {
-	auto build_system_schedule() -> ptr<job_graph<ag::isystem>>;
+	auto build_system_schedule() -> job_graph<ag::isystem>;
 }

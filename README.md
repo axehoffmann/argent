@@ -9,8 +9,8 @@ A lightweight game engine written in C++
 - Modular OpenGL renderer (in progress)
 
 ## Planned Features
+- Asset streaming
 - Real-time networking
-- Modular Vulkan renderer
-- Modular Audio system
-- VFX system
-- Physics bindings
+- FMOD bindings
+- Physics engine bindings
+- VFX systems

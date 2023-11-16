@@ -12,6 +12,9 @@
 #include "ecs/world/system.h"
 #include "ecs/world/system_scheduler.h"
 
+#include "engine/ecs_thread.h"
+#include "engine/worker_thread.h"
+
 namespace stc = std::chrono;
 
 namespace ag
@@ -23,6 +26,7 @@ namespace ag
 		engine()
 			: ecs_jobs(ag::build_system_schedule())
 		{
+			// calculate amount of game/worker threads
 			std::thread::hardware_concurrency();
 			
 		}
@@ -31,28 +35,8 @@ namespace ag
 		{
 			atomic<bool> running = true;
 
-			auto ecs_unit = [&]()
-			{
-				while (running)
-				{
-					// System update
-					ecs_jobs->consume([](temp_ptr<isystem> s)
-					{
-						s->update();
-					});
-					
-					// Events update
-
-					// Scene graph, audio info, network send, spatial index
-
-					// Spin until next update
-				}
-			};
-
-			auto worker_unit = [&]()
-			{
-				// Handle IO requests and any heavy tasks
-			};
+			vector<ecs_thread> ecs_threads(ecs_thread_count, ecs_thread(running, ecs_jobs));
+			vector<worker_thread> worker_threads(worker_thread_count, worker_thread(running));
 
 			while (running)
 			{
@@ -61,11 +45,14 @@ namespace ag
 		}
 	private:
 		
-		ptr<job_graph<isystem>> ecs_jobs;
+		job_graph<isystem> ecs_jobs;
 		/// TODO: event system jobs, network update jobs
 
 		std::thread audio_thread;
 		vector<std::thread> worker_threads;
-		vector<std::thread> ecs_threads;
+
+		u8 ecs_thread_count;
+		u8 worker_thread_count;
+
 	};
 }

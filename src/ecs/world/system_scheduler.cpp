@@ -10,7 +10,7 @@ using bucket = arr<vector<u16>, componentCount>;
 using node = job_graph<isystem>::node;
 
 
-auto build_system_schedule() -> ptr<job_graph<isystem>>
+auto build_system_schedule() -> job_graph<isystem>
 {
 	auto& systems = isystem::registers();
 
@@ -69,5 +69,5 @@ auto build_system_schedule() -> ptr<job_graph<isystem>>
 		}
 	}
 
-	return make<job_graph<isystem>>(std::move(nodes));
+	return job_graph<isystem>(std::move(nodes));
 }
