@@ -95,7 +95,10 @@ namespace ag
 			work_queue.operate([&](queue<pair<string, entry*>>& q)
 			{
 				if (!q.empty())
-					tie(current_job, resrc) = q.pop();
+				{
+					tie(current_job, resrc) = q.front();
+					q.pop();
+				}
 			});
 
 			// Load the resource
