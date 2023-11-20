@@ -12,7 +12,9 @@ using id_t = unsigned short;
 
 template <typename ... Ts>
 struct typelist
-{};
+{
+	constexpr typelist() {}
+};
 
 namespace detail
 {
