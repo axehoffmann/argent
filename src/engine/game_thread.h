@@ -9,10 +9,10 @@
 
 namespace ag
 {
-	class ecs_thread
+	class game_thread
 	{
 	public:
-		ecs_thread(atomic<bool>& running_flag, job_graph<isystem>& tasks) : 
+		game_thread(atomic<bool>& running_flag, job_graph<isystem>& tasks) : 
 			running(running_flag),
 			jobs(tasks)
 		{
