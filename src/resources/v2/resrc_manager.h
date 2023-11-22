@@ -111,7 +111,7 @@ namespace ag
 		struct entry
 		{
 			atomic<i8> status;
-			Resource* data;
+			resource* data;
 		};
 
 		locked<map<string, entry>> resources;

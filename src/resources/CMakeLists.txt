@@ -1,2 +1,2 @@
 add_library(resources "Resource.cpp" "Mesh.cpp" "Texture.cpp" "Material.h" "Material.cpp" "AssetManager.h" "AssetManager.cpp" "Shader.h" "Shader.cpp" "Blueprint.cpp" "Blueprint.h" "AudioClip.h" "AudioClip.cpp" 
-						"v2/resources.h" "v2/resrc_manager.cpp" "v2/resrc_manager.h" "v2/resrc_handle.h" "v2/resrc_specifier.h")
+						"v2/resources.h" "v2/resrc_manager.cpp" "v2/resrc_manager.h" "v2/resrc_handle.h" "v2/resrc_specifier.h" "v2/material.h" "v2/texture.h")

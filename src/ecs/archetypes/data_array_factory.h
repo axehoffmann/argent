@@ -30,7 +30,7 @@ namespace ag
 		arr<data_array_factory_func, componentCount> ar{};
 		(ar[componentID<Ts>] = []()
 			{
-				return make<data_array<Ts>, data_array>();
+				return make<data_array_t<Ts>, data_array>();
 			}
 			, ...);
 		return ar;
