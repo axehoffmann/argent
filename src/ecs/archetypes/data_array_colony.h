@@ -43,6 +43,7 @@ namespace ag
 
 		template <typename T>
 		friend colony createColony();
+		friend class archetype;
 
 		colony(block_alloc_func alloc, u8 sz) : allocator(alloc), unit_size(sz) {}
 
