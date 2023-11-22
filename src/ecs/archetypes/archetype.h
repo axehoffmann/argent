@@ -23,6 +23,19 @@ namespace ag
 			
 		}
 
+		u64 count() const
+		{
+			return entityCount;
+		}
+
+		/// TODO: bad API
+		template <typename ... Ts>
+		void instantiateImmediate(Ts... params)
+		{
+			u8 i = 0;
+			(dataArrays.at(i++)->insert(range<byte>(&params, sizeof(Ts))), ...);
+		}
+
 		/// TODO: Support const
 		/**
 		 * An iterator that can iterate across multiple archetypes,

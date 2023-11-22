@@ -11,6 +11,20 @@ namespace ag
 {
 	using data_array_factory_func = ptr<data_array>(*)();
 
+	template <typename ... Ts>
+	constexpr arr<data_array_factory_func, componentCount> _dataArrayFactoryInit(typelist<Ts...>) noexcept
+	{
+		arr<data_array_factory_func, componentCount> ar{};
+		(ar[componentID<Ts>] = []()
+			{
+				return make<data_array_t<Ts>, data_array>();
+			}
+		, ...);
+		return ar;
+	}
+
+	constinit arr<data_array_factory_func, componentCount> _dataArrayFactoryFuncs = _dataArrayFactoryInit(ComponentTypes());
+
 	vector<ptr<data_array>> create_arrays_for_components(const component_set<MAX_COMPONENTS>& cTypes)
 	{
 		vector<ptr<data_array>> out{};
@@ -20,19 +34,5 @@ namespace ag
 		}
 
 		return out;
-	}
-
-	constinit arr<data_array_factory_func, componentCount> _dataArrayFactoryFuncs = _dataArrayFactoryInit<ComponentTypes>();
-
-	template <template <typename ... Ts> typename TL>
-	constexpr arr<data_array_factory_func, componentCount> _dataArrayFactoryInit() noexcept
-	{
-		arr<data_array_factory_func, componentCount> ar{};
-		(ar[componentID<Ts>] = []()
-			{
-				return make<data_array_t<Ts>, data_array>();
-			}
-			, ...);
-		return ar;
 	}
 }

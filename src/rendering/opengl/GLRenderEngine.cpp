@@ -7,7 +7,7 @@ static std::string MESH_PATH = "assets/cube.obj";
 void CheckError()
 {
 	int err = glGetError();
-	
+	if (err)
 		ag::Log::Error(ag::sfmt("OpenGL error: {}", (const char*)glewGetErrorString(err)));
 }
 

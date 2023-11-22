@@ -1,6 +1,7 @@
 #include "../TestFramework.h"
 #include "ecs/ECS.h"
 #include "ecs/EntityRef.h"
+#include "tests/ecs/ECS_Mock.h"
 
 #include <memory>
 
@@ -31,8 +32,8 @@ namespace archetype_test {
 
     $Init(archetype)
     {
-        collection1 = std::make_unique<ag::ArchetypeCollection>(ComponentSet{ ag::ComponentInfo::GetID<ComponentA>() });
-        collection2 = std::make_unique<ag::ArchetypeCollection>(ComponentSet{ ag::ComponentInfo::GetID<ComponentA>(), ag::ComponentInfo::GetID<ComponentB>() });
+        collection1 = std::make_unique<ag::ArchetypeCollection>(ComponentSet{ ag::ComponentInfo::GetID<mock::CmptA>() });
+        collection2 = std::make_unique<ag::ArchetypeCollection>(ComponentSet{ ag::ComponentInfo::GetID<mock::CmptA>(), ag::ComponentInfo::GetID<mock::CmptB>() });
     }
 
     $Cleanup(archetype)
@@ -44,7 +45,7 @@ namespace archetype_test {
     // Entity Creation and Destruction
     $Case(create_destroy, archetype)
     {
-        collection1->SpawnEntity(ComponentA(100));
+        collection1->SpawnEntity(mock::CmptA(100));
 
         ag_expect(collection1->GetEntityCount() == 0, "Entity creation should have been buffered");
         collection1->ResolveBuffers();
@@ -52,7 +53,7 @@ namespace archetype_test {
 
         for (int i = 0; i < 5; i++)
         {
-            collection1->SpawnEntity(ComponentA(i));
+            collection1->SpawnEntity(mock::CmptA(i));
         }
 
         ag_expect(collection1->GetEntityCount() == 1, "Expected 1 entity before resolving spawn buffer, instead found {}", collection1->GetEntityCount());
@@ -75,13 +76,13 @@ namespace archetype_test {
         EntityID lastEntity;
         for (int i = 0; i < 5; i++)
         {
-            lastEntity = collection2->SpawnEntity(ComponentA(100 + i), ComponentB(i));
+            lastEntity = collection2->SpawnEntity(mock::CmptA(100 + i), mock::CmptB(i));
         }
 
         bool err = false;
         try
         {
-            collection2->GetComponent<ComponentA>(0);
+            collection2->GetComponent<mock::CmptA>(0);
         }
         catch (const std::exception&)
         {
@@ -91,19 +92,19 @@ namespace archetype_test {
 
         collection2->ResolveBuffers();
 
-        ComponentA& componentA = collection2->GetComponent<ComponentA>(0);
+        mock::CmptA& componentA = collection2->GetComponent<mock::CmptA>(0);
         ag_expect(componentA.value == 100, "Expected initial ComponentA.value of 100, instead found {}", componentA.value);
         componentA.value = 10;
-        ag_expect(collection2->GetComponent<ComponentA>(0).value == 10, "GetComponent error: Expected updated ComponentA.value of 10, instead found {}", collection2->GetComponent<ComponentA>(0).value);
+        ag_expect(collection2->GetComponent<mock::CmptA>(0).value == 10, "GetComponent error: Expected updated ComponentA.value of 10, instead found {}", collection2->GetComponent<mock::CmptA>(0).value);
 
-        ComponentB& componentB = collection2->GetComponent<ComponentB>(2);
+        mock::CmptB& componentB = collection2->GetComponent<mock::CmptB>(2);
         ag_expect(componentB.partner == 2, "Expected initial ComponentB.partner of 2, instead found {}", componentB.partner);
         componentB.partner = lastEntity;
-        ag_expect(collection2->GetComponent<ComponentB>(2).partner == lastEntity, "Expected updated ComponentB.partner of {}, instead found {}", lastEntity, collection2->GetComponent<ComponentB>(2).partner);
+        ag_expect(collection2->GetComponent<mock::CmptB>(2).partner == lastEntity, "Expected updated ComponentB.partner of {}, instead found {}", lastEntity, collection2->GetComponent<mock::CmptB>(2).partner);
 
         size_t partnerIndex = collection2->GetIndexByID(componentB.partner);
         ag_expect(partnerIndex == 4, "Expected last entity at index 4, instead found {}", partnerIndex);
-        ComponentA& partnerComponentA = collection2->GetComponent<ComponentA>(partnerIndex);
+        mock::CmptA& partnerComponentA = collection2->GetComponent<mock::CmptA>(partnerIndex);
         ag_expect(partnerComponentA.value == 104, "Expected last entity to have ComponentA.value of 104, instead found {}", partnerComponentA.value);
     }
 }

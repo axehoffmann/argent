@@ -1,10 +1,12 @@
 #pragma once
 
 #include <numeric>
+#include <cstddef>
 
 // Fundamental type definitions
-
+namespace ag{
 using byte = std::byte;
+}
 
 using i8  = std::int8_t;
 using i16 = std::int16_t;

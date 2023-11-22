@@ -4,7 +4,7 @@
 #include <utility>
 
 template <typename ... Ts>
-using tuple = std::tuple;
+using tuple = std::tuple<Ts...>;
 
 template <typename T1, typename T2>
 using pair = std::pair<T1, T2>;

@@ -15,12 +15,13 @@ namespace ag
 		 * @param data		A pointer to the contiguous data
 		 * @param count		Amount of units in the data
 		*/
-		void append(byte* data, u16 count) 
+		void append(range<byte*>&& data) 
 		{
 			block_te* block_it = blocks.back();
-			byte* it = data;
+			byte* it = data.begin();
 
-			while (it != data + (unit_size * count))
+			/// TODO: straight up allocate large enough blocks straight away
+			while (it != data + (unit_size * data.width()))
 			{
 				u64 remainder = u64{block_it->back} - u64{block_it->back};
 

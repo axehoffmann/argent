@@ -72,8 +72,8 @@ constexpr u16 size_of(id_t id) noexcept
 }
 */
 
-template <template <typename ... Ts> typename TL>
-constexpr id_t type_count() noexcept
+template <typename ... Ts>
+constexpr id_t type_count(typelist<Ts...>) noexcept
 {
 	return sizeof...(Ts);
 }

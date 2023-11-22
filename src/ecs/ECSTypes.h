@@ -13,4 +13,4 @@ const int EPARTSIZE = 64 - 16;
 typedef unsigned char ComponentTypeID;
 typedef std::vector<ComponentTypeID> ComponentSet;
 
-typedef std::vector<byte> ComponentArray;
+typedef std::vector<ag::byte> ComponentArray;

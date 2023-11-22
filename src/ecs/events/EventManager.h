@@ -32,7 +32,7 @@ namespace ag::event
 		template <typename T>
 		void pushEvent(T event)
 		{
-			std::get<EventQueue<T>>(event_queues)->push(event);
+			std::get<event_queue<T>>(event_queues)->push(event);
 		}
 
 		void alertAll()
@@ -51,11 +51,11 @@ namespace ag::event
 			using T = unary_func_argument<Func>;
 			
 			reader_func<T> func_wrap(callback);
-			std::get<EventQueue<T>>(event_queues)->register_listener(func_wrap);
+			std::get<event_queue<T>>(event_queues)->register_listener(func_wrap);
 		}
 
 	private:
-		tuple<EventQueue<Ts>...> event_queues;
+		tuple<event_queue<Ts>...> event_queues;
 		std::mutex event_queue_mutex;
 		inline static std::atomic<int> next_event_id{0};
 	};

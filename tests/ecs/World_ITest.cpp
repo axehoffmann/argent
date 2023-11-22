@@ -5,9 +5,9 @@
 
 namespace world_test
 {
-    ag::ArchetypeCollection* cA;
-    ag::ArchetypeCollection* cAB;
-    ag::ArchetypeCollection* cAC;
+    std::shared_ptr<ag::ArchetypeCollection> cA;
+    std::shared_ptr<ag::ArchetypeCollection> cAB;
+    std::shared_ptr<ag::ArchetypeCollection> cAC;
 
     ag::World* wrld;
 
@@ -28,20 +28,19 @@ namespace world_test
 
     $Init(world)
     {
-        cA = new ag::ArchetypeCollection({ ag::ComponentInfo::GetID<ComponentA>() });
-        cAB = new ag::ArchetypeCollection({ ag::ComponentInfo::GetID<ComponentA>(), ag::ComponentInfo::GetID<ComponentB>() });
-        cAC = new ag::ArchetypeCollection({ ag::ComponentInfo::GetID<ComponentA>(), ag::ComponentInfo::GetID<ComponentC>() });
+        cA = std::make_shared<ag::ArchetypeCollection>(ComponentSet{ ag::ComponentInfo::GetID<ComponentA>() });
+        cAB = std::make_shared<ag::ArchetypeCollection>(ComponentSet{ ag::ComponentInfo::GetID<ComponentA>(), ag::ComponentInfo::GetID<ComponentB>() });
+        cAC = std::make_shared<ag::ArchetypeCollection>(ComponentSet{ ag::ComponentInfo::GetID<ComponentA>(), ag::ComponentInfo::GetID<ComponentC>() });
 
         wrld = new ag::World();
 
-        wrld->AddArchetype(cA);
-        wrld->AddArchetype(cAB);
+        wrld->AddArchetype(std::move(cA));
+        wrld->AddArchetype(std::move(cAB));
     }
 
     $Cleanup(world)
     {
         delete wrld;
-        delete cAC;
     }
 
 

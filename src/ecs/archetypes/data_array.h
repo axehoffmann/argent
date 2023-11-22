@@ -1,3 +1,5 @@
+#pragma once
+
 #include "ecs/components/component.h"
 #include "lib/basic.h"
 #include "lib/vector.h"
@@ -54,7 +56,7 @@ namespace ag
 		{
 			assert(componentID<T> == componentType);
 
-			return static_cast<T*>(data)
+			return static_cast<T*>(data);
 		}
 
 		/**

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "lib/typelist.h"
 #include "lib/basic.h"
 #include "lib/vector.h"
@@ -22,15 +24,7 @@ namespace ag
 	template <typename C>
 	constexpr id_t componentID = index_of<C, ComponentTypes>();
 
-	/**
-	 * A compile-time calculation of the size of a component based on its ID.
-	 * @param id	the ID of the component type
-	 * @return		the size of the component in bytes, or 0 if the ID was invalid.
-	*/
-	constexpr u16 component_size(id_t id) noexcept
-	{
-		return _componentSizes[id];
-	}
+
 	
 	/**
 	 * A type-erased non-owning component data reference
@@ -58,16 +52,26 @@ namespace ag
 		id_t type;
 	};
 
+	constexpr id_t componentCount = type_count(ComponentTypes());
 
-	constexpr id_t componentCount = type_count<ComponentTypes>();
-
-	constinit arr<u16, componentCount> _componentSizes = _componentSizesInit<ComponentTypes>();
-
-	template <template <typename ... Ts> typename TL>
-	constexpr arr<u16, componentCount> _componentSizesInit() noexcept
+	template <typename ... Ts>
+	constexpr arr<u16, componentCount> _componentSizesInit(typelist<Ts...>) noexcept
 	{
 		arr<u16, componentCount> ar{};
-		(ar[componentID<Ts>] = sizeof(Ts), ...);
+		((ar[componentID<Ts>] = sizeof(Ts)), ...);
 		return ar;
 	}
+
+	constinit arr<u16, componentCount> _componentSizes = _componentSizesInit(ComponentTypes());
+	
+	/**
+	 * A compile-time calculation of the size of a component based on its ID.
+	 * @param id	the ID of the component type
+	 * @return		the size of the component in bytes, or 0 if the ID was invalid.
+	*/
+	constexpr u16 component_size(id_t id) noexcept
+	{
+		return _componentSizes[id];
+	}
+	
 }
