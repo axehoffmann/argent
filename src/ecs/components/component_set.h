@@ -15,11 +15,13 @@ namespace ag
 	public:
 		constexpr component_set<N>(const component_set<N>& other)
 		{
+			size = other.size;
 			std::copy(other.ids, other.ids + N, ids);
 		}
 
-		constexpr component_set(range<id_t> data)
+		constexpr component_set(vector<id_t>&& data)
 		{
+			size = data.size();
 			std::copy(data.begin(), data.end(), ids);
 		}
 
@@ -66,26 +68,29 @@ namespace ag
 			return ids[idx];
 		}
 
-		constexpr id_t* begin() const
+		constexpr const id_t* begin() const
 		{
 			return ids;
 		}
 
-		constexpr id_t* end() const
+		constexpr const id_t* end() const
 		{
-			return ids + N;
+			return ids + size;
 		}
 
 	private:
+		u8 size;
 		id_t ids[N];
 	};
 
-	template <int N, typename ... Ctype>
+	template <u8 N, typename ... Ctype>
 	constexpr component_set<N> make_component_set() noexcept
 	{
-		int idx = 0;
+		u8 idx = 0;
 		vector<id_t> ids{};
-		(ids.push_back(componentID<std::remove_cv_t<Ctype>>), ...);
-		return component_set<N>(ids);
+
+		(ids.emplace_back(id_t(componentID<std::remove_cv_t<Ctype>>)), ...);
+
+		return component_set<N>(std::move(ids));
 	}
 }

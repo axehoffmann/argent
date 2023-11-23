@@ -65,28 +65,27 @@ namespace ag
 		 * - The data may exceed the current capacity of the array
 		 * @param data a view into the data to insert
 		*/
-		void insert(range<byte>&& data)
+		void insert(byte* data, u32 bytes)
 		{
-			count += data.width() / componentSize;
+			count += bytes / componentSize;
 			// Do we need to reallocate to fit this?
 			if (count > size)
 			{
 				size = std::bit_ceil(count);
 				reallocate();
 			}
-
-			std::memcpy(end, data.begin(), data.width());
-			end += data.width();
+			std::memcpy(end, data, bytes);
+			end += bytes;
 		}
-
-	protected:
-		data_array(id_t type) : componentType(type), componentSize(component_size(type)) {}
 		virtual ~data_array() {}
 
+		data_array(id_t type) : componentType(type), componentSize(component_size(type)) {}
+
+	protected:
 		virtual void reallocate() = 0;
 
 		u64 count{ 0 };
-		u64 size{ 1 };
+		u64 size{ 0 };
 		byte* data;
 
 	private:
@@ -109,9 +108,11 @@ namespace ag
 
 			std::memcpy(newBuf, first, count * sizeof(T));
 
-			delete[] first;
+			if (first != nullptr)
+				delete[] first;
+
 			first = newBuf;
-			data = static_cast<byte*>(first);
+			data = reinterpret_cast<byte*>(first);
 		}
 
 	private:

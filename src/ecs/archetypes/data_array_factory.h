@@ -15,10 +15,10 @@ namespace ag
 	constexpr arr<data_array_factory_func, componentCount> _dataArrayFactoryInit(typelist<Ts...>) noexcept
 	{
 		arr<data_array_factory_func, componentCount> ar{};
-		(ar[componentID<Ts>] = []()
+		((ar[componentID<Ts>] = []()
 			{
 				return make<data_array_t<Ts>, data_array>();
-			}
+			})
 		, ...);
 		return ar;
 	}
@@ -30,6 +30,8 @@ namespace ag
 		vector<ptr<data_array>> out{};
 		for (const id_t ct : cTypes)
 		{
+			std::cout << ct << std::endl;
+
 			out.emplace_back(_dataArrayFactoryFuncs[ct]());
 		}
 

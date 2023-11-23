@@ -33,7 +33,8 @@ namespace ag
 		void instantiateImmediate(Ts... params)
 		{
 			u8 i = 0;
-			(dataArrays.at(i++)->insert(range<byte>(&params, sizeof(Ts))), ...);
+
+			((dataArrays.at(i++)->insert(reinterpret_cast<byte*>(&params), sizeof(Ts))), ...);
 		}
 
 		/// TODO: Support const
@@ -45,6 +46,27 @@ namespace ag
 		template <typename ... Ts>
 		struct iterator 
 		{
+		private:
+			tuple<Ts*...> currentIters;
+			u64 currentIdx;
+			u64 currentArch;
+
+			range<archetype*> archetypes;
+
+			void increment()
+			{
+				const archetype& cur = archetypes[currentArch];
+				currentIdx++;
+				if (currentIdx > cur.entityCount)
+				{
+					// Step to next archetype we iterate across
+					currentArch++;
+					currentIdx = 0;
+					currentIters = tuple<Ts*...>{ cur.get_begin<Ts>()... };
+				}
+			}
+
+		public:
 			/**
 			 * Creates an iterator across a set of archetypes
 			 * @param archs the set of archetypes to iterate across
@@ -58,7 +80,7 @@ namespace ag
 			*/
 			iterator(u64 idx, u64 archIdx) : currentIdx(0), currentArch(0) {}
 
-			friend bool operator==(const iterator<Ts...>& other) const
+			bool operator==(const archetype::iterator<Ts...>& other) const
 			{
 				return other.currentArch == currentArch
 					&& other.currentIdx == currentIdx;
@@ -80,26 +102,6 @@ namespace ag
 			tuple<Ts&...> operator*() const
 			{
 				return tuple<Ts&...>{ *(std::get<Ts*>(currentIters) + currentIdx)... };
-			}
-
-		private:
-			tuple<Ts*...> currentIters;
-			u64 currentIdx;
-			u64 currentArch;
-
-			range<archetype*> archetypes;
-
-			void increment()
-			{
-				const archetype& cur = archetypes[currentArch];
-				currentIdx++;
-				if (currentIdx > cur.entityCount)
-				{
-					// Step to next archetype we iterate across
-					currentArch++;
-					currentIdx = 0;
-					currentIters = tuple<Ts*...>{ cur.get_begin<Ts>()... };
-				}
 			}
 		};
 

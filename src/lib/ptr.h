@@ -37,6 +37,9 @@ struct ptr
 	template <typename T, typename ... Params>
 	friend ptr<T> make(Params... params);
 
+	template <typename T, typename Base, typename ... Params>
+	friend ptr<Base> make(Params... params);
+
 	T* operator->() const
 	{
 		return object;
