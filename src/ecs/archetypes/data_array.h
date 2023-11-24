@@ -28,7 +28,7 @@ namespace ag
 			assert(idx <= size);
 			assert(componentID<T> == componentType);
 
-			return *(static_cast<T*>(data) + idx);
+			return *(static_cast<T*>(start) + idx);
 		}
 
 		/**
@@ -43,7 +43,7 @@ namespace ag
 			assert(idx <= size);
 			assert(componentID<T> == componentType);
 
-			return *(static_cast<T*>(data) + idx);
+			return *(reinterpret_cast<T*>(start) + idx);
 		}
 
 		/**
@@ -56,7 +56,7 @@ namespace ag
 		{
 			assert(componentID<T> == componentType);
 
-			return static_cast<T*>(data);
+			return reinterpret_cast<T*>(start);
 		}
 
 		/**
@@ -67,12 +67,14 @@ namespace ag
 		*/
 		void insert(byte* data, u32 bytes)
 		{
-			count += bytes / componentSize;
+			u64 newSz = count + bytes / componentSize;
+
 			// Do we need to reallocate to fit this?
-			if (count > size)
+			if (newSz > size)
 			{
-				size = std::bit_ceil(count);
+				size = std::bit_ceil(newSz);
 				reallocate();
+				count += bytes / componentSize;
 			}
 			std::memcpy(end, data, bytes);
 			end += bytes;
@@ -86,33 +88,36 @@ namespace ag
 
 		u64 count{ 0 };
 		u64 size{ 0 };
-		byte* data;
+
+		byte* start;
+		byte* end;
 
 	private:
 		id_t componentType;
 		u16 componentSize;
 
-		byte* end;
 	};
 
 	template <typename T>
 	class data_array_t : public data_array
 	{
 	public:
-		data_array_t() : data_array(componentID<T>) {}
+		data_array_t() : data_array(componentID<T>), first(nullptr) {}
 
 	protected:
 		void reallocate() override
 		{
 			T* newBuf = new T[size];
 
-			std::memcpy(newBuf, first, count * sizeof(T));
-
 			if (first != nullptr)
+			{
+				std::memcpy(newBuf, first, count * sizeof(T));
 				delete[] first;
+			}
 
 			first = newBuf;
-			data = reinterpret_cast<byte*>(first);
+			start = reinterpret_cast<byte*>(first);
+			end = reinterpret_cast<byte*>(first + count);
 		}
 
 	private:

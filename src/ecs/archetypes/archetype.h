@@ -33,7 +33,7 @@ namespace ag
 		void instantiateImmediate(Ts... params)
 		{
 			u8 i = 0;
-
+			entityCount += 1;
 			((dataArrays.at(i++)->insert(reinterpret_cast<byte*>(&params), sizeof(Ts))), ...);
 		}
 
@@ -55,15 +55,19 @@ namespace ag
 
 			void increment()
 			{
-				const archetype& cur = archetypes[currentArch];
 				currentIdx++;
-				if (currentIdx > cur.entityCount)
+				if (currentIdx > archetypes[currentArch].entityCount)
 				{
 					// Step to next archetype we iterate across
 					currentArch++;
 					currentIdx = 0;
-					currentIters = tuple<Ts*...>{ cur.get_begin<Ts>()... };
+					updateIters();
 				}
+			}
+
+			void updateIters()
+			{
+				currentIters = tuple<Ts*...>{ archetypes[currentArch]->get_begin<Ts>()... };
 			}
 
 		public:
@@ -71,7 +75,10 @@ namespace ag
 			 * Creates an iterator across a set of archetypes
 			 * @param archs the set of archetypes to iterate across
 			*/
-			iterator(range<archetype*>&& archs) : archetypes(archs), currentIdx(0), currentArch(0) {}
+			iterator(vector<archetype*>&& archs) : archetypes(archs), currentIdx(0), currentArch(0) 
+			{
+				updateIters();
+			}
 			
 			/**
 			 * Creates an end iterator to mark the end of a range
