@@ -51,7 +51,8 @@ namespace ag
 			u64 currentIdx;
 			u64 currentArch;
 
-			range<archetype*> archetypes;
+			/// TODO: use span
+			vector<archetype*> archetypes;
 
 			void increment()
 			{

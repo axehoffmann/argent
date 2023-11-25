@@ -39,9 +39,9 @@ namespace ag
 
 		constexpr bool contains(id_t id) const
 		{
-			for (const id_t i : ids)
+			for (const id_t x : ids)
 			{
-				if (i == id)
+				if (x == id)
 				{
 					return true;
 				}
@@ -52,12 +52,13 @@ namespace ag
 
 		constexpr u8 find(id_t id) const
 		{
-			for (const id_t i : ids)
+			for (u8 i = 0; const id_t x : ids)
 			{
-				if (i == id)
+				if (x == id)
 				{
-					return true;
+					return i;
 				}
+				i++;
 			}
 
 			return std::numeric_limits<u8>::max();
