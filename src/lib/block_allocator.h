@@ -1,5 +1,8 @@
 #pragma once
 
+#include <bit>
+#include <cassert>
+#include <cstring>
 #include <memory>
 
 #include "debug/log/Log.h"
@@ -40,7 +43,7 @@ public:
 
 		/// TODO: may need to theoretically loop over it.
 		offset = cur->end.fetch_add(size);
-		void* out = new (cur->data + offset);
+		void* out = new (cur->data + offset) ag::byte[size];
 		counter.fetch_add(1);
 		return out;
 	}
@@ -48,7 +51,7 @@ public:
 	/**
 	 * Call after destructing an allocation
 	*/
-	void free()
+	void free(void* loc)
 	{
 		counter.fetch_add(-1);
 	}
@@ -65,7 +68,7 @@ public:
 
 		delete first;
 		// Reset with our highest total size, to avoid more reallocations
-		first = new block(totalSize);
+		first = new block(std::bit_ceil(totalSize.load()));
 		last.store(first);
 	}
 
@@ -82,7 +85,7 @@ private:
 
 	block* newBlock()
 	{
-		if (allocating.test_and_set(true))
+		if (allocating.test_and_set())
 		{
 			ag::Log::Error("Panic! Pool Allocator is trying to allocate twice at once.");
 		}
@@ -93,7 +96,8 @@ private:
 		totalSize.fetch_add(nb->size);
 		cur->next.store(nb);
 		last.store(nb);
-		allocating = false;
+
+		allocating.clear();
 	}
 
 	struct block
