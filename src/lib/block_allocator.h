@@ -23,29 +23,32 @@ public:
 	/**
 	 * Allocate memory in the block allocator
 	 * @param size 
-	 * @return 
+	 * @return a pointer to the beginning of the allocated memory
 	*/
 	void* allocate(u64 size)
 	{
-		block* cur = waitForBlock();
+		counter++;
 
-		u64 offset = cur->end.fetch_add(size);
-		// If we are the first to allocate over the block's size, its our responsibility to create a new block
-		if (offset + size > cur->size)
+		while (true)
 		{
-			cur = newBlock();
-		}
-		/// TODO: analyse for off-by-one errors?
-		else if (offset > cur->size)
-		{
-			cur = waitForBlock();
-		}
+			// Try append to the block
+			block* b = waitForBlock();
+			u64 offset = b->end.fetch_add(size);
 
-		/// TODO: may need to theoretically loop over it.
-		offset = cur->end.fetch_add(size);
-		void* out = new (cur->data + offset) ag::byte[size];
-		counter.fetch_add(1);
-		return out;
+			if (offset > b->size)
+			{
+				// Another thread is allocating a new block right now, wait for them
+				continue;
+			}
+			else if (offset + size > b->size)
+			{
+				// Our responsibility to create a new block
+				b = newBlock();
+				offset = b->end.fetch_add(size);
+			}
+
+			return (b->data + offset);
+		}
 	}
 
 	/**
