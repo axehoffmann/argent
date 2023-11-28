@@ -31,7 +31,7 @@ public:
 		while (true)
 		{
 			// Try append to the block
-			block* b = waitForBlock();
+			block* b = last.load();
 			u64 offset = b->offset.fetch_add(size);
 
 			if (offset > b->size)
@@ -134,15 +134,6 @@ private:
 			alloc->free(data);
 		}
 	};
-
-	block* waitForBlock()
-	{
-		while (true)
-		{
-			block* cur = last.load();
-			if (cur->offset.load() < cur->size) return cur;
-		}
-	}
 	
 	atomic<block*> first;
 	atomic<block*> last;

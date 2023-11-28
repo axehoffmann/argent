@@ -32,7 +32,7 @@ public:
 		while (true)
 		{
 			// Try append to the block
-			block* b = waitForBlock();
+			block* b = last.load();
 			u64 offset = b->end.fetch_add(size);
 
 			if (offset > b->size)
@@ -40,7 +40,7 @@ public:
 				// Another thread is allocating a new block right now, wait for them
 				continue;
 			}
-			else if (offset + size > b->size)
+			else if (offset + size >= b->size)
 			{
 				// Our responsibility to create a new block
 				b = newBlock();
@@ -75,16 +75,17 @@ public:
 		last.store(first);
 	}
 
+	block_allocator(u64 initial_size) :
+		counter(0),
+		totalSize(initial_size),
+		allocating(),
+		first(new block(initial_size)),
+		last(first) {}
+
+	atomic<u32> heap_allocs;
+
+
 private:
-	
-	block* waitForBlock()
-	{
-		while (true)
-		{
-			block* cur = last.load();
-			if (cur->end < cur->size) return cur;
-		}
-	}
 
 	block* newBlock()
 	{
@@ -96,11 +97,14 @@ private:
 		block* cur = last.load();
 
 		block* nb = new block(cur->size * 2);
+		heap_allocs.fetch_add(1);
 		totalSize.fetch_add(nb->size);
 		cur->next.store(nb);
 		last.store(nb);
 
 		allocating.clear();
+
+		return nb;
 	}
 
 	struct block

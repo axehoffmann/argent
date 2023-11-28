@@ -57,11 +57,18 @@ namespace ag
 			void increment()
 			{
 				currentIdx++;
-				if (currentIdx > archetypes[currentArch].entityCount)
+				if (currentIdx > archetypes[currentArch]->entityCount)
 				{
 					// Step to next archetype we iterate across
 					currentArch++;
 					currentIdx = 0;
+
+					if (currentArch >= archetypes.size())
+					{
+						// Reached end.
+						return;
+					}
+
 					updateIters();
 				}
 			}
@@ -86,7 +93,7 @@ namespace ag
 			 * @param idx		the entity count of the last archetype
 			 * @param archIdx	the index of the last archetype 
 			*/
-			iterator(u64 idx, u64 archIdx) : currentIdx(0), currentArch(0) {}
+			iterator(u64 idx, u64 archIdx) : currentIdx(idx), currentArch(archIdx) {}
 
 			bool operator==(const archetype::iterator<Ts...>& other) const
 			{

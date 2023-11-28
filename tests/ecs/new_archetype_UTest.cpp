@@ -15,20 +15,37 @@ namespace arch_test
 
 		archetype arch(set);
 		
-		ag_expect(arch.count() == 0, "");
+		ag_expect(arch.count() == 0, "a");
 
-		glm::vec3 expectedPos{1,0,1};
+		glm::vec3 expectedPos{0,1,0};
 		arch.instantiateImmediate(Transform(expectedPos));
 
 		archetype* ar = &arch;
 
-		ag_expect(arch.count() == 1, "");
+		ag_expect(arch.count() == 1, "a");
 
 		// Construct an iterator to the archetype
 		auto it = archetype::iterator<Transform>({&arch});
 		
 		auto [tf] = *it;
 
-		ag_expect(tf.GetPosition() == expectedPos, "");
+		ag_expect(tf.GetPosition() == expectedPos, "a");
+
+		// This isn't the actual use-case in-engine, but it tests iteration and data format.
+		for (u32 i = 1; i < 100; i++)
+		{
+			arch.instantiateImmediate(Transform({0, i + 1, 0}));
+		}
+
+		u32 i = 1;
+		auto end = archetype::iterator<Transform>(0, 1);
+		for (it = archetype::iterator<Transform>({ &arch }); it != end; it++)
+		{
+			auto [tf] = *it;
+			expectedPos = { 0, i, 0 };
+			ag_expect(tf.GetPosition() == expectedPos, "a");
+			i++;
+		}
+		ag_expect(i == 102, "i: {}, expected: {}", i, 102);
 	}
 }
