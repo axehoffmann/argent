@@ -10,7 +10,6 @@ namespace arch_test
 
 	$tcase(basic, archetypes)
 	{
-		std::cout << ag::componentID<std::remove_cv_t<Transform>> << std::endl;
 		auto set = ag::make_component_set<MAX_COMPONENTS, Transform>();
 
 		archetype arch(set);

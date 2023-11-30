@@ -30,8 +30,6 @@ namespace ag
 		vector<ptr<data_array>> out{};
 		for (const id_t ct : cTypes)
 		{
-			std::cout << ct << std::endl;
-
 			out.emplace_back(_dataArrayFactoryFuncs[ct]());
 		}
 

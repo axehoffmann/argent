@@ -18,6 +18,8 @@
 
 #define assert_equals(a, b) tf::assertEquals(ctx, a, b, std::source_location::current())
 
+std::string get_fname(const std::string& path);
+
 namespace tf
 {
 	struct context
@@ -28,8 +30,11 @@ namespace tf
 		{
 			for (const std::string& s : failures)
 			{
-				std::cout << s << std::endl;
+				std::cout << col::brightblack << "   |- " << s << '\n';
 			}
+
+			if (failures.size() > 0)
+				std::cout << '\n';
 		}
 	};
 
@@ -37,7 +42,7 @@ namespace tf
 	void assertEquals(context& ctx, T a, T b, std::source_location loc = std::source_location::current())
 	{
 		if (a == b) return;
-		ctx.failures.push_back(std::vformat("Assertion Fail ({}): {} != {}", std::make_format_args(loc.line(), a, b)));
+		ctx.failures.push_back(std::vformat(col::brightwhite +"Assertion Fail (ln "+ col::brightcyan +"{}"+ col::white +"): {} "+ col::brightred +"!= "+ col::white +"{} \n", std::make_format_args(loc.line(), a, b)));
 	}
 
 	using case_func = void(*)(context&);
@@ -58,9 +63,12 @@ namespace tf
 		std::vector<t_case*> cases;
 
 		t_suite(std::source_location loc)
-			: name(loc.file_name()) 
+			: name(get_fname(loc.file_name()))
 		{
 			reg().emplace_back(this);
+
+			// add padding to the name
+			name.insert(name.length(), 28 - name.length(), ' ');
 		}
 
 		void run()
@@ -68,6 +76,11 @@ namespace tf
 			context ctx;
 			for (t_case* c : cases)
 				c->func(ctx);
+
+			if (ctx.failures.size() == 0)
+				std::cout << col::brightblack << "  [ " << col::brightwhite << name << col::brightblack << " ]   [ " << col::brightgreen <<"PASS" << col::brightblack <<" ] \n";
+			else
+				std::cout << col::brightblack << "  [ " << col::brightwhite << name << col::brightblack << " ]   [ " << col::brightred <<"FAIL" << col::brightblack <<" ] \n";
 
 			ctx.dump();
 		}

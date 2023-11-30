@@ -74,8 +74,8 @@ namespace ag
 			{
 				size = std::bit_ceil(newSz);
 				reallocate();
-				count += bytes / componentSize;
 			}
+			count += bytes / componentSize;
 			std::memcpy(end, data, bytes);
 			end += bytes;
 		}

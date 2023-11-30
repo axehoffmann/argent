@@ -4,31 +4,51 @@
 #include <string>
 #include <vector>
 
+namespace col
+{
+	static inline std::string black			= "\033[30m";
+	static inline std::string red			= "\033[31m";
+	static inline std::string green			= "\033[32m";
+	static inline std::string yellow		= "\033[33m";
+	static inline std::string blue			= "\033[34m";
+	static inline std::string magenta		= "\033[35m";
+	static inline std::string cyan			= "\033[36m";
+	static inline std::string white			= "\033[37m";
+	static inline std::string brightblack	= "\033[90m";
+	static inline std::string brightred		= "\033[91m";
+	static inline std::string brightgreen	= "\033[92m";
+	static inline std::string brightyellow  = "\033[93m";
+	static inline std::string brightblue	= "\033[94m";
+	static inline std::string brightmagenta = "\033[95m";
+	static inline std::string brightcyan	= "\033[96m";
+	static inline std::string brightwhite   = "\033[97m";
+}
+
 class csw
 {
 public:
 	enum class Colour : uint16_t
 	{
-		Black = 30,
-		Red = 31,
-		Green = 32,
-		Yellow = 33,
-		Blue = 34,
-		Magenta = 35,
-		Cyan = 36,
-		White = 37,
-		BrightBlack = 90,
-		BrightRed = 91,
-		BrightGreen = 92,
-		BrightYellow = 93,
-		BrightBlue = 94,
-		BrightMagenta = 95,
-		BrightCyan = 96,
-		BrightWhite = 97,
+		Black			= 30,
+		Red				= 31,
+		Green			= 32,
+		Yellow			= 33,
+		Blue			= 34,
+		Magenta			= 35,
+		Cyan			= 36,
+		White			= 37,
+		BrightBlack		= 90,
+		BrightRed		= 91,
+		BrightGreen		= 92,
+		BrightYellow	= 93,
+		BrightBlue		= 94,
+		BrightMagenta	= 95,
+		BrightCyan		= 96,
+		BrightWhite		= 97,
 		Unset
 	};
 
-	static std::string ColourCode(uint16_t c)
+	static constexpr std::string ColourCode(uint16_t c)
 	{
 		return "\x1B[" + std::to_string(c) + "m";
 	}
