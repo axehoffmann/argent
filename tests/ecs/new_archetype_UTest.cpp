@@ -45,6 +45,6 @@ namespace arch_test
 			assert_equals(tf.GetPosition(), expectedPos);
 			i++;
 		}
-		assert_equals(i, u32{102});
+		assert_equals(i, u32{101});
 	}
 }

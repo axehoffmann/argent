@@ -89,6 +89,15 @@ public:
 		return count;
 	}
 
+	mt_list(block_allocator* a) : 
+		first(),
+		last(),
+		count(0),
+		allocator(a)
+	{
+		reset();
+	}
+
 	~mt_list()
 	{
 		clear();
@@ -100,7 +109,8 @@ private:
 		block* b = first.load();
 		while (b != nullptr)
 		{
-			b->~block(allocator);
+			allocator->free(b->data);
+			b->~block();
 			allocator->free(b);
 		}
 	}
@@ -109,11 +119,13 @@ private:
 	{
 		block* b = last.load();
 
-		block* nb = allocator->allocate(sizeof(block));
-		new (nb) block(b->size * 2);
+		block* nb = static_cast<block*>(allocator->allocate(sizeof(block)));
+		new (nb) block(b->size * 2, allocator);
 
 		b->next.store(nb);
 		last.store(nb);
+
+		return nb;
 	}
 
 	struct block
@@ -128,11 +140,6 @@ private:
 			data(new (alloc->allocate(sizeof(T) * size)) T[size]),
 			offset(0),
 			next(nullptr) {}
-
-		~block(block_allocator* alloc)
-		{
-			alloc->free(data);
-		}
 	};
 	
 	atomic<block*> first;

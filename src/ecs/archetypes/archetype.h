@@ -57,7 +57,7 @@ namespace ag
 			void increment()
 			{
 				currentIdx++;
-				if (currentIdx > archetypes[currentArch]->entityCount)
+				if (currentIdx >= archetypes[currentArch]->entityCount)
 				{
 					// Step to next archetype we iterate across
 					currentArch++;
