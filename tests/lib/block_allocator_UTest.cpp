@@ -1,4 +1,4 @@
-#include "tests/TestFramework.h"
+#include "tests/test_framework.h"
 
 #include "lib/block_allocator.h"
 
@@ -9,9 +9,9 @@
 
 namespace block_allocator_test
 {
-	$UTest(block_allocators);
+	$utest(block_allocators);
 
-	$Case(synchronous, block_allocators)
+	$tcase(synchronous, block_allocators)
 	{
 		constexpr u32 alloc_count = 1000;
 
@@ -30,7 +30,7 @@ namespace block_allocator_test
 
 			for (u32 i = 0; i < alloc_count; i++)
 			{
-				ag_expect(*ptrs.at(i) == i, "");
+				assert_equals(*ptrs.at(i), i);
 				alloc.free(nullptr);
 			}
 
@@ -38,7 +38,7 @@ namespace block_allocator_test
 		}
 	}
 
-	$Case(parrallel, block_allocators)
+	$tcase(parrallel, block_allocators)
 	{
 		constexpr u32 alloc_count = 1000;
 
@@ -61,7 +61,7 @@ namespace block_allocator_test
 
 			for (u32 i = 0; i < alloc_count; i++)
 			{
-				ag_expect(*ptrs.at(i) == i, "");
+				assert_equals(*ptrs.at(i), i);
 				alloc.free(nullptr);
 			}
 

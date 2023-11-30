@@ -8,6 +8,20 @@
 #include "../ecs/Component.h"
 #include <vector>
 
+template <>
+struct std::formatter<glm::vec3>
+{
+    constexpr auto parse(std::format_parse_context& ctx)
+    {
+        return ctx.begin();
+    }
+
+    auto format(const glm::vec3& ob, std::format_context& ctx) const
+    {
+        return std::format_to(ctx.out(), "({}, {}, {})", ob.x, ob.y, ob.z);
+    }
+};
+
 namespace ag
 {
     /// TODO: should we have a system where transforms/other components can all share a reference to a position value etc?

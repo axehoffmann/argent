@@ -1,4 +1,4 @@
-#include "../TestFramework.h"
+#include "tests/test_framework.h"
 
 #include "lib/ptr.h"
 
@@ -24,22 +24,22 @@ namespace ptr_test
 		~TestSubObject() override {}
 	};
 
-	$Test(ptr_test);
+	$utest(ptr_test);
 
-	$Case(construction_destruction, ptr_test)
+	$tcase(construction_destruction, ptr_test)
 	{
 		int test = 0;
 	
 		{
 			ptr<TestObject> ob = make<TestObject>(&test);
 
-			ag_expect(test == 1, "Expected ptr to initialise the object");
+			assert_equals(test, 1);
 		}
 
-		ag_expect(test == 2, "Expected ptr to destruct the object");
+		assert_equals(test, 2);
 	}
 
-	$Case(conversion, ptr_test)
+	$tcase(conversion, ptr_test)
 	{
 		int test = 0;
 
@@ -50,7 +50,7 @@ namespace ptr_test
 				auto casted = ob.convert<TestObject>();
 			}
 
-			ag_expect(test == 1, "Temp ptr should not have destructed object");
+			assert_equals(test, 1);
 		}
 	}
 }

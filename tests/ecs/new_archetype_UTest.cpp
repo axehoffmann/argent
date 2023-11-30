@@ -1,4 +1,4 @@
-#include "tests/TestFramework.h"
+#include "tests/test_framework.h"
 #include "ecs/archetypes/archetype.h"
 #include "ecs/components/component.h"
 
@@ -6,30 +6,30 @@ using namespace ag;
 
 namespace arch_test
 {
-	$UTest(archetypes);
+	$utest(archetypes);
 
-	$Case(basic, archetypes)
+	$tcase(basic, archetypes)
 	{
 		std::cout << ag::componentID<std::remove_cv_t<Transform>> << std::endl;
 		auto set = ag::make_component_set<MAX_COMPONENTS, Transform>();
 
 		archetype arch(set);
 		
-		ag_expect(arch.count() == 0, "a");
+		assert_equals(arch.count(), u64{0});
 
 		glm::vec3 expectedPos{0,1,0};
 		arch.instantiateImmediate(Transform(expectedPos));
 
 		archetype* ar = &arch;
 
-		ag_expect(arch.count() == 1, "a");
+		assert_equals(arch.count(), u64{1});
 
 		// Construct an iterator to the archetype
 		auto it = archetype::iterator<Transform>({&arch});
 		
 		auto [tf] = *it;
 
-		ag_expect(tf.GetPosition() == expectedPos, "a");
+		assert_equals(tf.GetPosition(), expectedPos);
 
 		// This isn't the actual use-case in-engine, but it tests iteration and data format.
 		for (u32 i = 1; i < 100; i++)
@@ -43,9 +43,9 @@ namespace arch_test
 		{
 			auto [tf] = *it;
 			expectedPos = { 0, i, 0 };
-			ag_expect(tf.GetPosition() == expectedPos, "a");
+			assert_equals(tf.GetPosition(), expectedPos);
 			i++;
 		}
-		ag_expect(i == 102, "i: {}, expected: {}", i, 102);
+		assert_equals(i, u32{102});
 	}
 }
