@@ -8,23 +8,22 @@
 #include "lib/sync.h"
 
 /**
- * A multi-writer block array. Uses a pool allocator.
+ * A multi-writer, type-erased block array. Uses a pool allocator.
  * Use case:
  *	- Faster iteration due to contiguous blocks
  *  - Lock-free append operation
 */
-template <typename T>
-class mt_list
+class mtte_list
 {
 private:
 	struct block;
 public:
 	/**
 	 * Concurrently appends an item to the list.
-	 * @param ob the item to append
+	 * @param ob the item to append. MUST represent the same type used by the rest of the list.
 	 * @return a pointer to the appended item. Note that its lifetime will end when reset() is called on the list.
 	*/
-	T* push(T&& ob)
+	ag::byte* push(ag::byte* ob)
 	{
 		count++;
 
@@ -32,22 +31,22 @@ public:
 		{
 			// Try append to the block
 			block* b = last.load();
-			u64 offset = b->offset.fetch_add(size);
+			u64 offset = b->offset.fetch_add(tsize);
 
 			if (offset > b->size)
 			{
 				// Another thread is allocating a new block right now, wait for them
 				continue;
 			}
-			else if (offset + size > b->size)
+			else if (offset + tsize > b->size)
 			{
 				// Our responsibility to create a new block
 				b = newBlock();
-				offset = b->offset.fetch_add(size);
+				offset = b->offset.fetch_add(tsize);
 			}
 
-			T* loc = b->data + offset;
-			*loc = std::move(ob);
+			std::byte* loc = b->data + offset;
+			std::memcpy(loc, ob, tsize);
 			return loc;
 		}
 	}
@@ -71,7 +70,7 @@ public:
 	 * Should not be used while being written to.
 	 * @param dest destination pointer
 	*/
-	void copy_to(T* dest) const
+	void copy_to(ag::byte* dest) const
 	{
 		block* b = first.load();
 		while (b != nullptr)
@@ -88,19 +87,26 @@ public:
 	{
 		return count;
 	}
+	
+	mtte_list(u32 item_size)
+		: tsize(item_size)
+	{
+		reset();
+	}
 
-	~mt_list()
+	~mtte_list()
 	{
 		clear();
 	}
 
-private:	
+private:
 	void clear()
 	{
 		block* b = first.load();
 		while (b != nullptr)
 		{
-			b->~block(allocator);
+			allocator->free(b->data);
+			b->~block();
 			allocator->free(b);
 		}
 	}
@@ -109,8 +115,8 @@ private:
 	{
 		block* b = last.load();
 
-		block* nb = allocator->allocate(sizeof(block));
-		new (nb) block(b->size * 2);
+		block* nb = static_cast<block*>(allocator->allocate(sizeof(block)));
+		new (nb) block(tsize, b->size * 2, allocator);
 
 		b->next.store(nb);
 		last.store(nb);
@@ -119,25 +125,22 @@ private:
 	struct block
 	{
 		u64 size;
-		T* data;
+		ag::byte* data;
 		atomic<u64> offset;
 		atomic<block*> next;
 
-		block(u64 sz, block_allocator* alloc) :
+		block(u32 isz, u64 sz, block_allocator* alloc) :
 			size(sz),
-			data(new (alloc->allocate(sizeof(T) * size)) T[size]),
+			data(new (alloc->allocate(isz * size)) ag::byte[isz * size]),
 			offset(0),
 			next(nullptr) {}
-
-		~block(block_allocator* alloc)
-		{
-			alloc->free(data);
-		}
 	};
-	
+
 	atomic<block*> first;
 	atomic<block*> last;
-	
+
+	u32 tsize;
+
 	atomic<u64> count;
 
 	block_allocator* allocator;
