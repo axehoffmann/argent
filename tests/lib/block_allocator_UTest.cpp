@@ -11,13 +11,13 @@ namespace block_allocator_test
 {
 	$utest(block_allocators);
 
-	$tcase(synchronous, block_allocators)
+	$tcase(synchronous, block_allocators) 
 	{
 		constexpr u32 alloc_count = 1000;
 
 		block_allocator alloc(10);
 
-		for (u32 i = 0; i < 5; i++)
+		for (u32 rep = 0; rep < 5; rep++)
 		{
 			std::vector<u32*> ptrs(alloc_count);
 

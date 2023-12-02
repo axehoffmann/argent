@@ -26,24 +26,25 @@ public:
 	*/
 	T* push(T&& ob)
 	{
-		count++;
+		count.fetch_add(1);
 
 		while (true)
 		{
 			// Try append to the block
 			block* b = last.load();
-			u64 offset = b->offset.fetch_add(sizeof(T));
+
+			u64 offset = b->offset.fetch_add(1);
 
 			if (offset > b->size)
 			{
 				// Another thread is allocating a new block right now, wait for them
 				continue;
 			}
-			else if (offset + sizeof(T) > b->size)
+			else if (offset + 1 >= b->size)
 			{
 				// Our responsibility to create a new block
 				b = newBlock();
-				offset = b->offset.fetch_add(sizeof(T));
+				offset = b->offset.fetch_add(1);
 			}
 
 			T* loc = b->data + offset;
@@ -53,16 +54,26 @@ public:
 	}
 
 	/**
-	 * Completely resets the list
+	 * Completely wipes the list, leaving it in an unusable state and freeing memory.
 	*/
 	void reset()
 	{
 		clear();
+		count.store(0);
+		first.store(nullptr);
+		last.store(nullptr);
+	}
 
-		block* nb = newBlock();
+	/**
+	 * Reconstructs the list, preparing it for use. Expects that reset() was called prior to use.
+	*/
+	void prepare()
+	{
+		block* nb = static_cast<block*>(allocator->allocate(sizeof(block)));
 		first.store(nb);
 		last.store(nb);
-		count.store(0);
+
+		new (nb) block(totalSize, allocator);
 	}
 
 	/**
@@ -89,13 +100,15 @@ public:
 		return count;
 	}
 
-	mt_list(block_allocator* a) : 
-		first(),
+	mt_list(u32 sz, block_allocator* a) : 
+		first(static_cast<block*>(a->allocate(sizeof(block)))),
 		last(),
 		count(0),
-		allocator(a)
+		allocator(a),
+		totalSize(sz)
 	{
-		reset();
+		last.store(first.load());
+		new (first) block(sz, allocator);
 	}
 
 	~mt_list()
@@ -109,9 +122,12 @@ private:
 		block* b = first.load();
 		while (b != nullptr)
 		{
-			allocator->free(b->data);
-			b->~block();
-			allocator->free(b);
+			block* cur = b;
+			b = cur->next;
+
+			allocator->free(cur->data);
+			cur->~block();
+			allocator->free(cur);
 		}
 	}
 
@@ -121,6 +137,7 @@ private:
 
 		block* nb = static_cast<block*>(allocator->allocate(sizeof(block)));
 		new (nb) block(b->size * 2, allocator);
+		totalSize += b->size * 2;
 
 		b->next.store(nb);
 		last.store(nb);
@@ -146,6 +163,7 @@ private:
 	atomic<block*> last;
 	
 	atomic<u64> count;
+	atomic<u64> totalSize;
 
 	block_allocator* allocator;
 };

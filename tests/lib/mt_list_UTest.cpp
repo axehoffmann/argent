@@ -2,6 +2,10 @@
 
 #include "lib/mt/mt_list.h"
 
+#include <algorithm>
+#include <array>
+#include <execution>
+
 namespace mt_list_test
 {
 	$utest(mtlist);
@@ -10,27 +14,67 @@ namespace mt_list_test
 	{
 		constexpr u64 count = 1000;
 
-		block_allocator alloc(10);
-		mt_list<u32> list(&alloc);
+		block_allocator alloc(2048);
 
-		for (u32 i = 0; i < 5; i++)
+		mt_list<u32> list(16, &alloc);
+
+		// Repeat to ensure validity after resets
+		for (u32 rep = 0; rep < 5; rep++)
 		{
 			std::vector<u32*> ptrs(count);
 
 			for (u32 i = 0; i < count; i++)
 			{
-				u32* p = list.push(u32{i});
-				ptrs.at(i) = p;
+				ptrs.at(i) = list.push(u32{ i });
 			}
 
 			assert_equals(list.size(), count);
 
+			// Validate the output of the list
 			for (u64 i = 0; i < count; i++)
 			{
 				assert_equals(u64{*ptrs.at(i)}, i);
 			}
 
+			list.reset();
 			alloc.reset();
+
+			list.prepare();
+		}
+	}
+
+	$tcase(parralel, mtlist)
+	{
+		constexpr u64 count = 1000;
+
+		block_allocator alloc(2048);
+
+		mt_list<u32> list(16, &alloc);
+
+		std::array<u32, count> indices;
+		std::iota(std::begin(indices), std::end(indices), 0);
+
+		// Repeat to ensure validity after resets
+		for (u32 rep = 0; rep < 5; rep++)
+		{
+			std::array<u32*, count> ptrs;
+
+			// Push to the list in parralel
+			std::for_each(std::execution::par_unseq, std::begin(indices), std::end(indices), [&](u32 i)
+			{
+				ptrs.at(i) = list.push(u32{i});
+			});
+
+			// Validate the output of the list
+			for (u64 i = 0; i < count; i++)
+			{
+				assert_equals(u64{ *ptrs.at(i) }, i);
+			}
+
+			list.reset();
+			alloc.reset();
+
+			list.prepare();
 		}
 	}
 }

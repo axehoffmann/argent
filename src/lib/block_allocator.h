@@ -22,12 +22,14 @@ private:
 public:
 	/**
 	 * Allocate memory in the block allocator
+	 * The size of an allocation must be smaller than the initial size of the allocator.
 	 * @param size 
 	 * @return a pointer to the beginning of the allocated memory
 	*/
 	void* allocate(u64 size)
 	{
-		counter++;
+		/// TODO: currently loops infinitely if size > the block's total width
+		counter.fetch_add(1);
 
 		while (true)
 		{
@@ -77,10 +79,10 @@ public:
 
 	block_allocator(u64 initial_size) :
 		counter(0),
-		totalSize(initial_size),
-		allocating(),
 		first(new block(initial_size)),
-		last(first) {}
+		last(first),
+		totalSize(initial_size),
+		allocating() {}
 
 	atomic<u32> heap_allocs;
 
@@ -130,10 +132,12 @@ private:
 	// Counter to ensure everything has been safely destructed before resetting
 	atomic<u64> counter;
 
+	block* first;
+	atomic<block*> last;
+
 	atomic<u64> totalSize;
 
 	std::atomic_flag allocating;
 
-	block* first;
-	atomic<block*> last;
+
 };
