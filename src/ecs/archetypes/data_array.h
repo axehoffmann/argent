@@ -2,6 +2,7 @@
 
 #include "ecs/components/component.h"
 #include "lib/basic.h"
+#include "lib/dyn_array.h"
 #include "lib/vector.h"
 
 #include <bit>
@@ -60,25 +61,19 @@ namespace ag
 		}
 
 		/**
+		 * Erases elements at a set of indices from the array.
+		 * @param indices a range of indices to erase.
+		*/
+		void eraseIndices(const dyn_array<u64>& indices);
+
+		/**
 		 * Inserts a series of type-erased values into the array.
-		 * - The data must have the same underlying type as this array. This is not validated at runtime.
+		 * - The data must have the same underlying type as this array. This is not validated at runtime for performance.
 		 * - The data may exceed the current capacity of the array
 		 * @param data a view into the data to insert
 		*/
-		void insert(byte* data, u32 bytes)
-		{
-			u64 newSz = count + bytes / componentSize;
-
-			// Do we need to reallocate to fit this?
-			if (newSz > size)
-			{
-				size = std::bit_ceil(newSz);
-				reallocate();
-			}
-			count += bytes / componentSize;
-			std::memcpy(end, data, bytes);
-			end += bytes;
-		}
+		void insert(byte* data, u32 bytes);
+		
 		virtual ~data_array() {}
 
 		data_array(id_t type) : componentType(type), componentSize(component_size(type)) {}

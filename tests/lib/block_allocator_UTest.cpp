@@ -38,7 +38,7 @@ namespace block_allocator_test
 		}
 	}
 
-	$tcase(parrallel, block_allocators)
+	$tcase(parallel, block_allocators)
 	{
 		constexpr u32 alloc_count = 1000;
 

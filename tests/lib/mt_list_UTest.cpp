@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <array>
 #include <execution>
+#include <numeric>
 
 namespace mt_list_test
 {
@@ -43,8 +44,9 @@ namespace mt_list_test
 		}
 	}
 
-	$tcase(parralel, mtlist)
+	$tcase(parallel, mtlist)
 	{
+		/// TODO: seems to cause UB sometimes on larger numbers
 		constexpr u64 count = 1000;
 
 		block_allocator alloc(2048);
@@ -59,7 +61,7 @@ namespace mt_list_test
 		{
 			std::array<u32*, count> ptrs;
 
-			// Push to the list in parralel
+			// Push to the list in parallel
 			std::for_each(std::execution::par_unseq, std::begin(indices), std::end(indices), [&](u32 i)
 			{
 				ptrs.at(i) = list.push(u32{i});

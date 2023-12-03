@@ -4,10 +4,11 @@
 #include "ecs/archetypes/data_array.h"
 #include "ecs/archetypes/data_array_factory.h"
 
-
+#include "lib/mt/mt_list.h"
+#include "lib/mt/te_list.h"
 #include "lib/ptr.h"
-#include "lib/vector.h"
 #include "lib/tuple.h"
+#include "lib/vector.h"
 
 namespace ag
 {
@@ -15,10 +16,11 @@ namespace ag
 	{
 	public:
 
-		archetype(const component_set<MAX_COMPONENTS>& cTypes) noexcept 
+		archetype(const component_set<MAX_COMPONENTS>& cTypes, block_allocator* alloc) noexcept 
 			: componentTypes(cTypes),
 			  dataArrays(create_arrays_for_components(cTypes)),
-			  entityCount(0)
+			  entityCount(0),
+			  destroyBuffer(2, alloc)
 		{
 			
 		}
@@ -37,7 +39,8 @@ namespace ag
 			((dataArrays.at(i++)->insert(reinterpret_cast<byte*>(&params), sizeof(Ts))), ...);
 		}
 
-		/// TODO: Support const
+		void resolveBuffers();
+
 		/**
 		 * An iterator that can iterate across multiple archetypes,
 		 * as long as each archetype has a subset of components Ts...
@@ -51,7 +54,7 @@ namespace ag
 			u64 currentIdx;
 			u64 currentArch;
 
-			/// TODO: use span
+			/// TODO: use span?
 			vector<archetype*> archetypes;
 
 			void increment()
@@ -135,6 +138,11 @@ namespace ag
 
 		component_set<MAX_COMPONENTS> componentTypes;
 		vector<ptr<data_array>> dataArrays;
+
+		vector<ptr<mtte_list>> spawnBuffers;
+		
+		mt_list<u64> destroyBuffer;
+
 		u64 entityCount;
 	};
 }

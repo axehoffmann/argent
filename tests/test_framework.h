@@ -12,9 +12,9 @@
 #define $utest(tsuite) static tf::t_suite tsuite(std::source_location::current())
 
 #define $tcase(tcase, tsuite)									\
-	void FUNCNAME(tcase, tsuite)(tf::context& ctx);				\
+	static void FUNCNAME(tcase, tsuite)(tf::context& ctx);				\
 	static tf::t_case tcase(#tcase, &tsuite, FUNCNAME(tcase, tsuite));	\
-	void FUNCNAME(tcase, tsuite)(tf::context& ctx)
+	static void FUNCNAME(tcase, tsuite)(tf::context& ctx)
 
 #define assert_equals(a, b) tf::assertEquals(ctx, a, b, std::source_location::current())
 

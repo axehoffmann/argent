@@ -8,7 +8,8 @@
 #include "lib/sync.h"
 
 /**
- * A multi-writer block array. Uses a pool allocator.
+ * A two-phase multi-writer block array. Uses a pool allocator.
+ * Note that the list should not be iterated/read while being written to.
  * Use case:
  *	- Faster iteration due to contiguous blocks
  *  - Lock-free append operation
@@ -114,6 +115,57 @@ public:
 	~mt_list()
 	{
 		clear();
+	}
+
+	struct iterator
+	{
+		bool operator==(const iterator& other) const
+		{
+			return other.current == current
+				&& other.currentIdx == currentIdx;
+		}
+
+		iterator& operator++()
+		{
+			increment();
+			return *this;
+		}
+
+		iterator operator++(i32)
+		{
+			iterator tmp = *this;
+			increment();
+			return tmp;
+		}
+
+		T& operator*() const
+		{
+			return *(current->data + currentIdx);
+		}
+
+	private:
+		void increment()
+		{
+			currentIdx++;
+			if (currentIdx >= current->offset.load())
+			{
+				current = current->next;
+				currentIdx = 0;
+			}
+		}
+
+		block* current;
+		u64 currentIdx;
+	};
+
+	iterator begin() const
+	{
+		return iterator { .current = first.load(), .currentIdx = 0 };
+	}
+
+	iterator end() const
+	{
+		return iterator { .current = nullptr, .currentIdx = 0 };
 	}
 
 private:	
