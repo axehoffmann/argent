@@ -16,7 +16,7 @@ public:
 
 	T* end() const
 	{
-		return data + size;
+		return data + count;
 	}
 
 	u32 size() const

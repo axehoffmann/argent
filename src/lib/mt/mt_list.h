@@ -27,12 +27,23 @@ public:
 	*/
 	T* push(T&& ob)
 	{
-		count.fetch_add(1);
+		bool first = count.fetch_add(1) == 0;
 
 		while (true)
 		{
 			// Try append to the block
 			block* b = last.load();
+
+			/// TODO: tidy up?
+			if (first && b == nullptr)
+			{
+				prepare();
+				b = last.load();
+			}
+			else if (b == nullptr)
+			{
+				continue;
+			}
 
 			u64 offset = b->offset.fetch_add(1);
 
@@ -55,7 +66,7 @@ public:
 	}
 
 	/**
-	 * Completely wipes the list, leaving it in an unusable state and freeing memory.
+	 * Completely wipes the list, freeing memory.
 	*/
 	void reset()
 	{
@@ -63,18 +74,6 @@ public:
 		count.store(0);
 		first.store(nullptr);
 		last.store(nullptr);
-	}
-
-	/**
-	 * Reconstructs the list, preparing it for use. Expects that reset() was called prior to use.
-	*/
-	void prepare()
-	{
-		block* nb = static_cast<block*>(allocator->allocate(sizeof(block)));
-		first.store(nb);
-		last.store(nb);
-
-		new (nb) block(totalSize, allocator);
 	}
 
 	/**
@@ -169,6 +168,15 @@ public:
 	}
 
 private:	
+	void prepare()
+	{
+		block* nb = static_cast<block*>(allocator->allocate(sizeof(block)));
+		new (nb) block(totalSize, allocator);
+
+		first.store(nb);
+		last.store(nb);
+	}
+
 	void clear()
 	{
 		block* b = first.load();

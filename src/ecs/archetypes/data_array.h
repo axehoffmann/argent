@@ -64,7 +64,44 @@ namespace ag
 		 * Erases elements at a set of indices from the array.
 		 * @param indices a range of indices to erase.
 		*/
-		void eraseIndices(const dyn_array<u64>& indices);
+		void eraseIndices(const dyn_array<u64>& indices)
+		{
+			auto rm_it = indices.begin();
+			u64 currentIdx = 0;
+
+			const auto predicate = [&]()
+			{
+				if (rm_it == indices.end()) return false;
+				if (*rm_it == currentIdx++) return ++rm_it, true;
+				return false;
+			};
+
+			// Find first element to remove (variable-size stepping std::find-if)
+			auto first = [&]()
+			{
+				auto pos = start;
+				while (pos < end)
+				{
+					if (predicate()) return start;
+					pos += componentSize;
+				}
+			}();
+
+			// std::remove_if with variable-size steps
+			if (first == end)
+			{
+				for (auto it = first; (it += componentSize) != end;)
+				{
+					if (!predicate())
+					{
+						first += componentSize;
+						std::memcpy(first, it, componentSize);
+					}
+				}
+			}
+
+			end = first;
+		}
 
 		/**
 		 * Inserts a series of type-erased values into the array.
@@ -72,7 +109,20 @@ namespace ag
 		 * - The data may exceed the current capacity of the array
 		 * @param data a view into the data to insert
 		*/
-		void insert(byte* data, u32 bytes);
+		void insert(byte* data, u32 bytes)
+		{
+			u64 newSz = count + bytes / componentSize;
+
+			// Do we need to reallocate to fit this?
+			if (newSz > size)
+			{
+				size = std::bit_ceil(newSz);
+				reallocate();
+			}
+			count += bytes / componentSize;
+			std::memcpy(end, data, bytes);
+			end += bytes;
+		}
 		
 		virtual ~data_array() {}
 
@@ -84,8 +134,8 @@ namespace ag
 		u64 count{ 0 };
 		u64 size{ 0 };
 
-		byte* start;
-		byte* end;
+		byte* start{ nullptr };
+		byte* end{ nullptr };
 
 	private:
 		id_t componentType;

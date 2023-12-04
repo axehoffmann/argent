@@ -39,8 +39,6 @@ namespace mt_list_test
 
 			list.reset();
 			alloc.reset();
-
-			list.prepare();
 		}
 	}
 
@@ -75,8 +73,6 @@ namespace mt_list_test
 
 			list.reset();
 			alloc.reset();
-
-			list.prepare();
 		}
 	}
 }

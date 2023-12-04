@@ -20,7 +20,8 @@ namespace ag
 			: componentTypes(cTypes),
 			  dataArrays(create_arrays_for_components(cTypes)),
 			  entityCount(0),
-			  destroyBuffer(2, alloc)
+			  destroyBuffer(2, alloc),
+			  allocator(alloc)
 		{
 			
 		}
@@ -39,7 +40,18 @@ namespace ag
 			((dataArrays.at(i++)->insert(reinterpret_cast<byte*>(&params), sizeof(Ts))), ...);
 		}
 
-		void resolveBuffers();
+		void resolveBuffers()
+		{
+			// Erase all data in the destroy buffers
+			dyn_array<u64> toDelete(destroyBuffer.size(), allocator);
+			destroyBuffer.copy_to(toDelete.begin());
+
+			for (auto& arr : dataArrays)
+				arr->eraseIndices(toDelete);
+
+			entityCount -= destroyBuffer.size();
+			destroyBuffer.reset();
+		}
 
 		/**
 		 * An iterator that can iterate across multiple archetypes,
@@ -123,6 +135,15 @@ namespace ag
 			}
 		};
 
+		/**
+		 * Marks the entity at the index for destruction
+		 * @param idx the index of the entity
+		*/
+		void destroyAtIndex(u64 idx)
+		{
+			destroyBuffer.push(u64{idx});
+		}
+
 	private:
 		/**
 		 * Gets a pointer to the first element of a data array in this archetype
@@ -144,5 +165,8 @@ namespace ag
 		mt_list<u64> destroyBuffer;
 
 		u64 entityCount;
+
+		/* Short-lived allocator for frame-lifetime memory management */
+		block_allocator* allocator;
 	};
 }
