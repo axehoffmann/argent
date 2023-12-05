@@ -66,6 +66,12 @@ namespace ag
 		*/
 		void eraseIndices(const dyn_array<u64>& indices)
 		{
+			for (u64 idx : indices)
+			{
+				std::cout << idx << " ";
+			}
+			std::cout << "\n";
+
 			auto rm_it = indices.begin();
 			u64 currentIdx = 0;
 
@@ -82,20 +88,20 @@ namespace ag
 				auto pos = start;
 				while (pos < end)
 				{
-					if (predicate()) return start;
+					if (predicate()) return pos;
 					pos += componentSize;
 				}
 			}();
 
 			// std::remove_if with variable-size steps
-			if (first == end)
+			if (first != end)
 			{
 				for (auto it = first; (it += componentSize) != end;)
 				{
 					if (!predicate())
 					{
-						first += componentSize;
 						std::memcpy(first, it, componentSize);
+						first += componentSize;
 					}
 				}
 			}

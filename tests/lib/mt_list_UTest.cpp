@@ -75,4 +75,30 @@ namespace mt_list_test
 			alloc.reset();
 		}
 	}
+
+	$tcase(copy_to, mtlist)
+	{
+		// As long as parralel test is valid, validity should be independent of concurrency
+		constexpr u32 count = 1000;
+		block_allocator alloc(2048);
+
+		mt_list<u32> list(16, &alloc);
+		std::array<u32, count> destination;
+
+		for (u32 i = 0; i < count; i++)
+		{
+			list.push(u32{i});
+		}
+		
+		assert_equals(list.size(), u64{count});
+
+		list.copy_to(destination.data());
+
+		bool test = true;
+		for (u32 i = 0; i < count; i++)
+		{
+			test &= destination[i] == i;
+		}
+		assert_equals(test, true);
+	}
 }

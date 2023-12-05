@@ -88,8 +88,10 @@ public:
 		while (b != nullptr)
 		{
 			u64 amt = b->offset.load();
+			if (amt > b->size) amt = b->size;
+
 			std::copy(b->data, b->data + amt, dest);
-			dest += amt;
+			dest += amt - 1;
 
 			b = b->next;
 		}
