@@ -2,10 +2,10 @@
 
 int main()
 {
-	std::unique_ptr<ag::Engine> e = std::make_unique<ag::Engine>();
+	ag::Engine e;
 	try
 	{
-		e->Run();
+		e.Run();
 	}
 	catch (const std::exception& ex)
 	{
