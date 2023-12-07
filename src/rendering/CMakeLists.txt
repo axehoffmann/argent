@@ -1,4 +1,4 @@
-add_executable(renderer "main.cpp" "vertex.h")
+add_executable(renderer "main.cpp" "vertex.h" "transform.h" "transform.cpp" "glm.h")
 
 add_subdirectory(ogl)
 

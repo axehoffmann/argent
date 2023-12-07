@@ -1,10 +1,10 @@
 #pragma once
 
+#include "rendering/glm.h"
+
 #include "ogl/vao.h"
 
 #include <unordered_map>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
 
 struct vertex
 {

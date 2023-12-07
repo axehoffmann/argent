@@ -1,5 +1,6 @@
 target_sources(renderer PRIVATE
 	"opengl.h"
+	"opengl.cpp"
 	"window.h"
 	"window.cpp"
 	"renderer.h"
@@ -10,4 +11,6 @@ target_sources(renderer PRIVATE
 	"vao.cpp"
 	"shader.cpp" 
 	"shader.h"
+    "command_buffer.h" 
+	"command_buffer.cpp"
 )

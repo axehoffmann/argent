@@ -20,6 +20,4 @@ public:
 
 private:
 	glhandle handle;
-	static inline glhandle bound = -1;
-
 };

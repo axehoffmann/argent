@@ -1,5 +1,6 @@
 #pragma once
 
+#include "debug/log/Log.h"
 #include "lib/basic.h"
 
 #define GLEW_STATIC
@@ -25,3 +26,5 @@ enum class gltype : GLenum
 	U32_2_10_10_10 = GL_UNSIGNED_INT_2_10_10_10_REV,
 	F32_10_11_10 = GL_UNSIGNED_INT_10F_11F_11F_REV
 };
+
+void checkError(std::source_location loc = std::source_location::current());

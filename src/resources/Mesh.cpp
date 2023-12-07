@@ -53,6 +53,7 @@ void ag::Mesh::Load()
             };
 
             vertices.push_back(vertex);
+            indices.push_back(indices.size());
         }
     }
 }

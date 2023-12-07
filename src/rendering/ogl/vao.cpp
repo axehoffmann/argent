@@ -31,7 +31,6 @@ vao& vao::operator=(vao&& other) noexcept
 
 void vao::bind()
 {
-	bound = handle;
 	glBindVertexArray(handle);
 }
 

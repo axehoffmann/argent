@@ -39,18 +39,27 @@ buffer::~buffer()
 	glDeleteBuffers(1, &handle);
 }
 
+void buffer::allocate(u64 sz)
+{
+	size = sz;
+	glBufferStorage(static_cast<GLenum>(storageType), size, nullptr, GL_DYNAMIC_STORAGE_BIT);
+}
+
+void buffer::set(void* data, u64 sz, u64 offset)
+{
+	ag::Log::Error(ag::sfmt("aughh {} {}", sz, offset));
+
+	glBufferSubData(static_cast<GLenum>(storageType), offset, sz, data);
+}
+
 void buffer::setData(void* data, u64 sz)
 {
-	if (size == 0)
-	{
-		size = sz;
-	}
+	size = sz;
 
-	glBindBuffer(static_cast<GLenum>(storageType), handle);
 	glBufferData(static_cast<GLenum>(storageType), size, data, static_cast<GLenum>(accessType));
 }
 
 void buffer::bind()
 {
-	glBindBuffer((GLenum)storageType, handle);
+	glBindBuffer(static_cast<GLenum>(storageType), handle);
 }
