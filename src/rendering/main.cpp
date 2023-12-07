@@ -12,6 +12,7 @@ i32 main()
 
 	while (true) 
 	{
-		
+		r.render();
+		w.swapBuffers();
 	}
 }

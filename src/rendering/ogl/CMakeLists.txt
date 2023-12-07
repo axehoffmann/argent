@@ -8,6 +8,6 @@ target_sources(renderer PRIVATE
 	"buffer.cpp"
 	"vao.h"
 	"vao.cpp"
-	
-	
+	"shader.cpp" 
+	"shader.h"
 )

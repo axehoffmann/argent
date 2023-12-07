@@ -38,7 +38,7 @@ public:
 
 	~buffer();
 
-	void setData(void* data, u64 size, u64 offset = 0);
+	void setData(void* data, u64 sz);
 
 	void bind();
 

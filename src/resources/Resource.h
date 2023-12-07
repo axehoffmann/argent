@@ -1,16 +1,17 @@
 #pragma once
 
-#include <string>
 #include <stdexcept>
+
+#include "lib/string.h"
 
 namespace ag 
 {
     struct Resource
     {
 
-        Resource(std::string path);
+        Resource(const string& path);
 
-        std::string filePath;
+        string filePath;
 
         /**
         * Returns whether the asset data is loaded into memory and ready for use

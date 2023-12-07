@@ -1,6 +1,7 @@
 #pragma once
 
 #include "buffer.h"
+#include "shader.h"
 #include "vao.h"
 #include "window.h"
 
@@ -15,4 +16,5 @@ private:
 
 	buffer model;
 	vao vert;
+	shader s;
 };

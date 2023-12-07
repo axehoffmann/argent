@@ -33,7 +33,6 @@ namespace ag
     struct Transform
     {
     public:
-        Transform() {}
         Transform(glm::vec3 pos);
         Transform(glm::vec3 pos, glm::vec3 rot);
         Transform(glm::vec3 pos, glm::vec3 rot, glm::vec3 sc);

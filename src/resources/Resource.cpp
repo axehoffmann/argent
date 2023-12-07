@@ -1,6 +1,6 @@
 #include "Resource.h"
 
-ag::Resource::Resource(std::string path)
+ag::Resource::Resource(const string& path)
 {
     filePath = path;
 }

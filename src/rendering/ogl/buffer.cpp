@@ -39,19 +39,15 @@ buffer::~buffer()
 	glDeleteBuffers(1, &handle);
 }
 
-void buffer::setData(void* data, u64 sz, u64 offset)
+void buffer::setData(void* data, u64 sz)
 {
 	if (size == 0)
 	{
 		size = sz;
 	}
-	else if (sz + offset > size)
-	{
-		ag::Log::Error("Reallocating a GL buffer");
-	}
 
 	glBindBuffer(static_cast<GLenum>(storageType), handle);
-	glBufferSubData(static_cast<GLenum>(storageType), offset, size, data);
+	glBufferData(static_cast<GLenum>(storageType), size, data, static_cast<GLenum>(accessType));
 }
 
 void buffer::bind()

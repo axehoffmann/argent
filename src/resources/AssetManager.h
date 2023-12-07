@@ -48,7 +48,7 @@ namespace ag
 		* @return The ID of the loaded resource
 		*/
 		template <class T>
-		static uint32_t Load(std::string path)
+		static uint32_t Load(const std::string& path)
 		{
 			// Ensure we are loading a resource type
 			static_assert(std::is_base_of<ag::Resource, T>::value);
