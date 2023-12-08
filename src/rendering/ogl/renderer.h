@@ -23,7 +23,7 @@ class renderer
 {
 public:
 	renderer();
-	void render(const scene_graph& scene);
+	void render(scene_graph& scene);
 
 	u32 createRenderable(u32 meshID);
 

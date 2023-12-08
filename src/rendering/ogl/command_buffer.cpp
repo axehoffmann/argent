@@ -14,10 +14,13 @@ void command_buffer::push(indirect_draw_command&& cmd)
 	cmds.push_back(std::move(cmd));
 }
 
-void command_buffer::submit()
+u32 command_buffer::submit()
 {
 	buf.setData(cmds.data(), sizeof(indirect_draw_command) * cmds.size());
+	u32 sz = cmds.size();
 	cmds.clear();
+
+	return sz;
 }
 
 void command_buffer::bind()

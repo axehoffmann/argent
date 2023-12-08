@@ -2,12 +2,12 @@
 	{
 		"type": "transform",
 		"position": [0, 0, 0],
-		"rotation": [45, 20, 45],
-		"scale": [1, 1, 1]
+		"rotation": [0, 20, 0],
+		"scale": [0.4, 0.4, 0.4]
 	},
 	{
 		"type": "static_renderable",
-		"mesh": 0,
+		"mesh": 1,
 		"material": "assets/brick/brick.mat"
 	}
 ]

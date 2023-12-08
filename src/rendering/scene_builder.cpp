@@ -19,7 +19,7 @@ void ag::scene_builder::Update()
     scene_graph* graph = &graphs[lockedGraph];
 
     /// TODO: bad approach to building scene graph
-    for (auto v : graph->scene)
+    for (auto& v : graph->scene)
     {
         v.clear();
     }
@@ -48,7 +48,7 @@ void ag::scene_builder::Update()
     
 }
 
-const scene_graph& ag::scene_builder::StartGraphRead()
+scene_graph& ag::scene_builder::StartGraphRead()
 {
     for (int i = 0; i < graphs.size(); i++)
     {

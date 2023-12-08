@@ -15,18 +15,18 @@ ag::Engine::Engine()
 	render->createRenderable(AssetManager::Load<Mesh>("assets/cube.obj"));
 
 
-	/*
+	
 	uint32_t cube = AssetManager::Load<Blueprint>("assets/entities/cube.json");
-	uint32_t l1 = AssetManager::Load<Blueprint>("assets/entities/l1.json");
+	uint32_t pilar = AssetManager::Load<Blueprint>("assets/entities/pillar.json");
 
 	auto cb = AssetManager::Fetch<Blueprint>(cube).lock();
 	cb->SetWorld(ecsWorld);
 	cb->Instantiate();
 
-	auto l = AssetManager::Fetch<Blueprint>(l1).lock();
+	auto l = AssetManager::Fetch<Blueprint>(pilar).lock();
 	l->SetWorld(ecsWorld);
 	l->Instantiate();
-	*/
+	
 }
 
 ag::Engine::~Engine()

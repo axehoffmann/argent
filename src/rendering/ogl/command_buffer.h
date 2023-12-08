@@ -27,7 +27,7 @@ public:
 	/**
 	 * Submits the buffer to the GPU
 	*/
-	void submit();
+	u32 submit();
 
 	/**
 	 * Binds the buffer as the current command buffer.

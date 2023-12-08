@@ -31,7 +31,7 @@ namespace ag
         /**
          * Called by the Renderer to get the most recent completed scene graph
         */
-        const scene_graph& StartGraphRead();
+        scene_graph& StartGraphRead();
 
         /**
          * Called by the Renderer to stop locking the graph

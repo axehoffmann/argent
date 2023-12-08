@@ -8,8 +8,6 @@
 #include "resources/Mesh.h"
 #include "resources/Texture.h"
 
-
-
 auto loadMesh(const string& path)
 {
 	u32 rsc = ag::AssetManager::Load<ag::Mesh>(path);
@@ -94,27 +92,26 @@ renderer::renderer() :
 	vert.bind();
 }
 
-void renderer::render(const scene_graph& scene)
+void renderer::render(scene_graph& scene)
 {
 	u32 i = 0;
-	for (auto& tr : t)
+	u32 t = 0;
+	for (auto& v : scene.scene)
 	{
-		tr = glm::rotate(tr, 0.01f, {0, 1, 0});
-		i++;
+		instanceData.set(v.data(), sizeof(render_instance) * v.size(), sizeof(render_instance) * i);
+
+		cmdbuf.push({ renderables[t].indexCount, u32(v.size()), renderables[t].firstIndex, renderables[t].baseVertex, i });
+
+		i += v.size();
+		t++;
 	}
 	checkError();
 
-	instanceData.set(t.data(), sizeof(render_instance) * t.size(), 0);
-	checkError();
-
-	cmdbuf.push({ renderables[cube].indexCount, 50, renderables[cube].firstIndex, renderables[cube].baseVertex, 0});
-	cmdbuf.push({ renderables[pillar].indexCount, 110, renderables[pillar].firstIndex, renderables[pillar].baseVertex, 50});
 	cmdbuf.bind();
-	cmdbuf.submit();
-	checkError();
+	u32 cmds = cmdbuf.submit();
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMultiDrawElementsIndirect(GL_TRIANGLES, static_cast<GLenum>(gltype::U32), (void*)0, 2, 20);
+	glMultiDrawElementsIndirect(GL_TRIANGLES, static_cast<GLenum>(gltype::U32), (void*)0, cmds, 20);
 	checkError();
 }
 

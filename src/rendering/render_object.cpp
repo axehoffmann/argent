@@ -16,7 +16,7 @@ nlohmann::json ag::render_object::ToJSON(const ag::render_object& t)
 ag::render_object ag::render_object::FromJSON(nlohmann::json& ob)
 {
     return render_object {
-        ag::AssetManager::Load<ag::Mesh>(ob["mesh"]),
+        ob["mesh"],
         ag::AssetManager::Load<ag::Material>(ob["material"])
     };
 }
