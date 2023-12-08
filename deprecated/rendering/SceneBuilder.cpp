@@ -7,7 +7,9 @@ ag::SceneBuilder::SceneBuilder(std::shared_ptr<ag::World> w) :
     world(w),
     graphUnderConstruction(-1),
     graphReadByRenderer(-1),
-    graphReady(-1) {}
+    graphReady(-1),
+    graphs(3)
+    {}
 
 void ag::SceneBuilder::Update()
 {

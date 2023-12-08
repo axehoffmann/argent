@@ -1,0 +1,13 @@
+[
+	{
+		"type": "transform",
+		"position": [0, 0, 0],
+		"rotation": [45, 20, 45],
+		"scale": [1, 1, 1]
+	},
+	{
+		"type": "static_renderable",
+		"mesh": "assets/cube.obj",
+		"material": "assets/brick/brick.mat"
+	}
+]

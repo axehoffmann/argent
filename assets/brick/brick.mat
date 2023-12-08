@@ -1,9 +1,9 @@
 {
 	"parameters" : [],
 	"textures" : [
-		"assets/alb.png",
-		"assets/metal.png",
-		"assets/normal.png",
-		"assets/smooth.png",
+		"assets/brick/alb.png",
+		"assets/brick/smooth.png",
+		"assets/brick/metal.png",
+		"assets/brick/norm.png"
 	]
 }

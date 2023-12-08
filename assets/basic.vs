@@ -1,16 +1,28 @@
+#version 460 core
 
-#version 330 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec2 aTexCoord;
+layout (location = 0) in vec3 v_Pos;
+layout (location = 1) in vec2 v_UV;
+layout (location = 2) in vec3 v_Norm;
 
-out vec2 TexCoord;
+layout(std430, binding = 1) buffer data 
+{
+	mat4 model[];
+};
 
-uniform mat4 model;
 uniform mat4 view;
-uniform mat4 projection;
+uniform mat4 proj;
+
+out vec2 a_UV;
+out vec3 a_Norm;
+
+out vec3 fragPos;
 
 void main()
 {
-    gl_Position = projection * view * model * vec4(aPos, 1.0);
-    TexCoord = aTexCoord;	
+	mat4 m = model[gl_InstanceID + gl_BaseInstance];
+
+	fragPos = vec3(m * vec4(v_Pos, 1.0));
+	gl_Position = proj * view * m * vec4(v_Pos, 1.0);
+	a_UV = v_UV;
+	a_Norm = mat3(transpose(inverse(m))) * v_Norm;
 }

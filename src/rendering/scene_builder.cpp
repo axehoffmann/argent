@@ -41,10 +41,11 @@ void ag::scene_builder::Update()
     {
         graph->pointLights.push_back(PointLight{ entity.Get<Transform>().GetPosition(), entity.Get<PointLightComp>().colour, 1 });
     }
+    */
 
     graphReady = lockedGraph;
     graphUnderConstruction = -1;
-    */
+    
 }
 
 const scene_graph& ag::scene_builder::StartGraphRead()

@@ -1,6 +1,7 @@
 #include "Engine.h"
 
 #include "resources/Blueprint.h"
+#include "resources/Mesh.h"
 
 ag::Engine::Engine()
 {
@@ -10,6 +11,9 @@ ag::Engine::Engine()
 	sceneBuilder = std::make_shared<ag::scene_builder>(ecsWorld);
 
 	render = std::make_unique<renderer>();
+	render->createRenderable(AssetManager::Load<Mesh>("assets/pillar.obj"));
+	render->createRenderable(AssetManager::Load<Mesh>("assets/cube.obj"));
+
 
 	/*
 	uint32_t cube = AssetManager::Load<Blueprint>("assets/entities/cube.json");

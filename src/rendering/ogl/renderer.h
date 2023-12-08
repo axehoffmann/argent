@@ -35,6 +35,8 @@ private:
 	u32 vboOffset;
 	u32 eboOffset;
 
+	buffer instanceData;
+
 	texture tex;
 
 	u32 pillar;
@@ -43,7 +45,7 @@ private:
 	vao vert;
 	shader s;
 
-	vector<transform> t;
+	vector<glm::mat4> t;
 
 	vector<renderable> renderables;
 };

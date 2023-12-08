@@ -62,7 +62,16 @@ public:
 		return size;
 	}
 
+	/**
+	 * Binds the buffer to the slot designated by its type.
+	 * Types that can bind multiple buffers should instead use void bind(u32).
+	*/
 	void bind();
+
+	void bind(u32 binding)
+	{
+		glBindBufferBase(static_cast<GLenum>(storageType), binding, handle);
+	}	
 
 private:
 	buffer_type storageType;

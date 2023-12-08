@@ -35,9 +35,21 @@ renderer::renderer() :
 	vert(),
 	s("assets/basic.vs", "assets/basic.fs"),
 
+	instanceData(buffer_access_type::DynamicDraw, buffer_type::Storage),
+
 	pillar(0),
-	cube(0)
+	cube(1)
 {
+	// Prepare scene state
+	t.reserve(250);
+	for (u64 i = 0; i < 25; i++)
+	{
+		for (u64 j = 0; j < 10; j++)
+		{
+			t.push_back(model_matrix(transform{ {-15.0f + (3.0f * i), -5, -5.0f - (2.5f * j)}, glm::angleAxis(glm::quarter_pi<float>(), glm::vec3{0.0f, 1.0f, 0.0f}), {0.6f,0.6f,0.6f} }));
+		}
+	}
+
 	// Load 2 models into the VBO + EBO
 	auto p = loadMesh("assets/cube.obj");
 	auto c = loadMesh("assets/pillar.obj");
@@ -50,9 +62,11 @@ renderer::renderer() :
 	ebo.bind();
 	ebo.setData(p->indices.data(), sizeof(u32) * p->indices.size()); /// TODO: for some reason this is required, otherwise the allocation breaks
 	ebo.allocate(sizeof(u32) * (p->indices.size() + c->indices.size()));
+	
 
-	cube = createRenderable(ag::AssetManager::Load<ag::Mesh>("assets/cube.obj"));
-	pillar = createRenderable(ag::AssetManager::Load<ag::Mesh>("assets/pillar.obj"));
+	instanceData.bind();
+	instanceData.setData(t.data(), sizeof(render_instance) * 250); /// TODO: for some reason this is required, otherwise the allocation breaks
+	instanceData.allocate(sizeof(render_instance) * 250);
 
 	vertex::prepareVAO(vert);
 
@@ -62,16 +76,6 @@ renderer::renderer() :
 
 	glClearColor(0.0f, 0.5f, 0.5f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
-
-	// Prepare scene state
-	t.reserve(200);
-	for (u64 i = 0; i < 25; i++)
-	{
-		for (u64 j = 0; j < 25; j++)
-		{
-			t.push_back(transform{ {-15.0f + (3.0f * i), -5, -5.0f - (2.5f * j)}, glm::angleAxis(glm::quarter_pi<float>(), glm::vec3{0.0f, 1.0f, 0.0f}), {0.6f,0.6f,0.6f}});
-		}
-	}
 
 	auto view = view_matrix({{0, 0, 2}});
 	auto proj = projection_matrix(glm::radians(90.0f), 1280.0f / 720.0f, 0.01f, 100.0f);
@@ -84,6 +88,9 @@ renderer::renderer() :
 	s.uniform("lightPos", {1.5, 0, 0});
 	s.uniform("viewPos", {0, 0, 2});
 
+	instanceData.bind();
+	instanceData.bind(1);
+
 	vert.bind();
 }
 
@@ -92,19 +99,23 @@ void renderer::render(const scene_graph& scene)
 	u32 i = 0;
 	for (auto& tr : t)
 	{
-		tr.rot *= glm::quat({0, 0.01, 0});
-		s.uniform("model["+std::to_string(i) + "]", model_matrix(tr));
+		tr = glm::rotate(tr, 0.01f, {0, 1, 0});
 		i++;
 	}
 	checkError();
 
-	cmdbuf.push({ renderables[cube].indexCount, 25, 0, 0, 0});
-	cmdbuf.push({ renderables[pillar].indexCount, 195, renderables[pillar].firstIndex, renderables[pillar].baseVertex, 25});
+	instanceData.set(t.data(), sizeof(render_instance) * t.size(), 0);
+	checkError();
+
+	cmdbuf.push({ renderables[cube].indexCount, 50, renderables[cube].firstIndex, renderables[cube].baseVertex, 0});
+	cmdbuf.push({ renderables[pillar].indexCount, 110, renderables[pillar].firstIndex, renderables[pillar].baseVertex, 50});
 	cmdbuf.bind();
 	cmdbuf.submit();
+	checkError();
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMultiDrawElementsIndirect(GL_TRIANGLES, static_cast<GLenum>(gltype::U32), (void*)0, 2, 20);
+	checkError();
 }
 
 u32 renderer::createRenderable(u32 meshID)

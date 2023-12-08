@@ -1,4 +1,4 @@
 {
-	"vertex": "assets/basic.vs",
+	"vertex": "assets/triangle.vs",
 	"fragment": "assets/triangle.fs"
 }
