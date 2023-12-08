@@ -2,10 +2,11 @@
 
 #include "buffer.h"
 #include "command_buffer.h"
+#include "rendering/transform.h"
 #include "shader.h"
+#include "texture.h"
 #include "vao.h"
 #include "window.h"
-#include "rendering/transform.h"
 
 class renderer
 {
@@ -20,6 +21,8 @@ private:
 
 	buffer model;
 	buffer ebo;
+
+	texture tex;
 
 	u32 voff;
 	u32 ioff;

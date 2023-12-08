@@ -13,4 +13,6 @@ target_sources(renderer PRIVATE
 	"shader.h"
     "command_buffer.h" 
 	"command_buffer.cpp"
+	"texture.h"
+	"texture.cpp"
 )

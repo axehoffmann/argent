@@ -6,7 +6,7 @@ window::window()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	screen = glfwCreateWindow(1280, 720, "gfx", nullptr, nullptr);
+	screen = glfwCreateWindow(1920, 1080, "gfx", nullptr, nullptr);
 
 	if (screen == nullptr)
 	{
@@ -17,7 +17,7 @@ window::window()
 
 	glewInit();
 
-	glViewport(0, 0, 1280, 720);
+	glViewport(0, 0, 1920, 1080);
 }
 
 void window::pollEvents()

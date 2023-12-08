@@ -6,6 +6,7 @@
 
 #include "resources/AssetManager.h"
 #include "resources/Mesh.h"
+#include "resources/Texture.h"
 
 
 
@@ -14,6 +15,15 @@ auto loadMesh(const string& path)
 	u32 rsc = ag::AssetManager::Load<ag::Mesh>(path);
 	auto v = ag::AssetManager::Fetch<ag::Mesh>(rsc).lock();
 	ag::Log::Trace(ag::sfmt("Loaded mesh with {} indices", v->indices.size()));
+	return v;
+}
+
+
+auto loadTex(const string& path)
+{
+	u32 rsc = ag::AssetManager::Load<ag::Texture>(path);
+	auto v = ag::AssetManager::Fetch<ag::Texture>(rsc).lock();
+	ag::Log::Trace(ag::sfmt("Loaded tex"));
 	return v;
 }
 
@@ -30,8 +40,6 @@ renderer::renderer(window& w) :
 
 	vert.bind();
 
-
-
 	voff =p->vertices.size();
 	model.bind();
 	model.allocate(sizeof(vertex) * (p->vertices.size() + c->vertices.size()));
@@ -47,22 +55,32 @@ renderer::renderer(window& w) :
 
 	vertex::prepareVAO(vert);
 
-	glClearColor(0.0f, 0.5f, 0.5f, 1.0f);
+	auto pt = loadTex("assets/pillar.png");
+	tex.setData(pt->width, pt->height, pt->data);
+	tex.bind(0);
 
-	t.reserve(400);
-	for (u64 i = 0; i < 5; i++)
+	glClearColor(0.0f, 0.5f, 0.5f, 1.0f);
+	glEnable(GL_DEPTH_TEST);
+
+	t.reserve(200);
+	for (u64 i = 0; i < 25; i++)
 	{
-		for (u64 j = 0; j < 10; j++)
+		for (u64 j = 0; j < 25; j++)
 		{
-			t.push_back(transform{ {-7.0f + (3.0f * i), -5, -5.0f - (2.5f * j)}, glm::angleAxis(glm::quarter_pi<float>(), glm::vec3{0.0f, 1.0f, -0.5f}), {0.5f,0.5f,0.5f}});
+			t.push_back(transform{ {-15.0f + (3.0f * i), -5, -5.0f - (2.5f * j)}, glm::angleAxis(glm::quarter_pi<float>(), glm::vec3{0.0f, 1.0f, 0.0f}), {0.6f,0.6f,0.6f}});
 		}
 	}
-
 	auto view = view_matrix({{0, 0, 2}});
 	auto proj = projection_matrix(glm::radians(90.0f), 1280.0f / 720.0f, 0.01f, 100.0f);
 	s.bind();
 	s.uniform("view", view);
 	s.uniform("proj", proj);
+
+	s.uniform("diffuse", 0);
+
+	s.uniform("lightPos", {1.5, 0, 0});
+	s.uniform("viewPos", {0, 0, 2});
+
 	vert.bind();
 }
 
@@ -71,18 +89,17 @@ void renderer::render()
 	u32 i = 0;
 	for (auto& tr : t)
 	{
-		tr.rot *= glm::quat({0, 0.01, 0.01});
+		tr.rot *= glm::quat({0, 0.01, 0});
 		s.uniform("model["+std::to_string(i) + "]", model_matrix(tr));
 		i++;
 	}
 	checkError();
 
 	cmdbuf.push({36, 25, 0, 0, 0});
-	cmdbuf.push({11310, 25, ioff, voff, 25});
+	cmdbuf.push({11310, 195, ioff, voff, 25});
 	cmdbuf.bind();
 	cmdbuf.submit();
 
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMultiDrawElementsIndirect(GL_TRIANGLES, static_cast<GLenum>(gltype::U32), (void*)0, 2, 20);
-
 }
