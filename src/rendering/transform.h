@@ -1,6 +1,7 @@
 #pragma once
 
 #include "rendering/glm.h"
+#include "ecs/Component.h"
 
 #include "lib/basic.h"
 
@@ -24,6 +25,11 @@ struct transform
 	{
 		return rot * glm::vec3(1.0f, 0.0f, 0.0f);
 	}
+
+	static inline auto serialiser = ag::Component::Serialiser<transform>("transform");
+
+	static nlohmann::json ToJSON(const transform& t);
+	static transform FromJSON(nlohmann::json& ob);
 };
 
 glm::mat4 model_matrix(const transform& t);

@@ -1,8 +1,7 @@
 #pragma once
 
-#include "rendering/SceneBuilder.h"
-#include "rendering/Renderer.h"
-#include "rendering/opengl/GLRenderEngine.h"
+#include "rendering/scene_builder.h"
+#include "rendering/ogl/renderer.h"
 #include "ecs/World.h"
 #include "ecs/System.h"
 #include "debug/log/Log.h"
@@ -37,11 +36,13 @@ namespace ag
 		void Update(double dt);
 		void FrameUpdate(double dt);
 
-		std::unique_ptr<ag::Renderer> renderer;
+		std::unique_ptr<renderer> render;
 
-		std::shared_ptr<ag::SceneBuilder> sceneBuilder;
+		std::shared_ptr<ag::scene_builder> sceneBuilder;
 		std::shared_ptr<ag::World> ecsWorld;
 
+		window w;
+	
 		vector<ag::ISystem*> systems;
 
 		bool active;

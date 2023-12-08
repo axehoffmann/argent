@@ -1,7 +1,15 @@
+#include "lib/basic.h"
+
 #include "core/Engine.h"
 
-int main()
+#include "rendering/ogl/window.h"
+#include "rendering/ogl/renderer.h"
+
+#include "debug/log/Log.h"
+
+i32 main()
 {
+
 	ag::Engine e;
 	try
 	{
@@ -11,4 +19,5 @@ int main()
 	{
 		std::cout << ex.what();
 	}
+	
 }

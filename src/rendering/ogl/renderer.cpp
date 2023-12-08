@@ -27,31 +27,32 @@ auto loadTex(const string& path)
 	return v;
 }
 
-renderer::renderer(window& w) :
-	win(w),
-	model(buffer_access_type::StaticDraw, buffer_type::VertexData),
+renderer::renderer() :
+	vbo(buffer_access_type::StaticDraw, buffer_type::VertexData),
 	ebo(buffer_access_type::StaticDraw, buffer_type::IndexArray),
+	vboOffset(0),
+	eboOffset(0),
 	vert(),
-	s("assets/basic.vs", "assets/basic.fs")
-{
+	s("assets/basic.vs", "assets/basic.fs"),
 
+	pillar(0),
+	cube(0)
+{
+	// Load 2 models into the VBO + EBO
 	auto p = loadMesh("assets/cube.obj");
 	auto c = loadMesh("assets/pillar.obj");
 
 	vert.bind();
 
-	voff =p->vertices.size();
-	model.bind();
-	model.allocate(sizeof(vertex) * (p->vertices.size() + c->vertices.size()));
-	model.set(p->vertices.data(), sizeof(vertex) * voff, 0);
-	model.set(c->vertices.data(), sizeof(vertex) * c->vertices.size(), sizeof(vertex) * voff);
+	vbo.bind();
+	vbo.allocate(sizeof(vertex) * (p->vertices.size() + c->vertices.size()));
 
-	ioff = p->indices.size();
 	ebo.bind();
 	ebo.setData(p->indices.data(), sizeof(u32) * p->indices.size()); /// TODO: for some reason this is required, otherwise the allocation breaks
 	ebo.allocate(sizeof(u32) * (p->indices.size() + c->indices.size()));
-	ebo.set(p->indices.data(), sizeof(u32) * ioff, 0);
-	ebo.set(c->indices.data(), sizeof(u32) * c->indices.size(), sizeof(u32) * ioff);
+
+	cube = createRenderable(ag::AssetManager::Load<ag::Mesh>("assets/cube.obj"));
+	pillar = createRenderable(ag::AssetManager::Load<ag::Mesh>("assets/pillar.obj"));
 
 	vertex::prepareVAO(vert);
 
@@ -62,6 +63,7 @@ renderer::renderer(window& w) :
 	glClearColor(0.0f, 0.5f, 0.5f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 
+	// Prepare scene state
 	t.reserve(200);
 	for (u64 i = 0; i < 25; i++)
 	{
@@ -70,6 +72,7 @@ renderer::renderer(window& w) :
 			t.push_back(transform{ {-15.0f + (3.0f * i), -5, -5.0f - (2.5f * j)}, glm::angleAxis(glm::quarter_pi<float>(), glm::vec3{0.0f, 1.0f, 0.0f}), {0.6f,0.6f,0.6f}});
 		}
 	}
+
 	auto view = view_matrix({{0, 0, 2}});
 	auto proj = projection_matrix(glm::radians(90.0f), 1280.0f / 720.0f, 0.01f, 100.0f);
 	s.bind();
@@ -84,7 +87,7 @@ renderer::renderer(window& w) :
 	vert.bind();
 }
 
-void renderer::render()
+void renderer::render(const scene_graph& scene)
 {
 	u32 i = 0;
 	for (auto& tr : t)
@@ -95,11 +98,27 @@ void renderer::render()
 	}
 	checkError();
 
-	cmdbuf.push({36, 25, 0, 0, 0});
-	cmdbuf.push({11310, 195, ioff, voff, 25});
+	cmdbuf.push({ renderables[cube].indexCount, 25, 0, 0, 0});
+	cmdbuf.push({ renderables[pillar].indexCount, 195, renderables[pillar].firstIndex, renderables[pillar].baseVertex, 25});
 	cmdbuf.bind();
 	cmdbuf.submit();
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMultiDrawElementsIndirect(GL_TRIANGLES, static_cast<GLenum>(gltype::U32), (void*)0, 2, 20);
+}
+
+u32 renderer::createRenderable(u32 meshID)
+{
+	auto m = ag::AssetManager::Fetch<ag::Mesh>(meshID).lock();
+	vbo.bind();
+	vbo.set(m->vertices.data(), sizeof(vertex) * m->vertices.size(), sizeof(vertex) * vboOffset);
+
+	ebo.bind();
+	ebo.set(m->indices.data(), sizeof(u32) * m->indices.size(), sizeof(u32) * eboOffset);
+
+	renderables.push_back({eboOffset, vboOffset, u32(m->indices.size())});
+	vboOffset += m->vertices.size();
+	eboOffset += m->indices.size();
+
+	return renderables.size() - 1;
 }

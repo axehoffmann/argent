@@ -7,4 +7,4 @@ add_subdirectory(rendering)
 add_subdirectory(resources)
 add_subdirectory(lib)
 
-target_link_libraries(engine core lib ecs rendering ogl resources log_print)
+target_link_libraries(engine core lib ecs renderer resources log_print)

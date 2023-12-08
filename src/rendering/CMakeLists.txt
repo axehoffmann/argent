@@ -1,4 +1,4 @@
-add_executable(renderer "main.cpp" "vertex.h" "transform.h" "transform.cpp" "glm.h")
+add_library(renderer  "vertex.h" "transform.h" "transform.cpp" "glm.h" "scene_builder.h" "render_object.h" "render_object.cpp" "scene_graph.h" "scene_builder.cpp")
 
 add_subdirectory(ogl)
 

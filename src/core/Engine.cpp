@@ -7,10 +7,11 @@ ag::Engine::Engine()
 	active = true;
 
 	ecsWorld = std::make_shared<ag::World>();
-	sceneBuilder = std::make_shared<ag::SceneBuilder>(ecsWorld);
+	sceneBuilder = std::make_shared<ag::scene_builder>(ecsWorld);
 
-	renderer = std::make_unique<ag::Renderer>(std::make_unique<ag::GLRenderEngine>(), sceneBuilder);
+	render = std::make_unique<renderer>();
 
+	/*
 	uint32_t cube = AssetManager::Load<Blueprint>("assets/entities/cube.json");
 	uint32_t l1 = AssetManager::Load<Blueprint>("assets/entities/l1.json");
 
@@ -21,6 +22,7 @@ ag::Engine::Engine()
 	auto l = AssetManager::Fetch<Blueprint>(l1).lock();
 	l->SetWorld(ecsWorld);
 	l->Instantiate();
+	*/
 }
 
 ag::Engine::~Engine()
@@ -100,5 +102,7 @@ void ag::Engine::FrameUpdate(double dt)
 	}
 
 	ag::Stats::RegisterFrameTime(dt);
-	renderer->Render();
+	render->render(sceneBuilder->StartGraphRead());
+	sceneBuilder->EndGraphRead();
+	w.swapBuffers();
 }
