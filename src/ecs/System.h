@@ -9,24 +9,17 @@ namespace ag
 	class ISystem
 	{
 	public:
-		void SetWorld(std::shared_ptr<ag::World> w);
+		void SetWorld(ag::World* w);
 
 		/**
 		* Called when all ECS systems are initialised at client startup.
 		*/
-		virtual void Init() = 0;
+		virtual void Init() { Log::Trace("abase"); }
 		/**
 		* Called every game update. dt is unchanging between updates.
 		* @param dt The time since last update. Constant value
 		*/
 		virtual void Update(double dt) = 0;
-		/**
-		* Called every frame. dt is dependent on monitor rates and/or performance
-		* @param dt The time since last frame
-		*/
-		virtual void FrameUpdate(double dt) = 0;
-
-
 
 
 		using factory_func = std::unique_ptr<ag::ISystem>();
@@ -70,7 +63,7 @@ namespace ag
 			Systems().push_back(func);
 		}
 
-		std::shared_ptr<ag::World> world;
+		ag::World* world{nullptr};
 	};
 
 	template <class SysType>

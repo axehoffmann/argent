@@ -5,7 +5,7 @@ project ("argent")
 file(STRINGS includes.txt INCLUDE_DIRS)
 
 set(CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 
 include_directories(${INCLUDE_DIRS})
 

@@ -30,8 +30,8 @@ namespace ag
                 matches.push_back(std::move(archetype));
         }
 
+        IQuery(const ComponentSet& set);
         IQuery(ag::World* w, const ComponentSet& set);
-
         /**
         * Unsubscribe from getting archetype updates
         */
@@ -46,6 +46,11 @@ namespace ag
                 [](size_t sum, std::shared_ptr<ag::ArchetypeCollection> b) {
                 return sum + b->GetEntityCount();
             });
+        }
+
+        void SetWorld(ag::World* w)
+        {
+            world = w;
         }
 
 
@@ -70,6 +75,7 @@ namespace ag
         friend class ag::World;
     public:
 
+        Query() : IQuery(ag::ComponentInfo::GetComponentSet<Cs...>()) {}
         Query(ag::World* w) : IQuery(w, ag::ComponentInfo::GetComponentSet<Cs...>()) {}
 
         class Iterator

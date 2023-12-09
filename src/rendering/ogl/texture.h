@@ -16,6 +16,8 @@ public:
 
 	void setData(u32 w, u32 h, void* data);
 
+	u64 makeBindless();
+
 private:
 	glhandle handle;
 };

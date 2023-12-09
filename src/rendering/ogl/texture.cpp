@@ -1,4 +1,5 @@
 #include "texture.h"
+#include "texture.h"
 
 texture::texture()
 {
@@ -23,4 +24,11 @@ void texture::setData(u32 w, u32 h, void* data)
 {
 	glBindTexture(GL_TEXTURE_2D, handle);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+}
+
+u64 texture::makeBindless()
+{
+	u64 blh = glGetTextureHandleARB(handle);
+	glMakeTextureHandleResidentARB(blh);
+	return blh;
 }

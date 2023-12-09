@@ -5,6 +5,20 @@
 
 #include "lib/basic.h"
 
+template <>
+struct std::formatter<glm::vec3>
+{
+	constexpr auto parse(std::format_parse_context& ctx)
+	{
+		return ctx.begin();
+	}
+
+	auto format(const glm::vec3& ob, std::format_context& ctx) const
+	{
+		return std::format_to(ctx.out(), "({}, {}, {})", ob.x, ob.y, ob.z);
+	}
+};
+
 struct transform
 {
 	glm::vec3 pos;

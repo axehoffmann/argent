@@ -1,6 +1,6 @@
 #include "System.h"
 
-void ag::ISystem::SetWorld(std::shared_ptr<ag::World> w)
+void ag::ISystem::SetWorld(ag::World* w)
 {
 	world = w;
 }

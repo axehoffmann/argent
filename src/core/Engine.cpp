@@ -3,6 +3,37 @@
 #include "resources/Blueprint.h"
 #include "resources/Mesh.h"
 
+class test_system : public ag::System<test_system>
+{
+public:
+	test_system() : ag::System<test_system>(), q() {}
+
+	void Init() override
+	{
+		world->InitialiseQuery(&q);
+	}
+	void Update(f64 dt) override
+	{
+		for (auto e : q)
+		{
+			auto& t = e.Get<transform>();
+			if (t.pos.y != -3)
+			{
+				t.pos.y = -3;
+				t.pos.x = (state % 20) - 10;
+				t.pos.z = -5 - 2 *(state / 20);
+
+				state += 2;
+
+			}
+			t.rot *= glm::quat({0, 0.01, 0});
+		}
+	}
+
+	i32 state = 0;
+	ag::Query<transform> q;
+};
+
 ag::Engine::Engine()
 {
 	active = true;
@@ -14,19 +45,21 @@ ag::Engine::Engine()
 	render->createRenderable(AssetManager::Load<Mesh>("assets/pillar.obj"));
 	render->createRenderable(AssetManager::Load<Mesh>("assets/cube.obj"));
 
-
-	
 	uint32_t cube = AssetManager::Load<Blueprint>("assets/entities/cube.json");
 	uint32_t pilar = AssetManager::Load<Blueprint>("assets/entities/pillar.json");
 
 	auto cb = AssetManager::Fetch<Blueprint>(cube).lock();
 	cb->SetWorld(ecsWorld);
-	cb->Instantiate();
 
 	auto l = AssetManager::Fetch<Blueprint>(pilar).lock();
 	l->SetWorld(ecsWorld);
-	l->Instantiate();
-	
+	for (size_t i = 0; i < 120; i++)
+	{
+		l->Instantiate();
+		cb->Instantiate();
+	}
+
+	RegisterSystem(new test_system);
 }
 
 ag::Engine::~Engine()
@@ -47,10 +80,13 @@ void ag::Engine::Run()
 	// Based on Fix your Timestep! by Glenn Fiedler
 	stc::nanoseconds t(0);
 	// TODO: proper 1/60? research better chrono stuff
-	stc::nanoseconds dt = stc::milliseconds(167);
+	stc::nanoseconds dt = stc::milliseconds(17);
 
 	auto currentTime = stc::steady_clock::now();
 	stc::nanoseconds accumulator(0);
+
+	u64 frame = 0;
+	double ftime = 0;
 
 	while (active)
 	{
@@ -70,15 +106,26 @@ void ag::Engine::Run()
 			t += dt;
 		}
 
+		w.pollEvents();
 		/// TODO: is frame time correct step here? unsure
 		FrameUpdate(stc::duration<double>(frameTime).count());
+		frame++;
+		ftime += double(frameTime.count()) / 1000000000.0;
+
+		if (ftime >= 5.0)
+		{
+			Log::Trace(sfmt("FPS: {}", frame / ftime));
+			ftime = 0;
+			frame = 0;
+		}
 	}
 }
 
 void ag::Engine::RegisterSystem(ag::ISystem* s)
 {
 	systems.push_back(s);
-	s->SetWorld(std::shared_ptr<ag::World>(ecsWorld));
+	s->SetWorld(ecsWorld.get());
+	s->Init();
 }
 
 void ag::Engine::End()
@@ -100,11 +147,6 @@ void ag::Engine::Update(double dt)
 
 void ag::Engine::FrameUpdate(double dt)
 {
-	for (size_t i = 0; i < systems.size(); i++)
-	{
-		systems[i]->FrameUpdate(dt);
-	}
-
 	ag::Stats::RegisterFrameTime(dt);
 	render->render(sceneBuilder->StartGraphRead());
 	sceneBuilder->EndGraphRead();
