@@ -45,7 +45,7 @@ private:
 	vao vert;
 	shader s;
 
-	vector<glm::mat4> t;
+	vector<render_instance> t;
 
 	vector<renderable> renderables;
 };

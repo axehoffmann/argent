@@ -44,7 +44,7 @@ renderer::renderer() :
 	{
 		for (u64 j = 0; j < 10; j++)
 		{
-			t.push_back(model_matrix(transform{ {-15.0f + (3.0f * i), -5, -5.0f - (2.5f * j)}, glm::angleAxis(glm::quarter_pi<float>(), glm::vec3{0.0f, 1.0f, 0.0f}), {0.6f,0.6f,0.6f} }));
+			t.push_back({model_matrix(transform{ {-15.0f + (3.0f * i), -5, -5.0f - (2.5f * j)}, glm::angleAxis(glm::quarter_pi<float>(), glm::vec3{0.0f, 1.0f, 0.0f}), {0.6f,0.6f,0.6f} }), 0});
 		}
 	}
 
@@ -85,6 +85,8 @@ renderer::renderer() :
 
 	s.uniform("lightPos", {1.5, 0, 0});
 	s.uniform("viewPos", {0, 0, 2});
+
+	ag::Log::Trace(ag::sfmt("a {}", tex.makeBindless()));
 
 	instanceData.bind();
 	instanceData.bind(1);
