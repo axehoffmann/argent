@@ -36,8 +36,10 @@ private:
 	u32 eboOffset;
 
 	buffer instanceData;
+	buffer textures;
 
 	texture tex;
+	texture tex2;
 
 	u32 pillar;
 	u32 cube;

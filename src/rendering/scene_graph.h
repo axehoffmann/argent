@@ -9,9 +9,9 @@
 struct render_instance
 {
 	glm::mat4 model;
-	u64 tex;
+	u32 mat;
 
-	ag::byte padding;
+	ag::byte padding[12];
 };
 
 struct scene_graph

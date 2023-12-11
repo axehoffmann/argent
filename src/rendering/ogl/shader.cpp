@@ -62,10 +62,10 @@ shader::shader(const string& vpath, const string& fpath)
 	if (!success)
 	{
 		int logLength = 0;
-		glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &logLength);
+		glGetProgramiv(handle, GL_INFO_LOG_LENGTH, &logLength);
 		std::vector<char> errorLog(logLength + 1);
-		glGetShaderInfoLog(handle, 512, NULL, errorLog.data());
-		ag::Log::Error(ag::sfmt("failed to link shader program : \n{}", errorLog.data()));
+		glGetProgramInfoLog(handle, 512, NULL, errorLog.data());
+		ag::Log::Error(ag::sfmt("failed to link shader program : \n{} ", errorLog.data()));
 	}
 
 	glDeleteShader(vert);

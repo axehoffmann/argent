@@ -1,13 +1,13 @@
 [
 	{
 		"type": "transform",
-		"position": [0, 0, 0],
+		"position": [3, -5, -5],
 		"rotation": [0, 20, 0],
 		"scale": [0.4, 0.4, 0.4]
 	},
 	{
 		"type": "static_renderable",
-		"mesh": 1,
-		"material": "assets/brick/brick.mat"
+		"mesh": 0,
+		"material": 0
 	}
 ]

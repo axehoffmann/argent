@@ -31,7 +31,7 @@ void ag::scene_builder::Update()
         if (graph->scene.size() <= r.meshID)
             graph->scene.resize(u64{r.meshID} + 1);
 
-        graph->scene.at(r.meshID).push_back({ model_matrix(entity.Get<transform>()), 4294969856 });
+        graph->scene.at(r.meshID).push_back({ model_matrix(entity.Get<transform>()), r.materialID });
     }
 
     /*

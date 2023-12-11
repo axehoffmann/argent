@@ -34,6 +34,7 @@ renderer::renderer() :
 	s("assets/basic.vs", "assets/basic.fs"),
 
 	instanceData(buffer_access_type::DynamicDraw, buffer_type::Storage),
+	textures(buffer_access_type::DynamicDraw, buffer_type::Storage),
 
 	pillar(0),
 	cube(1)
@@ -44,7 +45,7 @@ renderer::renderer() :
 	{
 		for (u64 j = 0; j < 10; j++)
 		{
-			t.push_back({model_matrix(transform{ {-15.0f + (3.0f * i), -5, -5.0f - (2.5f * j)}, glm::angleAxis(glm::quarter_pi<float>(), glm::vec3{0.0f, 1.0f, 0.0f}), {0.6f,0.6f,0.6f} }), 0});
+			t.push_back({model_matrix(transform{ {-15.0f + (3.0f * i), -5, -5.0f - (2.5f * j)}, glm::angleAxis(glm::quarter_pi<float>(), glm::vec3{0.0f, 1.0f, 0.0f}), {0.6f,0.6f,0.6f} })});
 		}
 	}
 
@@ -60,7 +61,6 @@ renderer::renderer() :
 	ebo.bind();
 	ebo.setData(p->indices.data(), sizeof(u32) * p->indices.size()); /// TODO: for some reason this is required, otherwise the allocation breaks
 	ebo.allocate(sizeof(u32) * (p->indices.size() + c->indices.size()));
-	
 
 	instanceData.bind();
 	instanceData.setData(t.data(), sizeof(render_instance) * 250); /// TODO: for some reason this is required, otherwise the allocation breaks
@@ -70,7 +70,13 @@ renderer::renderer() :
 
 	auto pt = loadTex("assets/pillar.png");
 	tex.setData(pt->width, pt->height, pt->data);
-	tex.bind(0);
+	auto pt2 = loadTex("assets/pepe.png");
+	tex2.setData(pt2->width, pt2->height, pt2->data);
+
+	vector<u64> texes{ tex.makeBindless(), tex2.makeBindless() };
+	textures.bind();
+	textures.setData(texes.data(), sizeof(u64) * texes.size());
+	textures.bind(2);
 
 	glClearColor(0.0f, 0.5f, 0.5f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -81,12 +87,8 @@ renderer::renderer() :
 	s.uniform("view", view);
 	s.uniform("proj", proj);
 
-	s.uniform("diffuse", 0);
-
 	s.uniform("lightPos", {1.5, 0, 0});
 	s.uniform("viewPos", {0, 0, 2});
-
-	ag::Log::Trace(ag::sfmt("a {}", tex.makeBindless()));
 
 	instanceData.bind();
 	instanceData.bind(1);
