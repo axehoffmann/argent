@@ -8,7 +8,7 @@ buffer::buffer(buffer_access_type access, buffer_type type) :
 	handle(-1),
 	size(0)
 {
-	glGenBuffers(1, &handle);
+	glCreateBuffers(1, &handle);
 }
 
 buffer::buffer(buffer&& other) noexcept :
@@ -42,9 +42,7 @@ buffer::~buffer()
 void buffer::allocate(u64 sz)
 {
 	size = sz;
-	glBufferStorage(static_cast<GLenum>(storageType), size, nullptr, GL_DYNAMIC_STORAGE_BIT);
-
-	if (storageType == buffer_type::IndexArray);
+	glNamedBufferStorage(handle, size, nullptr, GL_DYNAMIC_STORAGE_BIT);
 }
 
 void buffer::set(void* data, u64 sz, u64 offset)

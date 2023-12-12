@@ -54,19 +54,14 @@ renderer::renderer() :
 	auto c = loadMesh("assets/pillar.obj");
 
 	vert.bind();
-
 	vbo.bind();
-	vbo.allocate(sizeof(vertex) * (p->vertices.size() + c->vertices.size()));
-
 	ebo.bind();
-	ebo.setData(p->indices.data(), sizeof(u32) * p->indices.size()); /// TODO: for some reason this is required, otherwise the allocation breaks
+	vertex::prepareVAO(vert);
+
+	vbo.allocate(sizeof(vertex) * (p->vertices.size() + c->vertices.size()));
 	ebo.allocate(sizeof(u32) * (p->indices.size() + c->indices.size()));
 
-	instanceData.bind();
-	instanceData.setData(t.data(), sizeof(render_instance) * 250); /// TODO: for some reason this is required, otherwise the allocation breaks
 	instanceData.allocate(sizeof(render_instance) * 250);
-
-	vertex::prepareVAO(vert);
 
 	auto pt = loadTex("assets/pillar.png");
 	tex.setData(pt->width, pt->height, pt->data);

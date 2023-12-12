@@ -15,4 +15,4 @@ target_sources(renderer PRIVATE
 	"command_buffer.cpp"
 	"texture.h"
 	"texture.cpp"
-)
+ "material_allocator.h")
