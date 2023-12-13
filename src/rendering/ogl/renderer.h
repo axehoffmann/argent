@@ -5,6 +5,7 @@
 
 #include "buffer.h"
 #include "command_buffer.h"
+#include "material_allocator.h"
 #include "shader.h"
 #include "texture.h"
 #include "vao.h"
@@ -28,6 +29,8 @@ public:
 	u32 createRenderable(u32 meshID);
 
 private:
+	material_allocator matAllocator;
+
 	command_buffer cmdbuf;
 
 	buffer vbo;

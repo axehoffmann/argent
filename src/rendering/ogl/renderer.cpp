@@ -68,10 +68,14 @@ renderer::renderer() :
 	auto pt2 = loadTex("assets/pepe.png");
 	tex2.setData(pt2->width, pt2->height, pt2->data);
 
-	vector<u64> texes{ tex.makeBindless(), tex2.makeBindless() };
+	vector<gl_material> texes{ gl_material{ tex.makeBindless() }, gl_material{tex2.makeBindless()} };
+	matAllocator.load(texes[1], 1);
+
+	matAllocator.load(texes[0], 0);
+
 	textures.bind();
-	textures.setData(texes.data(), sizeof(u64) * texes.size());
-	textures.bind(2);
+	textures.setData(texes.data(), sizeof(gl_material) * texes.size());
+	//textures.bind(2);
 
 	glClearColor(0.0f, 0.5f, 0.5f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
