@@ -2,6 +2,7 @@
 
 #include "resources/Blueprint.h"
 #include "resources/Mesh.h"
+#include "resources/Texture.h"
 
 class test_system : public ag::System<test_system>
 {
@@ -45,6 +46,9 @@ ag::Engine::Engine()
 	render->createRenderable(AssetManager::Load<Mesh>("assets/pillar.obj"));
 	render->createRenderable(AssetManager::Load<Mesh>("assets/cube.obj"));
 
+	render->loadMaterial(0, ag::AssetManager::Load<Texture>("assets/pillar.png"));
+	render->loadMaterial(1, ag::AssetManager::Load<Texture>("assets/pepe.png"));
+
 	uint32_t cube = AssetManager::Load<Blueprint>("assets/entities/cube.json");
 	uint32_t pilar = AssetManager::Load<Blueprint>("assets/entities/pillar.json");
 
@@ -53,7 +57,8 @@ ag::Engine::Engine()
 
 	auto l = AssetManager::Fetch<Blueprint>(pilar).lock();
 	l->SetWorld(ecsWorld);
-	for (size_t i = 0; i < 120; i++)
+
+	for (size_t i = 0; i < 500; i++)
 	{
 		l->Instantiate();
 		cb->Instantiate();

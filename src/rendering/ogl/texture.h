@@ -11,6 +11,7 @@ class texture
 {
 public:
 	texture();
+	texture(glhandle h);
 
 	void bind(u32 slot);
 

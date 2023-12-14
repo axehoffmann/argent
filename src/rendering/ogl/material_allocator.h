@@ -85,11 +85,6 @@ public:
 		resident_material_ids[resident_material_count] = material;
 		allocation_table[material] = newLoc;
 
-		for (size_t i = 0; i < 2; i++)
-		{
-			ag::Log::Trace(ag::sfmt("{}   {}", newLoc, material));
-		}
-
 		// Mirror the action on the GPU
 		gpu_resident_materials.set(&descriptor, sizeof(gl_material), sizeof(gl_material) * resident_material_count);
 		gpu_allocation_table.set(&newLoc, sizeof(u32), sizeof(u32) * material);

@@ -47,13 +47,13 @@ void buffer::allocate(u64 sz)
 
 void buffer::set(void* data, u64 sz, u64 offset)
 {
-	glBufferSubData(static_cast<GLenum>(storageType), offset, sz, data);
+	glNamedBufferSubData(handle, offset, sz, data);
 }
 
 void buffer::setData(void* data, u64 sz)
 {
 	size = sz;
-	glBufferData(static_cast<GLenum>(storageType), size, data, static_cast<GLenum>(accessType));
+	glNamedBufferData(handle, size, data, static_cast<GLenum>(accessType));
 }
 
 void buffer::bind()

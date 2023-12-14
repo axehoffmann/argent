@@ -5,8 +5,8 @@ window::window()
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
-	screen = glfwCreateWindow(1920, 1080, "gfx", nullptr, nullptr);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	screen = glfwCreateWindow(2560, 1440, "gfx", nullptr, nullptr);
 
 	if (screen == nullptr)
 	{
@@ -21,7 +21,7 @@ window::window()
 	{
 		ag::Log::Trace("aug");
 		}
-	glViewport(0, 0, 1920, 1080);
+	glViewport(0, 0, 2560, 1440);
 }
 
 void window::pollEvents()

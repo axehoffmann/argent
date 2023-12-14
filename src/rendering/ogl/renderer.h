@@ -28,6 +28,8 @@ public:
 
 	u32 createRenderable(u32 meshID);
 
+	void loadMaterial(u32 materialID, u32 texID);
+
 private:
 	material_allocator matAllocator;
 
@@ -41,16 +43,13 @@ private:
 	buffer instanceData;
 	buffer textures;
 
-	texture tex;
-	texture tex2;
+	vector<texture> tex;
 
 	u32 pillar;
 	u32 cube;
 
 	vao vert;
 	shader s;
-
-	vector<render_instance> t;
 
 	vector<renderable> renderables;
 };
