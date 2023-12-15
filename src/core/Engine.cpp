@@ -119,7 +119,7 @@ void ag::Engine::Run()
 
 		if (ftime >= 5.0)
 		{
-			Log::Trace(sfmt("FPS: {}", frame / ftime));
+			Log::Trace(sfmt("time: {}ms FPS: {}", ftime * 1000 / frame, frame / ftime));
 			ftime = 0;
 			frame = 0;
 		}

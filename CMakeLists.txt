@@ -18,4 +18,4 @@ if(NOT glfw OR NOT ogl32lib OR NOT glew)
 endif()
 
 add_subdirectory(src)
-add_subdirectory(tests)
+add_subdirectory(tests) 

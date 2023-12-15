@@ -9,11 +9,19 @@ in vec3 fragPos;
 struct Material
 {
 	uvec2 alb;
+	uvec2 norm;
+	uvec2 detail;
+	uvec2 detail2;
 };
 
 layout(std430, binding = 2) buffer mats
 {
 	Material materials[];
+};
+
+layout(std430, binding = 3) buffer matTable
+{
+	uint materialTable[];
 };
 
 flat in int materialID;
@@ -25,6 +33,8 @@ out vec4 FragColor;
 
 void main()
 {
+	Material mat = materials[materialTable[materialID]];
+
 	vec3 V = viewPos - fragPos;
 	vec3 L = lightPos - fragPos;
 	vec3 H = normalize(L + V);
