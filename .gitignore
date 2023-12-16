@@ -1,3 +1,4 @@
 .vs/**
 includes.txt
 out/**
+CMakeSettings.json

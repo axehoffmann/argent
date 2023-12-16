@@ -2,6 +2,8 @@
 
 #include "opengl.h"
 
+#include "resources/v2/packer/mesh.h"
+
 class vao
 {
 public:
@@ -11,7 +13,7 @@ public:
 	vao(vao&) = delete;
 	vao& operator=(vao&) = delete;
 
-	vao(vao&& other);
+	vao(vao&& other) noexcept;
 	vao& operator=(vao&& other) noexcept;
 
 	void bind();
@@ -21,3 +23,5 @@ public:
 private:
 	glhandle handle;
 };
+
+void prepareVAOStandard(vao& vao);

@@ -6,10 +6,10 @@
 
 #include "debug/log/Log.h"
 
-#include "core/Transform.h"
+#include "rendering/transform.h"
 
 using ComponentTypes = typelist<
-	ag::Transform
+	transform
 >;
 
 using component_count_t = u8;

@@ -2,7 +2,6 @@
 #include "renderer.h"
 
 #include "rendering/ogl/opengl.h"
-#include "rendering/vertex.h"
 #include "rendering/transform.h"
 
 #include "resources/AssetManager.h"
@@ -47,9 +46,9 @@ renderer::renderer() :
 	vert.bind();
 	vbo.bind();
 	ebo.bind();
-	vertex::prepareVAO(vert);
+	prepareVAOStandard(vert);
 
-	vbo.allocate(sizeof(vertex) * (p->vertices.size() + c->vertices.size()));
+	vbo.allocate(sizeof(basic_vertex) * (p->vertices.size() + c->vertices.size()));
 	ebo.allocate(sizeof(u32) * (p->indices.size() + c->indices.size()));
 
 	instanceData.allocate(sizeof(render_instance) * 1000);
@@ -99,7 +98,7 @@ u32 renderer::createRenderable(u32 meshID)
 {
 	auto m = ag::AssetManager::Fetch<ag::Mesh>(meshID).lock();
 	vbo.bind();
-	vbo.set(m->vertices.data(), sizeof(vertex) * m->vertices.size(), sizeof(vertex) * vboOffset);
+	vbo.set(m->vertices.data(), sizeof(basic_vertex) * m->vertices.size(), sizeof(basic_vertex) * vboOffset);
 
 	ebo.bind();
 	ebo.set(m->indices.data(), sizeof(u32) * m->indices.size(), sizeof(u32) * eboOffset);

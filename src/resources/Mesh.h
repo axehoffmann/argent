@@ -9,7 +9,7 @@
 
 #include "lib/string.h"
 #include "lib/vector.h"
-#include "rendering/vertex.h"
+#include "resources/v2/packer/mesh.h"
 
 #include <vector>
 
@@ -21,7 +21,7 @@ namespace ag
         ~Mesh() { Unload(); }
 
 
-        vector<vertex> vertices;
+        vector<basic_vertex> vertices;
         vector<uint32_t> indices;
 
         bool IsReady() const override;
