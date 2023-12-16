@@ -7,7 +7,7 @@
 #include <tiny_obj_loader.h>
 #pragma warning(pop)
 
-tuple<mesh_ir, u64> load_obj(const string& path)
+mesh_ir load_obj(const string& path)
 {
     tinyobj::attrib_t attributes;
     vector<tinyobj::shape_t> primitives;
@@ -18,13 +18,13 @@ tuple<mesh_ir, u64> load_obj(const string& path)
     
     bool success = tinyobj::LoadObj(&attributes, &primitives, &materials, &warning, &error, path.c_str());
     
-    u64 tris = primitives.size();
-
     if (!success)
     {
         std::cout << "Failed to load mesh " << path << "\n";
-        return;
+        return ir;
     }
+
+    u64 tris = primitives.size();
 
     for (const tinyobj::shape_t& triangle : primitives)
     {
@@ -32,9 +32,9 @@ tuple<mesh_ir, u64> load_obj(const string& path)
         {
             basic_vertex vertex{};
 
-            u64 positionIndex = 3 * u64{ index.vertex_index };
-            u64 uvIndex = 2 * u64{ index.texcoord_index };
-            u64 normalIndex = 3 * u64{ index.normal_index };
+            u64 positionIndex   = 3 * u64(index.vertex_index);
+            u64 uvIndex         = 2 * u64(index.texcoord_index);
+            u64 normalIndex     = 3 * u64(index.normal_index);
 
             vertex = {
                 attributes.vertices[positionIndex + 0],
@@ -50,22 +50,21 @@ tuple<mesh_ir, u64> load_obj(const string& path)
             };
 
             ir.vertices.push_back(vertex);
+            ir.indices.push_back(ir.indices.size());
         }
     }
-	return {ir, tris};
+	return ir;
 }
 
-mesh_ir optimize_mesh(const string& path)
+mesh_ir optimize_mesh(mesh_ir&& m)
 {
-    auto [m, tris] = load_obj(path);
-
     // Indexing
-    u64 indexCount = tris * 3;
+    u64 indexCount = m.indices.size();
     vector<u32> remapTable(indexCount);
     u64 vertexCount = meshopt_generateVertexRemap(
         remapTable.data(), 
-        nullptr, 
-        indexCount, 
+        m.indices.data(),
+        indexCount,
         m.vertices.data(),
         m.vertices.size(),
         sizeof(basic_vertex)
@@ -75,7 +74,7 @@ mesh_ir optimize_mesh(const string& path)
     ir.indices.resize(indexCount);
     ir.vertices.resize(vertexCount);
     meshopt_remapIndexBuffer(ir.indices.data(), nullptr, indexCount, remapTable.data());
-    meshopt_remapVertexBuffer(ir.vertices.data(), nullptr, vertexCount, sizeof(basic_vertex), remapTable.data());
+    meshopt_remapVertexBuffer(ir.vertices.data(), m.vertices.data(), vertexCount, sizeof(basic_vertex), remapTable.data());
 
     // Optimization
     meshopt_optimizeVertexCache(ir.indices.data(), ir.indices.data(), indexCount, vertexCount);
