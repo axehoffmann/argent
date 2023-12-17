@@ -28,12 +28,15 @@ public:
 
 ag::Engine::Engine()
 {
+	namespace stc = std::chrono;
+
 	active = true;
 
 	ecsWorld = std::make_shared<ag::World>();
 	sceneBuilder = std::make_shared<ag::scene_builder>(ecsWorld);
-
 	render = std::make_unique<renderer>();
+
+	auto t = stc::steady_clock::now();
 	render->createRenderable(AssetManager::Load<Mesh>("assets/pillar.obj"));
 	render->createRenderable(AssetManager::Load<Mesh>("assets/cube.obj"));
 
@@ -48,6 +51,10 @@ ag::Engine::Engine()
 
 	auto l = AssetManager::Fetch<Blueprint>(pilar).lock();
 	l->SetWorld(ecsWorld);
+
+	Log::Trace(sfmt("Loading: {}ms", (stc::steady_clock::now() - t).count() / 1000000.0));
+
+	t = stc::steady_clock::now();
 
 	i32 state = 0;
 	function<transform*> init = [&](transform* tp) 
@@ -64,6 +71,9 @@ ag::Engine::Engine()
 		l->Instantiate(init);
 		cb->Instantiate(init);
 	}
+	Log::Trace(sfmt("Initialisation: {}ms", (stc::steady_clock::now() - t).count() / 1000000.0));
+
+
 
 	RegisterSystem(new test_system);
 }
