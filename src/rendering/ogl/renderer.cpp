@@ -12,7 +12,7 @@ auto loadMesh(const string& path)
 {
 	u32 rsc = ag::AssetManager::Load<ag::Mesh>(path);
 	auto v = ag::AssetManager::Fetch<ag::Mesh>(rsc).lock();
-	ag::Log::Trace(ag::sfmt("Loaded mesh with {} indices", v->indices.size()));
+	ag::Log::Trace(ag::sfmt("Loaded mesh with {} indices", v->mesh.indices.size()));
 	return v;
 }
 
@@ -48,8 +48,8 @@ renderer::renderer() :
 	ebo.bind();
 	prepareVAOStandard(vert);
 
-	vbo.allocate(sizeof(basic_vertex) * (p->vertices.size() + c->vertices.size()));
-	ebo.allocate(sizeof(u32) * (p->indices.size() + c->indices.size()));
+	vbo.allocate(sizeof(basic_vertex) * (p->mesh.vertices.size() + c->mesh.vertices.size()));
+	ebo.allocate(sizeof(u32) * (p->mesh.indices.size() + c->mesh.indices.size()));
 
 	instanceData.allocate(sizeof(render_instance) * 1000);
 
@@ -98,14 +98,14 @@ u32 renderer::createRenderable(u32 meshID)
 {
 	auto m = ag::AssetManager::Fetch<ag::Mesh>(meshID).lock();
 	vbo.bind();
-	vbo.set(m->vertices.data(), sizeof(basic_vertex) * m->vertices.size(), sizeof(basic_vertex) * vboOffset);
+	vbo.set(m->mesh.vertices.data(), sizeof(basic_vertex) * m->mesh.vertices.size(), sizeof(basic_vertex) * vboOffset);
 
 	ebo.bind();
-	ebo.set(m->indices.data(), sizeof(u32) * m->indices.size(), sizeof(u32) * eboOffset);
+	ebo.set(m->mesh.indices.data(), sizeof(u32) * m->mesh.indices.size(), sizeof(u32) * eboOffset);
 
-	renderables.push_back({eboOffset, vboOffset, u32(m->indices.size())});
-	vboOffset += m->vertices.size();
-	eboOffset += m->indices.size();
+	renderables.push_back({eboOffset, vboOffset, u32(m->mesh.indices.size())});
+	vboOffset += m->mesh.vertices.size();
+	eboOffset += m->mesh.indices.size();
 
 	return renderables.size() - 1;
 }

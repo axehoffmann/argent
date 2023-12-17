@@ -21,8 +21,7 @@ namespace ag
         ~Mesh() { Unload(); }
 
 
-        vector<basic_vertex> vertices;
-        vector<uint32_t> indices;
+        mesh_ir mesh;
 
         bool IsReady() const override;
         void Load() override;

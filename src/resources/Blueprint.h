@@ -5,6 +5,7 @@
 #include "../ecs/Component.h"
 #include <nlohmann/json.hpp>
 
+#include "lib/functor.h"
 #include "lib/vector.h"
 
 #include "ecs/World.h"
@@ -25,7 +26,20 @@ namespace ag
 		void Unload() override;
 
 		void SetWorld(std::shared_ptr<ag::World> w);
-		ag::EntityRef Instantiate();
+
+		template <typename ... Ts>
+		ag::EntityRef Instantiate(function<Ts*...> f)
+		{
+			EntityID id = archetype->SpawnEntity(components, f);
+			return ag::EntityRef(id, world.get());
+		}
+
+		ag::EntityRef Instantiate()
+		{
+			EntityID id = archetype->SpawnEntity(components);
+			return ag::EntityRef(id, world.get());
+		}
+
 
 	private:
 		vector<ComponentTypeID> types;

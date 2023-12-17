@@ -17,9 +17,10 @@ ag::ArchetypeCollection::~ArchetypeCollection()
 {
 }
 
-void ag::ArchetypeCollection::AddComponent(byte* bytes, int i, int n, vector<ComponentArray>& target)
+ag::byte* ag::ArchetypeCollection::AddComponent(byte* bytes, int i, int n, vector<ComponentArray>& target)
 {
 	target[i].insert(target[i].end(), bytes, bytes + n);
+	return &target[i].back() + 1 - n;
 }
 
 void ag::ArchetypeCollection::ResolveBuffers()

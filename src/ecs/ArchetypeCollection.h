@@ -3,6 +3,7 @@
 #include "ECSTypes.h"
 #include "Component.h"
 
+#include "lib/functor.h"
 #include "lib/vector.h"
 
 #include <unordered_map>
@@ -12,6 +13,7 @@
 #include <optional>
 
 #include <stdexcept>
+#include "lib/tuple.h"
 
 namespace ag
 {
@@ -46,6 +48,15 @@ namespace ag
 		EntityID SpawnEntity(vector<ag::Component>& components)
 		{
 			return InstantiateEntity(components);
+		}
+
+		/**
+		* Adds an entity to the spawn buffer from a vector of type-erased components
+		*/
+		template <typename ... Ts>
+		EntityID SpawnEntity(vector<ag::Component>& components, function<Ts*...> f)
+		{
+			return InstantiateEntity(components, f);
 		}
 
 		/**
@@ -170,6 +181,32 @@ namespace ag
 			return newEntityID;
 		}
 
+		template <typename ... Ts>
+		EntityID InstantiateEntity(vector<ag::Component>& components, function<Ts*...> f)
+		{
+			EntityID newEntityID = GetNextID();
+			entitiesToSpawn.push_back(newEntityID);
+
+			tuple<Ts*...> callbackArgs{};
+
+			for (int i = 0; i < components.size(); i++)
+			{
+				byte* loc = AddComponent((byte*)components[i].GetRawData(), i, components[i].Size(), spawnBuffer);
+
+				([&]
+				{
+					if (ag::ComponentInfo::GetID<Ts>() == ComponentTypes[i])
+					{
+						std::get<Ts*>(callbackArgs) = reinterpret_cast<Ts*>(loc);
+					}
+				}(), ...);
+			}
+
+			std::apply(f, callbackArgs);
+			return newEntityID;
+		}
+
+
 		const ArchetypeID ID;
 		// The component types that make up this archetype
 		ComponentSet ComponentTypes;
@@ -190,7 +227,7 @@ namespace ag
 		// Core entity data (a component that every entity has)
 		vector<EntityID> entities;
 
-		void AddComponent(byte* bytes, int i, int n, vector<ComponentArray>& target);
+		byte* AddComponent(byte* bytes, int i, int n, vector<ComponentArray>& target);
 
 		static std::atomic<ArchetypeID> nextArchetypeID;
 	};

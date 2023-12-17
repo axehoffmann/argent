@@ -4,7 +4,7 @@
 #include <functional>
 
 template <typename ... Args>
-using functor = std::function<void(Args&...)>;
+using function = std::function<void(Args...)>;
 
 template <typename ... Args>
 using reader_func = std::function<void(const Args&...)>;

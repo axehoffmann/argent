@@ -18,20 +18,11 @@ public:
 		for (auto e : q)
 		{
 			auto& t = e.Get<transform>();
-			if (t.pos.y != -3)
-			{
-				t.pos.y = -3;
-				t.pos.x = (state % 20) - 10;
-				t.pos.z = -5 - 2 *(state / 20);
 
-				state += 2;
-
-			}
 			t.rot *= glm::quat({0, 0.01, 0});
 		}
 	}
 
-	i32 state = 0;
 	ag::Query<transform> q;
 };
 
@@ -58,10 +49,20 @@ ag::Engine::Engine()
 	auto l = AssetManager::Fetch<Blueprint>(pilar).lock();
 	l->SetWorld(ecsWorld);
 
+	i32 state = 0;
+	function<transform*> init = [&](transform* tp) 
+	{
+		transform& t = *tp;
+		t.pos.y = -3;
+		t.pos.x = (state % 20) - 10;
+		t.pos.z = -5 - 2 * (state / 20);
+
+		state += 2;
+	};
 	for (size_t i = 0; i < 500; i++)
 	{
-		l->Instantiate();
-		cb->Instantiate();
+		l->Instantiate(init);
+		cb->Instantiate(init);
 	}
 
 	RegisterSystem(new test_system);
