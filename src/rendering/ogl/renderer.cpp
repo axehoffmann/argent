@@ -34,7 +34,7 @@ renderer::renderer() :
 	s("assets/basic.vs", "assets/basic.fs"),
 
 	instanceData(buffer_access_type::DynamicDraw, buffer_type::Storage),
-	textures(buffer_access_type::DynamicDraw, buffer_type::Storage)
+	pointLights(buffer_access_type::DynamicDraw, buffer_type::Storage)
 {
 	// Load 2 models into the VBO + EBO
 	auto p = loadMesh("assets/cube.agmesh");
@@ -49,6 +49,14 @@ renderer::renderer() :
 	ebo.allocate(sizeof(u32) * (p->mesh.indices.size() + c->mesh.indices.size()));
 
 	instanceData.allocate(sizeof(render_instance) * 1000);
+	pointLights.allocate(sizeof(u32) + sizeof(point_light) * 256);
+	pointLights.bind();
+	pointLights.bind(4);
+
+	vector<point_light> pls{ { { 1.5, 0, 0, 0 }, { 1.0, 0.7, 0.7, 0 }}, { { -1.5, 0, 0, 0 }, { 0.0, 0.1, 0.5, 0 }} };
+	u32 plc = pls.size();
+	pointLights.set(&plc, sizeof(u32), 0);
+	pointLights.set(pls.data(), sizeof(point_light) * pls.size(), 16);
 
 	glClearColor(0.0f, 0.5f, 0.5f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -59,7 +67,6 @@ renderer::renderer() :
 	s.uniform("view", view);
 	s.uniform("proj", proj);
 
-	s.uniform("lightPos", {1.5, 0, 0});
 	s.uniform("viewPos", {0, 0, 2});
 
 	instanceData.bind();

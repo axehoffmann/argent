@@ -20,6 +20,12 @@ struct renderable
 	u32 indexCount;
 };
 
+struct point_light
+{
+	glm::vec4 pos;
+	glm::vec4 colour;
+};
+
 class renderer
 {
 public:
@@ -41,7 +47,7 @@ private:
 	u32 eboOffset;
 
 	buffer instanceData;
-	buffer textures;
+	buffer pointLights;
 
 	vector<texture> tex;
 

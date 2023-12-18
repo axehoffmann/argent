@@ -8,7 +8,7 @@ in vec3 fragPos;
 
 struct PointLight
 {
-	vec3 pos;
+	vec4 pos;
 	vec4 colour;
 };
 
@@ -43,12 +43,9 @@ uniform vec3 lightPos;
 
 out vec4 FragColor;
 
-void main()
+vec3 pointLightContribution(Material mat, vec3 V, PointLight light)
 {
-	Material mat = materials[materialTable[materialID]];
-
-	vec3 V = viewPos - fragPos;
-	vec3 L = lightPos - fragPos;
+	vec3 L = vec3(light.pos) - fragPos;
 	vec3 H = normalize(L + V);
 
 	float dist = length(L);
@@ -59,13 +56,28 @@ void main()
 	float NdL = dot(a_Norm, L);
 	float intensity = max(NdL, 0.0);
 
-	vec3 diff = intensity * vec3(texture(sampler2D(materials[materialID].alb), a_UV)) * 10.0 / dist;
+	vec3 diff = intensity * vec3(texture(sampler2D(mat.alb), a_UV)) * 5.0 / dist;
 
 	float NdH = dot(a_Norm, H);
 	intensity = pow(max(NdH, 0.0),  4.0);
 
-	vec3 spec = intensity * vec3(1.0, 0.7, 0.7) * 1.0 / dist;
+	vec3 spec = intensity * vec3(light.colour) * 1.0 / dist;
+	return diff + spec;
+}
+
+void main()
+{
+	Material mat = materials[materialTable[materialID] - 1];
+
+	vec3 V = viewPos - fragPos;
 	
-	FragColor = vec4(diff + spec, 1.0);
+	vec3 c = vec3(0.0);
+
+	for (int i = 0; i < lightCount; i++)
+	{
+		c += pointLightContribution(mat, V, pointLights[i]);
+	}
+	
+	FragColor = vec4(c, 1.0);
 	// FragColor = vec4(1.0);
 }
