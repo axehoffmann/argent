@@ -6,6 +6,12 @@ in vec2 a_UV;
 in vec3 a_Norm;
 in vec3 fragPos;
 
+struct PointLight
+{
+	vec3 pos;
+	vec4 colour;
+};
+
 struct Material
 {
 	uvec2 alb;
@@ -22,6 +28,12 @@ layout(std430, binding = 2) buffer mats
 layout(std430, binding = 3) buffer matTable
 {
 	uint materialTable[];
+};
+
+layout(std430, binding = 4) buffer pLights
+{
+	uint lightCount;
+	PointLight pointLights[];
 };
 
 flat in int materialID;

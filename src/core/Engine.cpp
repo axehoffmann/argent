@@ -37,8 +37,8 @@ ag::Engine::Engine()
 	render = std::make_unique<renderer>();
 
 	auto t = stc::steady_clock::now();
-	render->createRenderable(AssetManager::Load<Mesh>("assets/pillar.obj"));
-	render->createRenderable(AssetManager::Load<Mesh>("assets/cube.obj"));
+	render->createRenderable(AssetManager::Load<Mesh>("assets/pillar.agmesh"));
+	render->createRenderable(AssetManager::Load<Mesh>("assets/cube.agmesh"));
 
 	render->loadMaterial(0, ag::AssetManager::Load<Texture>("assets/pillar.png"));
 	render->loadMaterial(1, ag::AssetManager::Load<Texture>("assets/pepe.png"));

@@ -43,6 +43,9 @@ void serialize(S& s, mesh_ir& o)
 	s.container4b(o.indices, 1 << 24);
 }
 
+void compile_mesh(const string& path);
 mesh_ir load_obj(const string& path);
 mesh_ir optimize_mesh(mesh_ir&& m);
-void save_mesh(mesh_ir& m);
+void save_mesh(mesh_ir& m, const string& path);
+
+mesh_ir load_mesh(const string& path);

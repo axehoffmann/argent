@@ -34,14 +34,11 @@ renderer::renderer() :
 	s("assets/basic.vs", "assets/basic.fs"),
 
 	instanceData(buffer_access_type::DynamicDraw, buffer_type::Storage),
-	textures(buffer_access_type::DynamicDraw, buffer_type::Storage),
-
-	pillar(0),
-	cube(1)
+	textures(buffer_access_type::DynamicDraw, buffer_type::Storage)
 {
 	// Load 2 models into the VBO + EBO
-	auto p = loadMesh("assets/cube.obj");
-	auto c = loadMesh("assets/pillar.obj");
+	auto p = loadMesh("assets/cube.agmesh");
+	auto c = loadMesh("assets/pillar.agmesh");
 
 	vert.bind();
 	vbo.bind();

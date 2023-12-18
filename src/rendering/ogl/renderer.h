@@ -45,9 +45,6 @@ private:
 
 	vector<texture> tex;
 
-	u32 pillar;
-	u32 cube;
-
 	vao vert;
 	shader s;
 

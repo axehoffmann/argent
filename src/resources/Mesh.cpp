@@ -10,8 +10,7 @@ bool ag::Mesh::IsReady() const
 
 void ag::Mesh::Load()
 {
-    mesh_ir unop = load_obj(filePath);
-    mesh = optimize_mesh(std::move(unop));
+    mesh = load_mesh(filePath);
 }
 
 void ag::Mesh::Unload()

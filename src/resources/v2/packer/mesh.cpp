@@ -1,11 +1,23 @@
 #include "mesh.h"
 
+#include "debug/log/Log.h"
+
+#include <fstream>
 #include <iostream>
+
+#include <bitsery/adapter/stream.h>
 
 #pragma warning(push, 0)
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 #pragma warning(pop)
+
+void compile_mesh(const string& path)
+{
+    string outPath = path.substr(0, path.find('.')) + ".agmesh";
+    mesh_ir opt = optimize_mesh(load_obj(path));
+    save_mesh(opt, outPath);
+}
 
 mesh_ir load_obj(const string& path)
 {
@@ -83,3 +95,39 @@ mesh_ir optimize_mesh(mesh_ir&& m)
 
     return m;
 }
+
+void save_mesh(mesh_ir& m, const string& path)
+{
+    std::fstream s{ path, s.binary | s.trunc | s.out };
+    if (!s.is_open())
+    {
+        ag::Log::Error("Could not write to file " + path);
+        return;
+    }
+
+    bitsery::Serializer<bitsery::OutputBufferedStreamAdapter> out{ s };
+    out.object(m);
+    out.adapter().flush();
+}
+
+mesh_ir load_mesh(const string& path)
+{
+    std::fstream s{ path, s.binary | s.in };
+    if (!s.is_open())
+    {
+        ag::Log::Error("Could not open mesh file " + path);
+        return mesh_ir();
+    }
+    
+    mesh_ir m;
+    auto [e, r] = bitsery::quickDeserialization<bitsery::InputStreamAdapter>(s, m);
+
+    if (e != bitsery::ReaderError::NoError || !r)
+    {
+        ag::Log::Error("Failed while reading mesh " + path);
+        return mesh_ir();
+    }
+
+    return m;
+}
+
