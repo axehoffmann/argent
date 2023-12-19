@@ -163,7 +163,6 @@ void ag::Engine::Update(double dt)
 
 void ag::Engine::FrameUpdate(double dt)
 {
-	ag::Stats::RegisterFrameTime(dt);
 	render->render(sceneBuilder->StartGraphRead());
 	sceneBuilder->EndGraphRead();
 	w.swapBuffers();

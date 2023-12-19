@@ -5,6 +5,8 @@
 
 #include "lib/basic.h"
 
+#include <format>
+
 template <>
 struct std::formatter<glm::vec3>
 {

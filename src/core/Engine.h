@@ -6,8 +6,6 @@
 #include "ecs/System.h"
 #include "debug/log/Log.h"
 
-#include "Stats.h"
-
 #include <memory>
 #include <chrono>
 #include <vector>

@@ -1,0 +1,14 @@
+{
+  "dependencies": [
+    "glew",
+    "glfw3",
+    "glm",
+
+    "meshoptimizer",
+    "tinyobjloader",
+    "stb",
+
+    "nlohmann-json",
+    "bitsery"
+  ]
+}

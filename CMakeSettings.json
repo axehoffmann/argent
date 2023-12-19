@@ -10,7 +10,8 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "cmakeExecutable": "C:\\Program Files\\CMake\\bin\\cmake.exe"
+      "cmakeExecutable": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+      "cmakeToolchain": "C:\\Users\\axel\\argent-dev\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
     },
     {
       "name": "x64-Release",
@@ -21,8 +22,7 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x64_x64" ],
-      "variables": []
+      "inheritEnvironments": [ "msvc_x64_x64" ]
     }
   ]
 }

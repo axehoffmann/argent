@@ -1,4 +1,4 @@
-add_library(core "Transform.cpp" "Camera.h" "Transform.h" "Utility.h" "Engine.h" "Engine.cpp" "Stats.h" "Stats.cpp" "Input.h" "Input.cpp")
+add_library(core  "Camera.h" "Utility.h" "Engine.h" "Engine.cpp"   "Input.h" "Input.cpp")
 add_subdirectory(cvars)
 add_subdirectory(spatial)
 add_subdirectory(structures)

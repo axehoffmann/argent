@@ -2,4 +2,4 @@ add_library(renderer   "transform.h" "transform.cpp" "glm.h" "scene_builder.h" "
 
 add_subdirectory(ogl)
 
-target_link_libraries(renderer PRIVATE log_print lib resources ${glfw} ${glew} ${ogl32lib})
+target_link_libraries(renderer PRIVATE log_print lib resources glfw ${ogl32lib} ${glew})
