@@ -7,6 +7,6 @@
 */
 auto main() -> i32
 {
-	compile_mesh("assets/pillar.obj");
+	compile_mesh("assets/pillar/pillar.obj");
 	compile_mesh("assets/cube.obj");
 }

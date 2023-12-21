@@ -38,7 +38,7 @@ renderer::renderer() :
 {
 	// Load 2 models into the VBO + EBO
 	auto p = loadMesh("assets/cube.agmesh");
-	auto c = loadMesh("assets/pillar.agmesh");
+	auto c = loadMesh("assets/pillar/pillar.agmesh");
 
 	vert.bind();
 	vbo.bind();
@@ -53,7 +53,7 @@ renderer::renderer() :
 	pointLights.bind();
 	pointLights.bind(4);
 
-	vector<point_light> pls{ { { 1.5, 0, 0, 0 }, { 1.0, 0.7, 0.7, 0 }}, { { -1.5, 0, 0, 0 }, { 0.0, 0.1, 0.5, 0 }} };
+	vector<point_light> pls{ { { 2.5, 0, 0, 0 }, { 1.0, 0.7, 0.7, 20.0 }}, { { -4.5, 0, 0, 0 }, { 0.1, 0.6, 1.0, 20.0 }} };
 	u32 plc = pls.size();
 	pointLights.set(&plc, sizeof(u32), 0);
 	pointLights.set(pls.data(), sizeof(point_light) * pls.size(), 16);
@@ -114,23 +114,21 @@ u32 renderer::createRenderable(u32 meshID)
 	return renderables.size() - 1;
 }
 
-void renderer::loadMaterial(u32 materialID, u32 texID)
+void renderer::loadMaterial(u32 materialID, arr<u32, 3> texID)
 {
-	constexpr u32 texCount = 1;
+	arr<glhandle, 3> texs;
+	arr<u64, 3> handles;
+	glGenTextures(3, texs.data());
 
-	arr<glhandle, texCount> texs;
-	arr<u64, texCount> handles;
-	glGenTextures(texCount, texs.data());
-
-	for (u32 i = 0; i < texCount; i++)
+	for (u32 i = 0; i < 3; i++)
 	{
 		texture t(texs[i]);
-		auto r = ag::AssetManager::Fetch<ag::Texture>(texID).lock();
+		auto r = ag::AssetManager::Fetch<ag::Texture>(texID[i]).lock();
 		t.setData(r->width, r->height, r->data);
 		handles[i] = t.makeBindless();
 
 		tex.push_back(std::move(t));
 	}
 
-	matAllocator.load(gl_material{ handles[0] }, materialID);
+	matAllocator.load(gl_material{ handles[0], 0, handles[1], handles[2] }, materialID);
 }

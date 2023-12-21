@@ -26,6 +26,7 @@ struct point_light
 	glm::vec4 colour;
 };
 
+
 class renderer
 {
 public:
@@ -34,9 +35,10 @@ public:
 
 	u32 createRenderable(u32 meshID);
 
-	void loadMaterial(u32 materialID, u32 texID);
+	void loadMaterial(u32 materialID, arr<u32, 3> texID);
 
 private:
+
 	material_allocator matAllocator;
 
 	command_buffer cmdbuf;

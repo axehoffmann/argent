@@ -37,11 +37,15 @@ ag::Engine::Engine()
 	render = std::make_unique<renderer>();
 
 	auto t = stc::steady_clock::now();
-	render->createRenderable(AssetManager::Load<Mesh>("assets/pillar.agmesh"));
+	render->createRenderable(AssetManager::Load<Mesh>("assets/pillar/pillar.agmesh"));
 	render->createRenderable(AssetManager::Load<Mesh>("assets/cube.agmesh"));
 
-	render->loadMaterial(0, ag::AssetManager::Load<Texture>("assets/pillar.png"));
-	render->loadMaterial(1, ag::AssetManager::Load<Texture>("assets/pepe.png"));
+	render->loadMaterial(0, { 
+		AssetManager::Load<Texture>("assets/pillar/pillar.png"), 
+		AssetManager::Load<Texture>("assets/pillar/pillar_rough.png"), 
+		AssetManager::Load<Texture>("assets/pillar/pillar_metallic.png") 
+	});
+	render->loadMaterial(1, { AssetManager::Load<Texture>("assets/pepe.png"), AssetManager::Load<Texture>("assets/pepe.png"), AssetManager::Load<Texture>("assets/pepe.png") });
 
 	uint32_t cube = AssetManager::Load<Blueprint>("assets/entities/cube.json");
 	uint32_t pilar = AssetManager::Load<Blueprint>("assets/entities/pillar.json");
@@ -63,6 +67,8 @@ ag::Engine::Engine()
 		t.pos.y = -3;
 		t.pos.x = (state % 20) - 10;
 		t.pos.z = -5 - 2 * (state / 20);
+
+		t.rot *= glm::quat({ 0, 0.01 * state, 0 });
 
 		state += 2;
 	};
@@ -130,7 +136,9 @@ void ag::Engine::Run()
 
 		if (ftime >= 5.0)
 		{
-			Log::Trace(sfmt("time: {}ms FPS: {}", ftime * 1000 / frame, frame / ftime));
+			Log::Trace(sfmt("time: {}ms FPS: {}", 
+				std::round(ftime * 10000000.0 / frame) / 10000.0, 
+				std::round(frame * 10000.0 / ftime) / 10000.0));
 			ftime = 0;
 			frame = 0;
 		}

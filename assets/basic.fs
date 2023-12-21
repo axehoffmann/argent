@@ -6,6 +6,10 @@ in vec2 a_UV;
 in vec3 a_Norm;
 in vec3 fragPos;
 
+
+const float PI = 3.14159265359;
+
+
 struct PointLight
 {
 	vec4 pos;
@@ -14,12 +18,13 @@ struct PointLight
 
 struct Material
 {
-	uvec2 alb;
+	uvec2 colour;
 	uvec2 norm;
 	uvec2 detail;
 	uvec2 detail2;
 };
 
+// Input buffers
 layout(std430, binding = 2) buffer mats
 {
 	Material materials[];
@@ -43,41 +48,92 @@ uniform vec3 lightPos;
 
 out vec4 FragColor;
 
-vec3 pointLightContribution(Material mat, vec3 V, PointLight light)
-{
-	vec3 L = vec3(light.pos) - fragPos;
-	vec3 H = normalize(L + V);
+vec3 Fresnel(vec3 V, vec3 H, vec3 F0);
+float NDF(float a, vec3 H);
+float Geometry(float a, float NdV, float NdL);
+float Geometry1(float k, float NdX);
+vec3 BRDF(PointLight light, vec3 colour, float r, float m, float NdL, vec3 L, vec3 V, vec3 F0);
 
-	float dist = length(L);
-	L = normalize(L);
-
-	dist = dist * dist;
-
-	float NdL = dot(a_Norm, L);
-	float intensity = max(NdL, 0.0);
-
-	vec3 diff = intensity * vec3(texture(sampler2D(mat.alb), a_UV)) * 5.0 / dist;
-
-	float NdH = dot(a_Norm, H);
-	intensity = pow(max(NdH, 0.0),  4.0);
-
-	vec3 spec = intensity * vec3(light.colour) * 1.0 / dist;
-	return diff + spec;
-}
+vec3 pointLightContribution(vec3 colour, vec3 F0, float r, float m, vec3 V, PointLight light);
 
 void main()
 {
 	Material mat = materials[materialTable[materialID] - 1];
+	vec3 colour = texture(sampler2D(mat.colour), a_UV).rgb;
+	float r = texture(sampler2D(mat.detail), a_UV).r;
+	float m = texture(sampler2D(mat.detail2), a_UV).r;
+
+	// Dielectrics have F0=0.04, metallics have F0 represented by colour map
+	vec3 F0 = mix(vec3(0.04), colour, m);
 
 	vec3 V = viewPos - fragPos;
 	
-	vec3 c = vec3(0.0);
+	vec3 Lo = vec3(0.0);
 
-	for (int i = 0; i < lightCount; i++)
-	{
-		c += pointLightContribution(mat, V, pointLights[i]);
+	for (int i = 0; i < lightCount; i++) {
+
+		Lo += pointLightContribution(colour, F0, r, m, V, pointLights[i]);
 	}
 	
-	FragColor = vec4(c, 1.0);
-	// FragColor = vec4(1.0);
+	FragColor = vec4(Lo, 1.0);
+}
+
+vec3 pointLightContribution(vec3 colour, vec3 F0, float r, float m, vec3 V, PointLight light)
+{
+	vec3 L = normalize(light.pos.xyz - fragPos);
+	float NdL = max(dot(a_Norm, L), 0.0);
+
+	// Incoming light
+	float distance = length(light.pos.xyz - fragPos);
+	float attenuation = light.colour.a / (distance * distance);
+	vec3 irradiance = light.colour.rgb * attenuation * NdL;
+
+	// Outgoing light
+	return BRDF(light, colour, r, m, NdL, L, V, F0) * irradiance;
+}
+
+vec3 BRDF(PointLight light, vec3 colour, float r, float m, float NdL, vec3 L, vec3 V, vec3 F0)
+{
+	// Cook-Torrance BRDF impl
+	float a = r * r;
+	float NdV = max(dot(a_Norm, V), 0.0);
+	vec3 H = normalize(L + V);
+
+	vec3 F = Fresnel(V, H, F0);
+
+	// Diffuse contribution (only for dielectrics)
+	vec3 fd = (vec3(1.0) - F) * (1.0 - m) * colour / PI;
+	// Specular contribution
+	vec3 fs = F * NDF(a, H) * Geometry(a, NdV, NdL) / (4.0 * NdL * NdV + 0.00000001);
+	return fd + fs;
+}
+
+vec3 Fresnel(vec3 V, vec3 H, vec3 F0)
+{
+	// Fresnel-Schlick impl
+	return F0 + (1.0 - F0) * pow((clamp(1.0 - dot(V, H), 0.0, 1.0)), 5.0);
+}
+
+float NDF(float a, vec3 H)
+{
+	// Distribution GGX impl
+	float a2 = a * a;
+	float NdH = max(dot(a_Norm, H), 0.0);
+
+	float term = NdH * NdH * (a2 - 1.0) + 1.0;
+
+	return a2 / (PI * term * term);
+}
+
+float Geometry1(float k, float NdX)
+{
+	// Geometry-Schlick-GGX impl
+	return NdX / (NdX * (1.0 - k) + k);
+}
+
+float Geometry(float a, float NdV, float NdL)
+{
+	// Geometry-Smith impl
+	float k = (a + 1) * (a + 1) / 8.0;
+	return Geometry1(k, NdV) * Geometry1(k, NdL);
 }

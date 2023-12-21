@@ -2,3 +2,4 @@
 includes.txt
 out/**
 CMakeSettings.json
+deprecated/**
