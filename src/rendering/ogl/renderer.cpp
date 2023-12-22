@@ -53,7 +53,7 @@ renderer::renderer() :
 	pointLights.bind();
 	pointLights.bind(4);
 
-	vector<point_light> pls{ { { 2.5, 0, 0, 0 }, { 1.0, 0.7, 0.7, 20.0 }}, { { -4.5, 0, 0, 0 }, { 0.1, 0.6, 1.0, 20.0 }} };
+	vector<point_light> pls{ { { 2.5, 0, 0, 0 }, { 1.0, 0.7, 0.7, 40.0 }}, { { -4.5, 0, 0, 0 }, { 0.1, 0.6, 1.0, 40.0 }} };
 	u32 plc = pls.size();
 	pointLights.set(&plc, sizeof(u32), 0);
 	pointLights.set(pls.data(), sizeof(point_light) * pls.size(), 16);

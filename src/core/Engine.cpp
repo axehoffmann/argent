@@ -68,7 +68,7 @@ ag::Engine::Engine()
 		t.pos.x = (state % 20) - 10;
 		t.pos.z = -5 - 2 * (state / 20);
 
-		t.rot *= glm::quat({ 0, 0.01 * state, 0 });
+		t.rot *= glm::quat({ 0, 0.013 * state, 0 });
 
 		state += 2;
 	};
