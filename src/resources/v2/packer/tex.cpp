@@ -18,7 +18,7 @@ tex load_tex(const string& path)
 	tex t{};
 	i32 c;
 	t.data = stbi_load(path.c_str(), &t.w, &t.h, &c, STBI_rgb);
-
+	std::cout << c << '\n';
 	return t;
 }
 
@@ -35,12 +35,12 @@ void pack_texture_rgb(const string& out, const string& r, const string& g, const
 	*/
 	vector<u8> ot(u64{3} * rt.w * rt.h);
 	
-	for (u64 i = 0; i < ot.size() / 3; i++)
+	for (u64 i = 0; i < rt.w * rt.h; i++)
 	{
 		ot[i * 3] = rt.data[i * 3];
 	}
 
 	stbi_image_free(rt.data);
 
-	stbi_write_png(out.c_str(), rt.w, rt.h, STBI_rgb, ot.data(), 3);
+	stbi_write_png(out.c_str(), rt.w, rt.h, STBI_rgb, ot.data(), rt.w * 3);
 }
