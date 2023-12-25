@@ -60,8 +60,10 @@ void main()
 {
 	Material mat = materials[materialTable[materialID] - 1];
 	vec3 colour = texture(sampler2D(mat.colour), a_UV).rgb;
-	float r = texture(sampler2D(mat.detail), a_UV).r;
-	float m = texture(sampler2D(mat.detail2), a_UV).r;
+
+	vec4 detail = texture(sampler2D(mat.detail), a_UV);
+	float r = detail.r;
+	float m = detail.g;
 
 	// Dielectrics have F0=0.04, metallics have F0 represented by colour map
 	vec3 F0 = mix(vec3(0.04), colour, m);
