@@ -12,12 +12,12 @@
 
 #include "debug/log/Log.h"
 
-#include <string>
-
 class shader
 {
 public:
 	shader(const string& vpath, const string& fpath);
+	shader(const string& cpath);
+
 	~shader();
 
 	void uniform(const string& name, int val)

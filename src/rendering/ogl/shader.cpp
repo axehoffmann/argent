@@ -2,25 +2,7 @@
 
 #include <iostream>
 
-#include <sstream>
-#include <fstream>
-
-string readText(const string& path)
-{
-	string source;
-	std::ifstream stream(path);
-	if (stream.is_open())
-	{
-		std::stringstream s;
-		s << stream.rdbuf();
-		source = s.str();
-		stream.close();
-	}
-	else
-		throw std::runtime_error("Failed to open " + path);
-
-	return source;
-}
+#include "lib/read_file.h"
 
 void compileShader(const string& source, glhandle dest)
 {
@@ -70,6 +52,33 @@ shader::shader(const string& vpath, const string& fpath)
 
 	glDeleteShader(vert);
 	glDeleteShader(frag);
+}
+
+shader::shader(const string& cpath)
+{
+	glhandle csh = glCreateShader(GL_COMPUTE_SHADER);
+
+	string csrc = readText(path);
+
+	compileShader(csrc, csh);
+
+	handle = glCreateProgram();
+
+	glAttachShader(handle, csh);
+	glLinkProgram(handle);
+
+	int success = GL_FALSE;
+	glGetProgramiv(handle, GL_LINK_STATUS, &success);
+	if (!success)
+	{
+		int logLength = 0;
+		glGetProgramiv(handle, GL_INFO_LOG_LENGTH, &logLength);
+		std::vector<char> errorLog(logLength + 1);
+		glGetProgramInfoLog(handle, 512, NULL, errorLog.data());
+		ag::Log::Error(ag::sfmt("failed to link compute shader program : \n{} ", errorLog.data()));
+	}
+
+	glDeleteShader(csh);
 }
 
 shader::~shader()

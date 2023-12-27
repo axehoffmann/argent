@@ -54,7 +54,8 @@ private:
 	vector<texture> tex;
 
 	vao vert;
-	shader s;
+	shader standardShader;
+	shader cullShader;
 
 	vector<renderable> renderables;
 };

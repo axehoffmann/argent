@@ -31,7 +31,7 @@ renderer::renderer() :
 	vboOffset(0),
 	eboOffset(0),
 	vert(),
-	s("assets/basic.vs", "assets/basic.fs"),
+	standardShader("assets/basic.vs", "assets/basic.fs"),
 
 	instanceData(buffer_access_type::DynamicDraw, buffer_type::Storage),
 	pointLights(buffer_access_type::DynamicDraw, buffer_type::Storage)
@@ -63,11 +63,11 @@ renderer::renderer() :
 
 	auto view = view_matrix({{0, 0, 2}});
 	auto proj = projection_matrix(glm::radians(90.0f), 1280.0f / 720.0f, 0.01f, 100.0f);
-	s.bind();
-	s.uniform("view", view);
-	s.uniform("proj", proj);
+	standardShader.bind();
+	standardShader.uniform("view", view);
+	standardShader.uniform("proj", proj);
 
-	s.uniform("viewPos", {0, 0, 2});
+	standardShader.uniform("viewPos", {0, 0, 2});
 
 	instanceData.bind();
 	instanceData.bind(1);
