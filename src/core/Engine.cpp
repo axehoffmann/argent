@@ -38,14 +38,13 @@ ag::Engine::Engine()
 
 	auto t = stc::steady_clock::now();
 	render->createRenderable(AssetManager::Load<Mesh>("assets/pillar/pillar.agmesh"));
-	render->createRenderable(AssetManager::Load<Mesh>("assets/cube.agmesh"));
+	render->createRenderable(AssetManager::Load<Mesh>("assets/cube/cube2.agmesh"));
 
 	render->loadMaterial(0, { 
 		AssetManager::Load<Texture>("assets/pillar/pillar.png"), 
-		AssetManager::Load<Texture>("assets/pillar/pillar_rough.png"), 
-		AssetManager::Load<Texture>("assets/pillar/pillar_metallic.png") 
+		AssetManager::Load<Texture>("assets/pillar/pillar_detail.png")
 	});
-	render->loadMaterial(1, { AssetManager::Load<Texture>("assets/pepe.png"), AssetManager::Load<Texture>("assets/pepe.png"), AssetManager::Load<Texture>("assets/pepe.png") });
+	render->loadMaterial(1, { AssetManager::Load<Texture>("assets/cube/pepe.png"), AssetManager::Load<Texture>("assets/cube/pepe_detail.png") });
 
 	uint32_t cube = AssetManager::Load<Blueprint>("assets/entities/cube.json");
 	uint32_t pilar = AssetManager::Load<Blueprint>("assets/entities/pillar.json");
@@ -64,7 +63,7 @@ ag::Engine::Engine()
 	function<transform*> init = [&](transform* tp) 
 	{
 		transform& t = *tp;
-		t.pos.y = -3;
+		t.pos.y = state % 4 == 0 ? -3 : -2;
 		t.pos.x = (state % 20) - 10;
 		t.pos.z = -5 - 2 * (state / 20);
 

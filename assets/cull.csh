@@ -66,12 +66,12 @@ void main()
     // The ID of the object out of all existing renderables
     uint objectID = gl_GlobalInvocationID.x;
 
-    if (instanceID >= sceneInfo.totalObjects)
+    if (objectID >= sceneInfo.totalObjects)
     {
-        discard;
+        return;
     }
 
-    uint residentMeshID = inputInstances[instanceID].residentMeshID;
+    uint residentMeshID = inputInstances[objectID].residentMeshID;
     // The index of the instance within its own mesh batch
     uint drawID = atomicAdd(drawCommands[residentMeshID].instanceCount, 1);
     // The index of the instance within all visible objects

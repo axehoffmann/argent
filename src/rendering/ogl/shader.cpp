@@ -58,7 +58,7 @@ shader::shader(const string& cpath)
 {
 	glhandle csh = glCreateShader(GL_COMPUTE_SHADER);
 
-	string csrc = readText(path);
+	string csrc = readText(cpath);
 
 	compileShader(csrc, csh);
 

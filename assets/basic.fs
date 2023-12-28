@@ -87,8 +87,8 @@ vec3 pointLightContribution(vec3 colour, vec3 F0, float r, float m, vec3 N, vec3
 	float NdL = max(dot(N, L), 0.0);
 
 	// Incoming light
-	float distance = length(light.pos.xyz - fragPos);
-	float attenuation = light.colour.a / (distance * distance);
+	float dist = length(light.pos.xyz - fragPos);
+	float attenuation = light.colour.a / (dist * dist);
 	vec3 irradiance = light.colour.rgb * attenuation * NdL;
 
 	// Outgoing light

@@ -32,12 +32,13 @@ renderer::renderer() :
 	eboOffset(0),
 	vert(),
 	standardShader("assets/basic.vs", "assets/basic.fs"),
+	cullShader("assets/cull.csh"),
 
 	instanceData(buffer_access_type::DynamicDraw, buffer_type::Storage),
 	pointLights(buffer_access_type::DynamicDraw, buffer_type::Storage)
 {
 	// Load 2 models into the VBO + EBO
-	auto p = loadMesh("assets/cube.agmesh");
+	auto p = loadMesh("assets/cube/cube2.agmesh");
 	auto c = loadMesh("assets/pillar/pillar.agmesh");
 
 	vert.bind();
@@ -53,8 +54,12 @@ renderer::renderer() :
 	pointLights.bind();
 	pointLights.bind(4);
 
-	vector<point_light> pls{ { { 2.5, 0, 0, 0 }, { 1.0, 0.7, 0.7, 40.0 }}, { { -4.5, 0, 0, 0 }, { 0.1, 0.6, 1.0, 40.0 }} };
-	u32 plc = pls.size();
+	vector<point_light> pls{ 
+		{ { 2.5, 0, 0, 0 }, { 1.0, 0.7, 0.7, 40.0 } }, 
+		{ { -4.5, 0, 0, 0 }, { 0.1, 0.4, 1.0, 40.0 } },
+		{ { -3.5, 0, -12, 0 }, { 0.4, 0.9, 0.2, 30.0 } }
+	};
+	u32 plc = u32(pls.size());
 	pointLights.set(&plc, sizeof(u32), 0);
 	pointLights.set(pls.data(), sizeof(point_light) * pls.size(), 16);
 
@@ -85,7 +90,7 @@ void renderer::render(scene_graph& scene)
 
 		cmdbuf.push({ renderables[t].indexCount, u32(v.size()), renderables[t].firstIndex, renderables[t].baseVertex, i });
 
-		i += v.size();
+		i += u32(v.size());
 		t++;
 	}
 	checkError();
@@ -108,19 +113,19 @@ u32 renderer::createRenderable(u32 meshID)
 	ebo.set(m->mesh.indices.data(), sizeof(u32) * m->mesh.indices.size(), sizeof(u32) * eboOffset);
 
 	renderables.push_back({eboOffset, vboOffset, u32(m->mesh.indices.size())});
-	vboOffset += m->mesh.vertices.size();
-	eboOffset += m->mesh.indices.size();
+	vboOffset += u32(m->mesh.vertices.size());
+	eboOffset += u32(m->mesh.indices.size());
 
-	return renderables.size() - 1;
+	return u32(renderables.size()) - 1;
 }
 
-void renderer::loadMaterial(u32 materialID, arr<u32, 3> texID)
+void renderer::loadMaterial(u32 materialID, arr<u32, 2> texID)
 {
-	arr<glhandle, 3> texs;
-	arr<u64, 3> handles;
-	glGenTextures(3, texs.data());
+	arr<glhandle, 2> texs;
+	arr<u64, 2> handles;
+	glGenTextures(2, texs.data());
 
-	for (u32 i = 0; i < 3; i++)
+	for (u32 i = 0; i < 2; i++)
 	{
 		texture t(texs[i]);
 		auto r = ag::AssetManager::Fetch<ag::Texture>(texID[i]).lock();
@@ -130,5 +135,5 @@ void renderer::loadMaterial(u32 materialID, arr<u32, 3> texID)
 		tex.push_back(std::move(t));
 	}
 
-	matAllocator.load(gl_material{ handles[0], 0, handles[1], handles[2] }, materialID);
+	matAllocator.load(gl_material{ handles[0], 0, handles[1] }, materialID);
 }
