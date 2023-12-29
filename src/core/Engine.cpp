@@ -19,6 +19,8 @@ public:
 		{
 			auto& t = e.Get<transform>();
 
+			if (t.scale.x > 5) continue;
+
 			t.rot *= glm::quat({0, 0.01, 0});
 		}
 	}
@@ -39,21 +41,29 @@ ag::Engine::Engine()
 	auto t = stc::steady_clock::now();
 	render->createRenderable(AssetManager::Load<Mesh>("assets/pillar/pillar.agmesh"));
 	render->createRenderable(AssetManager::Load<Mesh>("assets/cube/cube2.agmesh"));
+	render->createRenderable(AssetManager::Load<Mesh>("assets/cube/cube.agmesh"));
 
 	render->loadMaterial(0, { 
 		AssetManager::Load<Texture>("assets/pillar/pillar.png"), 
 		AssetManager::Load<Texture>("assets/pillar/pillar_detail.png")
 	});
-	render->loadMaterial(1, { AssetManager::Load<Texture>("assets/cube/pepe.png"), AssetManager::Load<Texture>("assets/cube/pepe_detail.png") });
+	render->loadMaterial(1, { 
+		AssetManager::Load<Texture>("assets/cube/pepe.png"), 
+		AssetManager::Load<Texture>("assets/cube/pepe_detail.png") 
+	});
 
-	uint32_t cube = AssetManager::Load<Blueprint>("assets/entities/cube.json");
-	uint32_t pilar = AssetManager::Load<Blueprint>("assets/entities/pillar.json");
+	u32 cube = AssetManager::Load<Blueprint>("assets/entities/cube.json");
+	u32 pilar = AssetManager::Load<Blueprint>("assets/entities/pillar.json");
+	u32 room = AssetManager::Load<Blueprint>("assets/entities/room.json");
 
 	auto cb = AssetManager::Fetch<Blueprint>(cube).lock();
 	cb->SetWorld(ecsWorld);
 
 	auto l = AssetManager::Fetch<Blueprint>(pilar).lock();
 	l->SetWorld(ecsWorld);
+
+	auto r = AssetManager::Fetch<Blueprint>(room).lock();
+	r->SetWorld(ecsWorld);
 
 	Log::Trace(sfmt("Loading: {}ms", (stc::steady_clock::now() - t).count() / 1000000.0));
 
@@ -66,7 +76,7 @@ ag::Engine::Engine()
 		t.pos.y = state % 4 == 0 ? -3 : -2;
 		t.pos.x = (state % 20) - 10;
 		t.pos.z = -5 - 2 * (state / 20);
-
+			
 		t.rot *= glm::quat({ 0, 0.013 * state, 0 });
 
 		state += 2;
@@ -76,6 +86,9 @@ ag::Engine::Engine()
 		l->Instantiate(init);
 		cb->Instantiate(init);
 	}
+	r->Instantiate();
+
+
 	Log::Trace(sfmt("Initialisation: {}ms", (stc::steady_clock::now() - t).count() / 1000000.0));
 
 

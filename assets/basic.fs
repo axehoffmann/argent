@@ -79,6 +79,7 @@ void main()
 	}
 	
 	FragColor = vec4(Lo, 1.0);
+	// FragColor.rgb = pow(FragColor.rgb, vec3(1.0/2.2));
 }
 
 vec3 pointLightContribution(vec3 colour, vec3 F0, float r, float m, vec3 N, vec3 V, PointLight light)

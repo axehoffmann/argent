@@ -8,23 +8,6 @@
 #include "resources/Mesh.h"
 #include "resources/Texture.h"
 
-auto loadMesh(const string& path)
-{
-	u32 rsc = ag::AssetManager::Load<ag::Mesh>(path);
-	auto v = ag::AssetManager::Fetch<ag::Mesh>(rsc).lock();
-	ag::Log::Trace(ag::sfmt("Loaded mesh with {} indices", v->mesh.indices.size()));
-	return v;
-}
-
-
-auto loadTex(const string& path)
-{
-	u32 rsc = ag::AssetManager::Load<ag::Texture>(path);
-	auto v = ag::AssetManager::Fetch<ag::Texture>(rsc).lock();
-	ag::Log::Trace(ag::sfmt("Loaded tex"));
-	return v;
-}
-
 renderer::renderer() :
 	vbo(buffer_access_type::StaticDraw, buffer_type::VertexData),
 	ebo(buffer_access_type::StaticDraw, buffer_type::IndexArray),
@@ -40,37 +23,34 @@ renderer::renderer() :
 	sceneInfo(buffer_access_type::DynamicDraw, buffer_type::Storage),
 	instanceMap(buffer_access_type::StreamDraw, buffer_type::Storage)
 {
-	// Load 2 models into the VBO + EBO
-	auto p = loadMesh("assets/cube/cube2.agmesh");
-	auto c = loadMesh("assets/pillar/pillar.agmesh");
-
+	// Initialise mesh buffers
 	vert.bind();
 	vbo.bind();
 	ebo.bind();
 	prepareVAOStandard(vert);
+	vbo.allocate(sizeof(basic_vertex)  * 1000000);
+	ebo.allocate(sizeof(u32)	* 1000000);
 
-	vbo.allocate(sizeof(basic_vertex) * (p->mesh.vertices.size() + c->mesh.vertices.size()));
-	ebo.allocate(sizeof(u32) * (p->mesh.indices.size() + c->mesh.indices.size()));
-
+	// Initialise instance storage
 	instanceData.allocate(sizeof(instance_data) * 1024);
 	instanceData.bind(1);
 	instanceMap.allocate(sizeof(u32) * 1024);
 	instanceMap.bind(11);
 
-	pointLights.allocate(sizeof(u32) + sizeof(point_light) * 256);
-	pointLights.bind(4);
-	checkError();
-
+	// Auxiliary buffers for GPU-driven rendering
 	drawCmds.bind();
 	drawCmds.bind(12);
 	checkError();
-
 	sceneInfo.allocate(sizeof(scene_info));
 	sceneInfo.bind(10);
 	checkError();
 
+	// Some hard-coded lights
+	pointLights.allocate(sizeof(u32) + sizeof(point_light) * 256);
+	pointLights.bind(4);
+	checkError();
 	vector<point_light> pls{ 
-		{ { 2.5, 0, 0, 0 }, { 1.0, 0.7, 0.7, 40.0 } }, 
+		{ { 2.5, 0, 0, 0 }, { 1.0, 0.5, 0.4, 40.0 } }, 
 		{ { -4.5, 0, 0, 0 }, { 0.1, 0.4, 1.0, 40.0 } },
 		{ { -3.5, 0, -12, 0 }, { 0.4, 0.9, 0.2, 30.0 } }
 	};
@@ -83,10 +63,11 @@ renderer::renderer() :
 
 	auto view = view_matrix({{0, 0, 2}});
 	auto proj = projection_matrix(glm::radians(90.0f), 1280.0f / 720.0f, 0.01f, 100.0f);
+
+	// Prepare shader
 	standardShader.bind();
 	standardShader.uniform("view", view);
 	standardShader.uniform("proj", proj);
-
 	standardShader.uniform("viewPos", {0, 0, 2});
 
 	vert.bind();
@@ -96,31 +77,29 @@ void renderer::render(scene_graph& sg)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	// Update some scene data
 	instanceData.set(sg.scene.data(), sizeof(instance_data) * sg.scene.size(), 0);
 	sceneInfo.set(&sg.info, sizeof(scene_info), 0);
 
-	u32 meshes = 2;
-
-	u32 it = 0;
+	// Generate base draw commands
 	u32 baseInstance = 0;
-	for (auto& r : renderables)
+	for (u32 i = 0; i < sg.meshCounts.size(); i++)
 	{
-		if (it >= sg.meshCounts.size()) break;
+		renderable& r = renderables.at(i);
 
 		drawCmds.push({ r.indexCount, 0, r.firstIndex, r.baseVertex, baseInstance });
-		baseInstance += sg.meshCounts[it];
-		it++;
+		baseInstance += sg.meshCounts[i];
 	}
 	u32 cmds = drawCmds.submit();
 
+	// Perform GPU culling and population of the draw commands
 	cullShader.bind();
-	glDispatchCompute(u32(std::ceil(f32(meshes) / 256)), 1, 1);
-
+	glDispatchCompute(u32(std::ceil(f32(sg.scene.size()) / 256)), 1, 1);
 	glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
 
+	// Draw all objects
 	standardShader.bind();
 	glMultiDrawElementsIndirect(GL_TRIANGLES, static_cast<GLenum>(gltype::U32), (void*)0, cmds, 20);
-
 }
 
 u32 renderer::createRenderable(u32 meshID)
