@@ -16,23 +16,24 @@ void ag::scene_builder::Update()
     // Choose which graph to use
     int lockedGraph = ChooseGraph();
 
-    scene_graph* graph = &graphs[lockedGraph];
+    scene_graph& graph = graphs[lockedGraph];
 
-    /// TODO: bad approach to building scene graph
-    for (auto& v : graph->scene)
-    {
-        v.clear();
-    }
+    /// TODO: bad approach to building scene graph, do incremental updates
+    graph.scene.clear();
+    graph.meshCounts.clear();
 
     for (auto entity : staticQuery)
     {
         render_object& r = entity.Get<render_object>();
 
-        if (graph->scene.size() <= r.meshID)
-            graph->scene.resize(u64{r.meshID} + 1);
+        graph.scene.push_back({ model_matrix(entity.Get<transform>()), r.materialID, r.meshID });
 
-        graph->scene.at(r.meshID).push_back({ model_matrix(entity.Get<transform>()), r.materialID });
+        if (r.meshID >= graph.meshCounts.size())
+            graph.meshCounts.resize(u64(r.meshID) + 1);
+        graph.meshCounts[r.meshID]++;
     }
+
+    graph.info.totalObjects = u32(graph.scene.size());
 
     /*
     graph->pointLights.clear();
@@ -45,7 +46,6 @@ void ag::scene_builder::Update()
 
     graphReady = lockedGraph;
     graphUnderConstruction = -1;
-    
 }
 
 scene_graph& ag::scene_builder::StartGraphRead()

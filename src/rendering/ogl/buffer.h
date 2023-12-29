@@ -68,10 +68,21 @@ public:
 	*/
 	void bind();
 
+	void bindAs(buffer_type type)
+	{
+		glBindBuffer(static_cast<GLenum>(type), handle);
+	}
+
 	void bind(u32 binding)
 	{
+		bind();
 		glBindBufferBase(static_cast<GLenum>(storageType), binding, handle);
 	}	
+
+	void copyTo(void* dest, u64 sz)
+	{
+		glGetNamedBufferSubData(handle, 0, sz, dest);
+	}
 
 private:
 	buffer_type storageType;

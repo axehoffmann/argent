@@ -35,7 +35,10 @@ renderer::renderer() :
 	cullShader("assets/cull.csh"),
 
 	instanceData(buffer_access_type::DynamicDraw, buffer_type::Storage),
-	pointLights(buffer_access_type::DynamicDraw, buffer_type::Storage)
+	pointLights(buffer_access_type::DynamicDraw, buffer_type::Storage),
+
+	sceneInfo(buffer_access_type::DynamicDraw, buffer_type::Storage),
+	instanceMap(buffer_access_type::StreamDraw, buffer_type::Storage)
 {
 	// Load 2 models into the VBO + EBO
 	auto p = loadMesh("assets/cube/cube2.agmesh");
@@ -49,10 +52,22 @@ renderer::renderer() :
 	vbo.allocate(sizeof(basic_vertex) * (p->mesh.vertices.size() + c->mesh.vertices.size()));
 	ebo.allocate(sizeof(u32) * (p->mesh.indices.size() + c->mesh.indices.size()));
 
-	instanceData.allocate(sizeof(render_instance) * 1000);
+	instanceData.allocate(sizeof(instance_data) * 1024);
+	instanceData.bind(1);
+	instanceMap.allocate(sizeof(u32) * 1024);
+	instanceMap.bind(11);
+
 	pointLights.allocate(sizeof(u32) + sizeof(point_light) * 256);
-	pointLights.bind();
 	pointLights.bind(4);
+	checkError();
+
+	drawCmds.bind();
+	drawCmds.bind(12);
+	checkError();
+
+	sceneInfo.allocate(sizeof(scene_info));
+	sceneInfo.bind(10);
+	checkError();
 
 	vector<point_light> pls{ 
 		{ { 2.5, 0, 0, 0 }, { 1.0, 0.7, 0.7, 40.0 } }, 
@@ -74,33 +89,38 @@ renderer::renderer() :
 
 	standardShader.uniform("viewPos", {0, 0, 2});
 
-	instanceData.bind();
-	instanceData.bind(1);
-
 	vert.bind();
 }
 
-void renderer::render(scene_graph& scene)
+void renderer::render(scene_graph& sg)
 {
-	u32 i = 0;
-	u32 t = 0;
-	for (auto& v : scene.scene)
-	{
-		instanceData.set(v.data(), sizeof(render_instance) * v.size(), sizeof(render_instance) * i);
-
-		cmdbuf.push({ renderables[t].indexCount, u32(v.size()), renderables[t].firstIndex, renderables[t].baseVertex, i });
-
-		i += u32(v.size());
-		t++;
-	}
-	checkError();
-
-	cmdbuf.bind();
-	u32 cmds = cmdbuf.submit();
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	instanceData.set(sg.scene.data(), sizeof(instance_data) * sg.scene.size(), 0);
+	sceneInfo.set(&sg.info, sizeof(scene_info), 0);
+
+	u32 meshes = 2;
+
+	u32 it = 0;
+	u32 baseInstance = 0;
+	for (auto& r : renderables)
+	{
+		if (it >= sg.meshCounts.size()) break;
+
+		drawCmds.push({ r.indexCount, 0, r.firstIndex, r.baseVertex, baseInstance });
+		baseInstance += sg.meshCounts[it];
+		it++;
+	}
+	u32 cmds = drawCmds.submit();
+
+	cullShader.bind();
+	glDispatchCompute(u32(std::ceil(f32(meshes) / 256)), 1, 1);
+
+	glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+
+	standardShader.bind();
 	glMultiDrawElementsIndirect(GL_TRIANGLES, static_cast<GLenum>(gltype::U32), (void*)0, cmds, 20);
-	checkError();
+
 }
 
 u32 renderer::createRenderable(u32 meshID)

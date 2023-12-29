@@ -19,27 +19,20 @@ layout (std430, binding = 10) readonly buffer sceneCullingData
 struct idata 
 {
 	mat4 model;
-	int mat;
+	uint mat;
+    uint residentMeshID;
     // AABB?
 };
 layout (std430, binding = 1) readonly buffer instanceData 
 {
-	idata instance[]; 
+	idata instances[]; 
 };
 
-struct RenderInstance
-{
-    uint residentMeshID;
-};
-layout (std430, binding = 11) readonly buffer allInstances
-{
-    RenderInstance inputInstances[];
-};
 
 ////////////
 // OUTPUT //
 ////////////
-layout (std430, binding = 12) writeonly buffer outInstances
+layout (std430, binding = 11) writeonly buffer outInstances
 {
     // An indireciton from draw InstanceID to engine ObjectID (index into instance data)
     uint visibleInstances[];
@@ -53,7 +46,7 @@ struct IndirectDrawCommand
     uint baseVertex;
     uint baseInstance;
 };
-layout (std430, binding = 13) buffer drawCmds
+layout (std430, binding = 12) buffer drawCmds
 {
     // Generates 1 draw command for each mesh. 
     // Currently we don't bother cutting commands with 0 instances,
@@ -71,7 +64,7 @@ void main()
         return;
     }
 
-    uint residentMeshID = inputInstances[objectID].residentMeshID;
+    uint residentMeshID = instances[objectID].residentMeshID;
     // The index of the instance within its own mesh batch
     uint drawID = atomicAdd(drawCommands[residentMeshID].instanceCount, 1);
     // The index of the instance within all visible objects

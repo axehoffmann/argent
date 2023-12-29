@@ -34,6 +34,16 @@ public:
 	*/
 	void bind();
 
+	void bind(u32 binding)
+	{
+		buf.bind(binding);
+	}
+
+	void copyTo(void* dest, u64 sz)
+	{
+		buf.copyTo(dest, sz);
+	}
+
 
 private:
 	buffer buf;

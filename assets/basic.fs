@@ -41,7 +41,7 @@ layout(std430, binding = 4) buffer pLights
 	PointLight pointLights[];
 };
 
-flat in int materialID;
+flat in uint materialID;
 
 uniform vec3 viewPos;
 uniform vec3 lightPos;

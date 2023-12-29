@@ -4,7 +4,7 @@
 #include "command_buffer.h"
 
 command_buffer::command_buffer() :
-	buf(buffer_access_type::DynamicDraw, buffer_type::Command)
+	buf(buffer_access_type::StreamDraw, buffer_type::Storage)
 {
 
 }
@@ -25,5 +25,5 @@ u32 command_buffer::submit()
 
 void command_buffer::bind()
 {
-	buf.bind();
+	buf.bindAs(buffer_type::Command);
 }

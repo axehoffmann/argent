@@ -41,7 +41,6 @@ private:
 
 	material_allocator matAllocator;
 
-	command_buffer cmdbuf;
 
 	buffer vbo;
 	buffer ebo;
@@ -50,6 +49,10 @@ private:
 
 	buffer instanceData;
 	buffer pointLights;
+
+	buffer sceneInfo;
+	command_buffer drawCmds;
+	buffer instanceMap;
 
 	vector<texture> tex;
 
