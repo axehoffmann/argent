@@ -21,6 +21,22 @@ struct std::formatter<glm::vec3>
 	}
 };
 
+
+template <>
+struct std::formatter<glm::vec4>
+{
+	constexpr auto parse(std::format_parse_context& ctx)
+	{
+		return ctx.begin();
+	}
+
+	auto format(const glm::vec4& ob, std::format_context& ctx) const
+	{
+		return std::format_to(ctx.out(), "({}, {}, {}, {})", ob.x, ob.y, ob.z, ob.w);
+	}
+};
+
+
 struct transform
 {
 	glm::vec3 pos;

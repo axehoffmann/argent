@@ -50,6 +50,8 @@ private:
 	buffer instanceData;
 	buffer pointLights;
 
+	buffer grassPos;
+
 	buffer sceneInfo;
 	command_buffer drawCmds;
 	buffer instanceMap;

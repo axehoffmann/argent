@@ -16,4 +16,4 @@ target_sources(renderer PRIVATE
 	"texture.h"
 	"texture.cpp"
 	"material_allocator.h"
-)
+ "grass.h" "grass.cpp")

@@ -4,6 +4,7 @@
 #include "resources/Mesh.h"
 #include "resources/Texture.h"
 
+
 class test_system : public ag::System<test_system>
 {
 public:

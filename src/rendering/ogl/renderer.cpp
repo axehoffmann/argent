@@ -8,6 +8,8 @@
 #include "resources/Mesh.h"
 #include "resources/Texture.h"
 
+#include "grass.h"
+
 renderer::renderer() :
 	vbo(buffer_access_type::StaticDraw, buffer_type::VertexData),
 	ebo(buffer_access_type::StaticDraw, buffer_type::IndexArray),
@@ -19,6 +21,7 @@ renderer::renderer() :
 
 	instanceData(buffer_access_type::DynamicDraw, buffer_type::Storage),
 	pointLights(buffer_access_type::DynamicDraw, buffer_type::Storage),
+	grassPos(generateGrassBuffer()),
 
 	sceneInfo(buffer_access_type::DynamicDraw, buffer_type::Storage),
 	instanceMap(buffer_access_type::StreamDraw, buffer_type::Storage)
@@ -50,9 +53,10 @@ renderer::renderer() :
 	pointLights.bind(4);
 	checkError();
 	vector<point_light> pls{ 
-		{ { 2.5, 0, 0, 0 }, { 1.0, 0.5, 0.4, 40.0 } }, 
-		{ { -4.5, 0, 0, 0 }, { 0.1, 0.4, 1.0, 40.0 } },
-		{ { -3.5, 0, -12, 0 }, { 0.4, 0.9, 0.2, 30.0 } }
+		{ { 2.5, 0, -2, 0 }, { 0.8, 0.4, 0.2, 30.0 } },
+		{ { -4.5, 0, -2, 0 }, { 0.1, 0.4, 1.0, 40.0 } },
+		{ { -3.5, 0, -12, 0 }, { 0.4, 0.9, 0.2, 20.0 } },
+		{ { 3.5, 0, -12, 0 }, { 0.8, 0.2, 0.9, 20.0 } }
 	};
 	u32 plc = u32(pls.size());
 	pointLights.set(&plc, sizeof(u32), 0);
