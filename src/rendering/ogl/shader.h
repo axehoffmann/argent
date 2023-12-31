@@ -20,13 +20,13 @@ public:
 
 	~shader();
 
-	void uniform(const string& name, int val)
+	void uniform(const string& name, i32 val)
 	{
 		int location = uniformLocation(name);
 		glUniform1i(location, val);
 	}
 
-	void uniform(const string& name, float val)
+	void uniform(const string& name, f32 val)
 	{
 		int location = uniformLocation(name);
 		glUniform1f(location, val);
@@ -58,14 +58,19 @@ public:
 
 	void bind()
 	{
-		glUseProgram(handle);
+		glUseProgram(id);
 	}
 
-	glhandle handle;
+	glhandle getID() const
+	{
+		return id;
+	}
 
 private:
+	glhandle id;
+
 	int uniformLocation(const string& name)
 	{
-		return glGetUniformLocation(handle, name.c_str());
+		return glGetUniformLocation(id, name.c_str());
 	}
 };

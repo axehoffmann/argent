@@ -4,45 +4,44 @@
 
 texture::texture()
 {
-	glGenTextures(1, &handle);
-	glBindTexture(GL_TEXTURE_2D, handle);
+	glCreateTextures(GL_TEXTURE_2D, 1, &id);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTextureParameteri(id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTextureParameteri(id, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTextureParameteri(id, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	glGenerateMipmap(GL_TEXTURE_2D);
 }
 
-texture::texture(glhandle h)
-	: handle(h)
+texture::texture(glhandle glID)
+	: id(glID)
 {
-	glBindTexture(GL_TEXTURE_2D, handle);
+	glCreateTextures(GL_TEXTURE_2D, 1, &id);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTextureParameteri(id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTextureParameteri(id, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTextureParameteri(id, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	glGenerateMipmap(GL_TEXTURE_2D);
+	glGenerateTextureMipmap(id);
 }
 
 void texture::bind(u32 slot)
 {
-	glActiveTexture(GL_TEXTURE0 + slot);
-	glBindTexture(GL_TEXTURE_2D, handle);
+	glBindTextureUnit(slot, id);
 }
 
 void texture::setData(u32 w, u32 h, void* data)
 {
-	glBindTexture(GL_TEXTURE_2D, handle);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glTextureStorage2D(id, 1, GL_RGBA8, w, h);
+	glTextureSubImage2D(id, 0, 0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glGenerateTextureMipmap(id);
+
 }
 
 u64 texture::makeBindless()
 {
-	u64 blh = glGetTextureHandleARB(handle);
+	u64 blh = glGetTextureHandleARB(id);
 	glMakeTextureHandleResidentARB(blh);
 	return blh;
 }

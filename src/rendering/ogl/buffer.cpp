@@ -5,58 +5,58 @@
 buffer::buffer(buffer_access_type access, buffer_type type) :
 	storageType(type),
 	accessType(access),
-	handle(-1),
+	id(-1),
 	size(0)
 {
-	glCreateBuffers(1, &handle);
+	glCreateBuffers(1, &id);
 }
 
 buffer::buffer(buffer&& other) noexcept :
 	storageType(other.storageType),
 	accessType(other.accessType),
-	handle(other.handle),
+	id(other.id),
 	size(other.size)
 {
-	other.handle = -1;
+	other.id = -1;
 }
 
 buffer& buffer::operator=(buffer&& other) noexcept
 {
 	storageType = other.storageType;
 	accessType = other.accessType;
-	handle = other.handle;
+	id = other.id;
 	size = other.size;
-	other.handle = -1;
+	other.id = -1;
 
 	return *this;
 }
 
 buffer::~buffer()
 {
-	if (handle == -1)
+	if (id == -1)
 		return;
 
-	glDeleteBuffers(1, &handle);
+	glDeleteBuffers(1, &id);
 }
 
 void buffer::allocate(u64 sz)
 {
 	size = sz;
-	glNamedBufferStorage(handle, size, nullptr, GL_DYNAMIC_STORAGE_BIT);
+	glNamedBufferStorage(id, size, nullptr, GL_DYNAMIC_STORAGE_BIT);
 }
 
 void buffer::set(void* data, u64 sz, u64 offset)
 {
-	glNamedBufferSubData(handle, offset, sz, data);
+	glNamedBufferSubData(id, offset, sz, data);
 }
 
 void buffer::setData(void* data, u64 sz)
 {
 	size = sz;
-	glNamedBufferData(handle, size, data, static_cast<GLenum>(accessType));
+	glNamedBufferData(id, size, data, static_cast<GLenum>(accessType));
 }
 
 void buffer::bind()
 {
-	glBindBuffer(static_cast<GLenum>(storageType), handle);
+	glBindBuffer(static_cast<GLenum>(storageType), id);
 }

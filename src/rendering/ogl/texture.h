@@ -20,5 +20,5 @@ public:
 	u64 makeBindless();
 
 private:
-	glhandle handle;
+	glhandle id;
 };

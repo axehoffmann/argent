@@ -28,9 +28,7 @@ renderer::renderer() :
 {
 	// Initialise mesh buffers
 	vert.bind();
-	vbo.bind();
-	ebo.bind();
-	prepareVAOStandard(vert);
+	prepareVAOStandard(vert, vbo, ebo);
 	vbo.allocate(sizeof(basic_vertex)  * 1000000);
 	ebo.allocate(sizeof(u32)	* 1000000);
 
@@ -64,6 +62,7 @@ renderer::renderer() :
 
 	glClearColor(0.0f, 0.5f, 0.5f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_MULTISAMPLE);
 
 	auto view = view_matrix({{0, 0, 2}});
 	auto proj = projection_matrix(glm::radians(90.0f), 1280.0f / 720.0f, 0.01f, 100.0f);

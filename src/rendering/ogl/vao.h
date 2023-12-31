@@ -1,6 +1,7 @@
 #pragma once
 
 #include "opengl.h"
+#include "buffer.h"
 
 #include "resources/v2/packer/mesh.h"
 
@@ -18,10 +19,12 @@ public:
 
 	void bind();
 
-	void assignAttribute(u32 loc, u64 offset, i32 size, gltype type, i32 stride, bool normalised = false);
+	void link(buffer& vbo, buffer& ebo, u32 stride);
+
+	void assignAttribute(u32 loc, u64 offset, i32 size, gltype type, bool normalised = false);
 
 private:
-	glhandle handle;
+	glhandle id;
 };
 
-void prepareVAOStandard(vao& vao);
+void prepareVAOStandard(vao& vao, buffer& vbo, buffer& ebo);

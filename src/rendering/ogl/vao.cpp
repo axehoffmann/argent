@@ -1,49 +1,57 @@
+#include "vao.h"
 #pragma once
 
 #include "vao.h"
 
 vao::vao() :
-	handle(-1)
+	id(-1)
 {
-	glGenVertexArrays(1, &handle);
+	glGenVertexArrays(1, &id);
 }
 
 vao::~vao()
 {
-	if (handle == -1)
+	if (id == -1)
 		return;
 
-	glDeleteVertexArrays(1, &handle);
+	glDeleteVertexArrays(1, &id);
 }
 
 vao::vao(vao&& other) noexcept :
-	handle(other.handle)
+	id(other.id)
 {
-	other.handle = -1;
+	other.id = -1;
 }
 
 vao& vao::operator=(vao&& other) noexcept
 {
-	handle = other.handle;
-	other.handle = -1;
+	id = other.id;
+	other.id = -1;
 	return *this;
 }
 
 void vao::bind()
 {
-	glBindVertexArray(handle);
+	glBindVertexArray(id);
 }
 
-void vao::assignAttribute(u32 loc, u64 offset, i32 size, gltype type, i32 stride, bool normalised)
+void vao::link(buffer& vbo, buffer& ebo, u32 stride)
 {
-	glVertexAttribPointer(loc, size, static_cast<GLenum>(type), normalised, stride, (void*)offset);
-	glEnableVertexAttribArray(loc);
+	glVertexArrayVertexBuffer(id, 0, vbo.getID(), 0, stride);
+	glVertexArrayElementBuffer(id, ebo.getID());
 }
 
-void prepareVAOStandard(vao& vao)
+void vao::assignAttribute(u32 loc, u64 offset, i32 size, gltype type, bool normalised)
 {
-	vao.bind();
-	vao.assignAttribute(0, offsetof(basic_vertex, x), 3, gltype::F32, sizeof(basic_vertex));
-	vao.assignAttribute(1, offsetof(basic_vertex, u), 2, gltype::F32, sizeof(basic_vertex));
-	vao.assignAttribute(2, offsetof(basic_vertex, nx), 3, gltype::F32, sizeof(basic_vertex));
+	glEnableVertexArrayAttrib(id, loc);
+	glVertexArrayAttribFormat(id, loc, size, static_cast<GLenum>(type), normalised, offset);
+	glVertexArrayAttribBinding(id, loc, 0);
+}
+
+void prepareVAOStandard(vao& vao, buffer& vbo, buffer& ebo)
+{
+	vao.link(vbo, ebo, sizeof(basic_vertex));
+	vao.assignAttribute(0, offsetof(basic_vertex, x), 3, gltype::F32);
+	vao.assignAttribute(1, offsetof(basic_vertex, u), 2, gltype::F32);
+	vao.assignAttribute(2, offsetof(basic_vertex, nx), 3, gltype::F32);
 }
