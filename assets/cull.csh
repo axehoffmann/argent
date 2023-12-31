@@ -7,6 +7,8 @@ layout(local_size_x = 256) in;
 struct SceneInfo
 {
     uint totalObjects;
+
+    // Culling data
 };
 layout (std430, binding = 10) readonly buffer sceneCullingData 
 {

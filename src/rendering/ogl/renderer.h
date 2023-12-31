@@ -3,13 +3,14 @@
 #include "rendering/transform.h"
 #include "rendering/scene_builder.h"
 
-#include "buffer.h"
-#include "command_buffer.h"
 #include "material_allocator.h"
-#include "shader.h"
-#include "texture.h"
-#include "vao.h"
 #include "window.h"
+#include "structures/buffer.h"
+#include "structures/command_buffer.h"
+#include "structures/shader.h"
+#include "structures/texture.h"
+#include "structures/timer.h"
+#include "structures/vao.h"
 
 #include "lib/basic.h"
 
@@ -41,6 +42,7 @@ private:
 
 	material_allocator matAllocator;
 
+	gltimer cullTimer;
 
 	buffer vbo;
 	buffer ebo;

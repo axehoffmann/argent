@@ -66,7 +66,7 @@ ag::Engine::Engine()
 	auto r = AssetManager::Fetch<Blueprint>(room).lock();
 	r->SetWorld(ecsWorld);
 
-	Log::Trace(sfmt("Loading: {}ms", (stc::steady_clock::now() - t).count() / 1000000.0));
+	Log::Trace(sfmt("Loading: {}ms", (stc::steady_clock::now() - t).count() / 1e6));
 
 	t = stc::steady_clock::now();
 
@@ -74,25 +74,24 @@ ag::Engine::Engine()
 	function<transform*> init = [&](transform* tp) 
 	{
 		transform& t = *tp;
-		t.pos.y = state % 4 == 0 ? -3 : -2;
-		t.pos.x = (state % 20) - 10;
-		t.pos.z = -5 - 2 * (state / 20);
+		t.pos.y = state % 4 == 0 ? -14 : -13;
+		t.pos.x = ((state % 1040) % 96) * 0.75f - 35;
+		t.pos.z = -5 -  2 * ((state % 1040) / 96);
+		t.pos.y += (state / 1040) * 4.5f;
 			
 		t.rot *= glm::quat({ 0, 0.013 * state, 0 });
 
 		state += 2;
 	};
-	for (size_t i = 0; i < 500; i++)
+	for (size_t i = 0; i < 2000; i++)
 	{
 		l->Instantiate(init);
 		cb->Instantiate(init);
 	}
-	r->Instantiate();
+	// r->Instantiate();
 
 
-	Log::Trace(sfmt("Initialisation: {}ms", (stc::steady_clock::now() - t).count() / 1000000.0));
-
-
+	Log::Trace(sfmt("Initialisation: {}ms", (stc::steady_clock::now() - t).count() / 1e6));
 
 	RegisterSystem(new test_system);
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "buffer.h"
+#include "rendering/ogl/structures/buffer.h"
 
 [[nodiscard]]
 buffer generateGrassBuffer();

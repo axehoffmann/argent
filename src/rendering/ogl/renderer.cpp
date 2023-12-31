@@ -10,6 +10,9 @@
 
 #include "grass.h"
 
+
+gltimer ;
+
 renderer::renderer() :
 	vbo(buffer_access_type::StaticDraw, buffer_type::VertexData),
 	ebo(buffer_access_type::StaticDraw, buffer_type::IndexArray),
@@ -24,7 +27,11 @@ renderer::renderer() :
 	grassPos(generateGrassBuffer()),
 
 	sceneInfo(buffer_access_type::DynamicDraw, buffer_type::Storage),
-	instanceMap(buffer_access_type::StreamDraw, buffer_type::Storage)
+	instanceMap(buffer_access_type::StreamDraw, buffer_type::Storage),
+
+	cullTimer([](f32 ms) {
+		ag::Log::Trace(ag::sfmt("cull time: {}ms", ms));
+	})
 {
 	// Initialise mesh buffers
 	vert.bind();
@@ -33,9 +40,9 @@ renderer::renderer() :
 	ebo.allocate(sizeof(u32)	* 1000000);
 
 	// Initialise instance storage
-	instanceData.allocate(sizeof(instance_data) * 1024);
+	instanceData.allocate(sizeof(instance_data) * 1e6);
 	instanceData.bind(1);
-	instanceMap.allocate(sizeof(u32) * 1024);
+	instanceMap.allocate(sizeof(u32) * 1e6);
 	instanceMap.bind(11);
 
 	// Auxiliary buffers for GPU-driven rendering
@@ -63,6 +70,7 @@ renderer::renderer() :
 	glClearColor(0.0f, 0.5f, 0.5f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
+	glEnable(GL_CULL_FACE);
 
 	auto view = view_matrix({{0, 0, 2}});
 	auto proj = projection_matrix(glm::radians(90.0f), 1280.0f / 720.0f, 0.01f, 100.0f);
@@ -78,6 +86,7 @@ renderer::renderer() :
 
 void renderer::render(scene_graph& sg)
 {
+	checkError();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Update some scene data
@@ -95,10 +104,12 @@ void renderer::render(scene_graph& sg)
 	}
 	u32 cmds = drawCmds.submit();
 
+	cullTimer.start();
 	// Perform GPU culling and population of the draw commands
 	cullShader.bind();
 	glDispatchCompute(u32(std::ceil(f32(sg.scene.size()) / 256)), 1, 1);
 	glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+	cullTimer.stop();
 
 	// Draw all objects
 	standardShader.bind();

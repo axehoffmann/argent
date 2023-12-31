@@ -1,6 +1,6 @@
 #pragma once
 
-#include "opengl.h"
+#include "rendering/ogl/opengl.h"
 
 enum class buffer_type : GLenum
 {

@@ -3,7 +3,7 @@
 		"type": "transform",
 		"position": [3, -5, -5],
 		"rotation": [0, 20, 0],
-		"scale": [0.7, 0.7, 0.7]
+		"scale": [0.4, 0.4, 0.4]
 	},
 	{
 		"type": "static_renderable",

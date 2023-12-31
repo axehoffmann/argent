@@ -5,8 +5,8 @@
 #include "lib/basic.h"
 #include "lib/vector.h"
 
-#include "buffer.h"
-#include "texture.h"
+#include "structures/buffer.h"
+#include "structures/texture.h"
 
 // 2^18 = 262,144 maximum materials
 // 2^18 * 4B index = 1MiB

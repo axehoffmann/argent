@@ -8,7 +8,7 @@
 #include "lib/basic.h"
 #include "lib/string.h"
 
-#include "opengl.h"
+#include "rendering/ogl/opengl.h"
 
 #include "debug/log/Log.h"
 

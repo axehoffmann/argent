@@ -1,6 +1,6 @@
 #pragma once
 
-#include "rendering/ogl/buffer.h"
+#include "buffer.h"
 
 #include "lib/vector.h"
 
