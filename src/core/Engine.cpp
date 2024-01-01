@@ -45,11 +45,13 @@ ag::Engine::Engine()
 	render->createRenderable(AssetManager::Load<Mesh>("assets/cube/cube.agmesh"));
 
 	render->loadMaterial(0, { 
-		AssetManager::Load<Texture>("assets/pillar/pillar.png"), 
+		AssetManager::Load<Texture>("assets/pillar/pillar1.png"), 
+		AssetManager::Load<Texture>("assets/pillar/pillar_norm.png"),
 		AssetManager::Load<Texture>("assets/pillar/pillar_detail.png")
 	});
 	render->loadMaterial(1, { 
-		AssetManager::Load<Texture>("assets/cube/pepe.png"), 
+		AssetManager::Load<Texture>("assets/cube/pepe.png"),
+		AssetManager::Load<Texture>("assets/cube/pepe_norm.png"),
 		AssetManager::Load<Texture>("assets/cube/pepe_detail.png") 
 	});
 
@@ -74,7 +76,7 @@ ag::Engine::Engine()
 	function<transform*> init = [&](transform* tp) 
 	{
 		transform& t = *tp;
-		t.pos.y = state % 4 == 0 ? -14 : -13;
+		t.pos.y = state % 4 == 0 ? -16 : -15;
 		t.pos.x = ((state % 1040) % 96) * 0.75f - 35;
 		t.pos.z = -5 -  2 * ((state % 1040) / 96);
 		t.pos.y += (state / 1040) * 4.5f;

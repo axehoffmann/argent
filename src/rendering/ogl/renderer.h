@@ -36,7 +36,7 @@ public:
 
 	u32 createRenderable(u32 meshID);
 
-	void loadMaterial(u32 materialID, arr<u32, 2> texID);
+	void loadMaterial(u32 materialID, arr<u32, 3> texID);
 
 private:
 

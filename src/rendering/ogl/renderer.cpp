@@ -10,9 +10,6 @@
 
 #include "grass.h"
 
-
-gltimer ;
-
 renderer::renderer() :
 	vbo(buffer_access_type::StaticDraw, buffer_type::VertexData),
 	ebo(buffer_access_type::StaticDraw, buffer_type::IndexArray),
@@ -87,6 +84,7 @@ renderer::renderer() :
 void renderer::render(scene_graph& sg)
 {
 	checkError();
+	glDepthMask(1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Update some scene data
@@ -110,9 +108,20 @@ void renderer::render(scene_graph& sg)
 	glDispatchCompute(u32(std::ceil(f32(sg.scene.size()) / 256)), 1, 1);
 	glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
 	cullTimer.stop();
-
-	// Draw all objects
+	
 	standardShader.bind();
+	/*
+	// Depth prepass
+	glColorMask(0, 0, 0, 0);
+	glDepthFunc(GL_LESS);
+	glEnable(GL_DEPTH_TEST);
+	glMultiDrawElementsIndirect(GL_TRIANGLES, static_cast<GLenum>(gltype::U32), (void*)0, cmds, 20);
+	
+	// Main draw
+	glDepthMask(1);
+	glColorMask(1, 1, 1, 1);
+	glDepthFunc(GL_EQUAL);
+	*/
 	glMultiDrawElementsIndirect(GL_TRIANGLES, static_cast<GLenum>(gltype::U32), (void*)0, cmds, 20);
 }
 
@@ -132,13 +141,13 @@ u32 renderer::createRenderable(u32 meshID)
 	return u32(renderables.size()) - 1;
 }
 
-void renderer::loadMaterial(u32 materialID, arr<u32, 2> texID)
+void renderer::loadMaterial(u32 materialID, arr<u32, 3> texID)
 {
-	arr<glhandle, 2> texs;
-	arr<u64, 2> handles;
-	glGenTextures(2, texs.data());
+	arr<glhandle, 3> texs;
+	arr<u64, 3> handles;
+	glGenTextures(3, texs.data());
 
-	for (u32 i = 0; i < 2; i++)
+	for (u32 i = 0; i < 3; i++)
 	{
 		texture t(texs[i]);
 		auto r = ag::AssetManager::Fetch<ag::Texture>(texID[i]).lock();
@@ -148,5 +157,5 @@ void renderer::loadMaterial(u32 materialID, arr<u32, 2> texID)
 		tex.push_back(std::move(t));
 	}
 
-	matAllocator.load(gl_material{ handles[0], 0, handles[1] }, materialID);
+	matAllocator.load(gl_material{ handles[0], handles[1], handles[2] }, materialID);
 }

@@ -26,6 +26,7 @@ void pack_texture_rgb(const string& out, const string& r, const string& g, const
 {
 	tex rt = load_tex(r);
 	tex gt = load_tex(g);
+	tex bt = load_tex(b);
 	/*
 	tex bt = load_tex(b);
 
@@ -35,10 +36,11 @@ void pack_texture_rgb(const string& out, const string& r, const string& g, const
 	*/
 	vector<u8> ot(u64{3} * rt.w * rt.h);
 	
-	for (u64 i = 0; i < rt.w * rt.h; i++)
+	for (u64 i = 0; i < u64(rt.w) * rt.h; i++)
 	{
 		ot[i * 3] = rt.data[i * 3];
-		ot[i * 3 + 1] = gt.data[i * 3 + 1];
+		ot[i * 3 + 1] = gt.data[i * 3];
+		ot[i * 3 + 2] = bt.data[i * 3];
 	}
 
 	stbi_image_free(rt.data);

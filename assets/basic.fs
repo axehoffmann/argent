@@ -3,7 +3,7 @@
 #extension GL_ARB_bindless_texture : require
 
 in vec2 a_UV;
-in vec3 a_Norm;
+in mat3 TBN;
 in vec3 fragPos;
 
 
@@ -54,7 +54,7 @@ float Geometry(float a, float NdV, float NdL);
 float Geometry1(float k, float NdX);
 vec3 BRDF(PointLight light, vec3 colour, float r, float m, float NdL, vec3 N, vec3 L, vec3 V, vec3 F0);
 
-vec3 pointLightContribution(vec3 colour, vec3 F0, float r, float m, vec3 N, vec3 V, PointLight light);
+vec3 pointLightContribution(vec3 colour, vec3 F0, float r, float m, float ao, vec3 N, vec3 V, PointLight light);
 
 void main()
 {
@@ -64,25 +64,26 @@ void main()
 	vec4 detail = texture(sampler2D(mat.detail), a_UV);
 	float r = detail.r;
 	float m = detail.g;
+	float ao = detail.b;
 
 	// Dielectrics have F0=0.04, metallics have F0 represented by colour map
 	vec3 F0 = mix(vec3(0.04), colour, m);
 
 	vec3 V = viewPos - fragPos;
-	vec3 N = normalize(a_Norm);
+	vec3 N = normalize(TBN * (texture(sampler2D(mat.norm), a_UV).rgb * 2.0 - 1.0));
 
 	vec3 Lo = vec3(0.0);
 
 	for (int i = 0; i < lightCount; i++) {
 
-		Lo += pointLightContribution(colour, F0, r, m, N, V, pointLights[i]);
+		Lo += pointLightContribution(colour, F0, r, m, ao, N, V, pointLights[i]);
 	}
 	
 	FragColor = vec4(Lo, 1.0);
 	// FragColor.rgb = pow(FragColor.rgb, vec3(1.0/2.2));
 }
 
-vec3 pointLightContribution(vec3 colour, vec3 F0, float r, float m, vec3 N, vec3 V, PointLight light)
+vec3 pointLightContribution(vec3 colour, vec3 F0, float r, float m, float ao, vec3 N, vec3 V, PointLight light)
 {
 	vec3 L = normalize(light.pos.xyz - fragPos);
 	float NdL = max(dot(N, L), 0.0);
@@ -92,6 +93,10 @@ vec3 pointLightContribution(vec3 colour, vec3 F0, float r, float m, vec3 N, vec3
 	float attenuation = light.colour.a / (dist * dist);
 	vec3 irradiance = light.colour.rgb * attenuation * NdL;
 
+	// Approximate self-shadowing via AO + normal
+	float occlusion = NdL - (1.0 - ao);
+	irradiance *= occlusion;
+	
 	// Outgoing light
 	return BRDF(light, colour, r, m, NdL, N, L, V, F0) * irradiance;
 }

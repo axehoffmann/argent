@@ -1,7 +1,7 @@
-#include "vao.h"
 #pragma once
 
 #include "vao.h"
+#include "resources/v2/packer/mesh/mesh.h"
 
 vao::vao() :
 	id(-1)
@@ -54,4 +54,5 @@ void prepareVAOStandard(vao& vao, buffer& vbo, buffer& ebo)
 	vao.assignAttribute(0, offsetof(basic_vertex, x), 3, gltype::F32);
 	vao.assignAttribute(1, offsetof(basic_vertex, u), 2, gltype::F32);
 	vao.assignAttribute(2, offsetof(basic_vertex, nx), 3, gltype::F32);
+	vao.assignAttribute(3, offsetof(basic_vertex, tx), 3, gltype::F32);
 }

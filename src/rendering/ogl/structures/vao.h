@@ -3,8 +3,6 @@
 #include "rendering/ogl/opengl.h"
 #include "buffer.h"
 
-#include "resources/v2/packer/mesh.h"
-
 class vao
 {
 public:

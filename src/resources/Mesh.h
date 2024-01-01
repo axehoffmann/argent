@@ -9,7 +9,7 @@
 
 #include "lib/string.h"
 #include "lib/vector.h"
-#include "resources/v2/packer/mesh.h"
+#include "resources/v2/packer/mesh/mesh.h"
 
 #include <vector>
 
