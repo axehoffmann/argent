@@ -2,6 +2,8 @@
 
 #include "render_object.h"
 #include "scene_graph.h"
+#include "transform.h"
+
 #include "ecs/ECS.h"
 #include "ecs/Query.h"
 

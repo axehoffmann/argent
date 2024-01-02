@@ -10,6 +10,7 @@ struct idata
 	mat4 model;
 	uint mat;
 	uint mesh;
+	vec4 boundingSphere;
 };
 
 layout(std430, binding = 1) readonly buffer data 

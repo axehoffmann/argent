@@ -22,6 +22,7 @@ struct basic_vertex
 
 struct mesh_ir
 {
+	glm::vec4 boundingSphere;
 	vector<basic_vertex> vertices;
 	vector<u32> indices;
 };
@@ -29,6 +30,13 @@ struct mesh_ir
 template <typename S>
 void serialize(S& s, mesh_ir& o)
 {
+	s.object(o.boundingSphere, [](S& s, glm::vec4& v)
+	{
+		s.value4b(v.x);
+		s.value4b(v.y);
+		s.value4b(v.z);
+		s.value4b(v.w);
+	});
 	s.container(o.vertices, 1 << 24, [](S& s, basic_vertex& v) 
 	{
 		s.value4b(v.x);
@@ -51,5 +59,6 @@ void compile_mesh(const string& path);
 mesh_ir load_obj(const string& path);
 mesh_ir optimize_mesh(mesh_ir&& m);
 void save_mesh(mesh_ir& m, const string& path);
+void calculate_bounds(mesh_ir& m);
 
 mesh_ir load_mesh(const string& path);

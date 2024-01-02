@@ -8,8 +8,11 @@ struct SceneInfo
 {
     uint totalObjects;
 
-    // Culling data
+    mat4 view;
+    // Frustum culling data
+    float frustum[4];
 };
+
 layout (std430, binding = 10) readonly buffer sceneCullingData 
 {
     SceneInfo sceneInfo;
@@ -23,7 +26,7 @@ struct idata
 	mat4 model;
 	uint mat;
     uint residentMeshID;
-    // AABB?
+    vec4 boundingSphere;
 };
 layout (std430, binding = 1) readonly buffer instanceData 
 {
@@ -56,6 +59,25 @@ layout (std430, binding = 12) buffer drawCmds
     IndirectDrawCommand drawCommands[];
 };
 
+bool isVisibleFrustum(uint objectID)
+{
+    vec4 boundingSphere = instances[objectID].boundingSphere;
+
+    vec3 center = boundingSphere.xyz;
+    // Translate sphere to view space
+    center = (sceneInfo.view * vec4(center, 1.0)).xyz;
+
+    float radius = boundingSphere.w;
+
+    bool visible = true;
+    visible = visible && center.z * sceneInfo.frustum[1] - abs(center.x) * sceneInfo.frustum[0] > -radius;
+    visible = visible && center.z * sceneInfo.frustum[3] - abs(center.y) * sceneInfo.frustum[2] > -radius;
+
+    /// TODO: missing forward/back culling?
+
+    return visible;
+}
+
 void main()
 {
     // The ID of the object out of all existing renderables
@@ -64,6 +86,11 @@ void main()
     if (objectID >= sceneInfo.totalObjects)
     {
         return;
+    }
+
+    if (!isVisibleFrustum(objectID))
+    {
+        // return;
     }
 
     uint residentMeshID = instances[objectID].residentMeshID;

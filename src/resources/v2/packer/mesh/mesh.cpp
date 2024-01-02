@@ -4,6 +4,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <numeric>
 
 #include <bitsery/adapter/stream.h>
 
@@ -15,6 +16,8 @@
 #pragma warning(pop)
 
 #include "tangents.h"
+
+const f32 inf = std::numeric_limits<f32>::infinity();
 
 void compile_mesh(const string& path)
 {
@@ -72,7 +75,7 @@ mesh_ir load_obj(const string& path)
 
     // Generate tangents
     calculate_tangents(ir);
-
+    calculate_bounds(ir);
 	return ir;
 }
 
@@ -91,6 +94,7 @@ mesh_ir optimize_mesh(mesh_ir&& m)
     );
 
     mesh_ir ir{};
+    ir.boundingSphere = m.boundingSphere;
     ir.indices.resize(indexCount);
     ir.vertices.resize(vertexCount);
     meshopt_remapIndexBuffer(ir.indices.data(), nullptr, indexCount, remapTable.data());
@@ -116,6 +120,23 @@ void save_mesh(mesh_ir& m, const string& path)
     bitsery::Serializer<bitsery::OutputBufferedStreamAdapter> out{ s };
     out.object(m);
     out.adapter().flush();
+}
+
+void calculate_bounds(mesh_ir& m)
+{
+    /// TODO: calculate better sphere via
+    // https://stackoverflow.com/questions/6083286/having-a-little-issue-calculating-the-bounding-sphere-radius
+    glm::vec3 minPos{ inf, inf, inf };
+    glm::vec3 maxPos{ -1 * inf, -1 * inf, -1 * inf };
+
+    for (const auto& v : m.vertices)
+    {
+        minPos = glm::min(minPos, {v.x, v.y, v.z});
+        maxPos = glm::max(maxPos, {v.x, v.y, v.z});
+    }
+
+    glm::vec3 center = (minPos + maxPos) / 2.0f;
+    m.boundingSphere = glm::vec4(center, glm::distance(center, minPos));
 }
 
 mesh_ir load_mesh(const string& path)

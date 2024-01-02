@@ -70,7 +70,7 @@ renderer::renderer() :
 	glEnable(GL_CULL_FACE);
 
 	auto view = view_matrix({{0, 0, 2}});
-	auto proj = projection_matrix(glm::radians(90.0f), 1280.0f / 720.0f, 0.01f, 100.0f);
+	auto proj = projection_matrix(glm::radians(90.0f), 1280.0f / 720.0f, 0.01f, 200.0f);
 
 	// Prepare shader
 	standardShader.bind();
