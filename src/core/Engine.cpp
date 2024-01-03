@@ -77,7 +77,7 @@ ag::Engine::Engine()
 	{
 		transform& t = *tp;
 		t.pos.y = state % 4 == 0 ? -16 : -15;
-		t.pos.x = ((state % 1040) % 96) * 0.75f - 35;
+		t.pos.x = ((state % 1040) % 96) - 50;
 		t.pos.z = -5 -  2 * ((state % 1040) / 96);
 		t.pos.y += (state / 1040) * 4.5f;
 			

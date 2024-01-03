@@ -6,13 +6,12 @@
 /**
  * Per-instance render data
 */
-struct instance_data
+struct alignas(16) instance_data
 {
 	glm::mat4 model;
+	glm::vec4 boundingSphere;
 	u32 mat;
 	u32 mesh;
-	glm::vec4 boundingSphere;
-	ag::byte padding[8];
 };
 
 struct scene_info

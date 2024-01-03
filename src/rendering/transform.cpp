@@ -9,7 +9,7 @@ glm::mat4 model_matrix(const transform& t)
 
 glm::mat4 view_matrix(const transform& t)
 {
-	return glm::lookAt(t.pos, t.front(), t.up());
+	return glm::lookAt(t.pos, glm::vec3(0,0,0), glm::vec3(0, 1, 0));
 }
 
 glm::mat4 projection_matrix(f32 fov, f32 aspectRatio, f32 nearPlane, f32 farPlane)

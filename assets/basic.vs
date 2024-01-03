@@ -8,9 +8,9 @@ layout (location = 3) in vec3 v_Tan;
 struct idata 
 {
 	mat4 model;
+	vec4 boundingSphere;
 	uint mat;
 	uint mesh;
-	vec4 boundingSphere;
 };
 
 layout(std430, binding = 1) readonly buffer data 

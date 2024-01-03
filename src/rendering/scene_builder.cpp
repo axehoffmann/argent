@@ -32,10 +32,10 @@ void ag::scene_builder::Update()
     for (auto entity : staticQuery)
     {
         render_object& r = entity.Get<render_object>();
-        transform& tr = entity.Get<transform>();
-        glm::vec4 boundingSphere = glm::vec4(tr.pos, 1.0f);
+        transform& tr = entity.Get<transform>();    
+        glm::vec4 boundingSphere = glm::vec4(tr.pos.x, tr.pos.y, tr.pos.z, 1.0f);
 
-        graph.scene.push_back({ model_matrix(tr), r.materialID, r.meshID, boundingSphere });
+        graph.scene.push_back({ model_matrix(tr), boundingSphere, r.materialID, r.meshID });
 
         if (r.meshID >= graph.meshCounts.size())
             graph.meshCounts.resize(u64(r.meshID) + 1);
@@ -43,16 +43,23 @@ void ag::scene_builder::Update()
     }
 
     /// TODO: parameterise camera data
-    auto proj = glm::transpose(projection_matrix(glm::radians(90.0f), 1280.0f / 720.0f, 0.01f, 200.0f));
+    auto proj = glm::transpose(projection_matrix(glm::radians(70.0f), 1280.0f / 720.0f, 0.01f, 200.01f));
     glm::vec4 fX = normalizePlane(proj[3] + proj[0]);
     glm::vec4 fY = normalizePlane(proj[3] + proj[1]);
 
     graph.info.totalObjects = u32(graph.scene.size());
-    graph.info.view = view_matrix({{0, 0, 2}});
+    graph.info.view = view_matrix({{0, 0, 2}, {0, 0, -1, 0} });
     graph.info.frustum[0] = fX.x;
     graph.info.frustum[1] = fX.z;
     graph.info.frustum[2] = fY.y;
     graph.info.frustum[3] = fY.z;
+
+    static bool once = false;
+    if (not once)
+    {
+        once = true;
+        ag::Log::Trace(ag::sfmt("{} {} {} {}", fX.x, fX.z, fY.y, fY.z));
+    }
 
     /*
     graph->pointLights.clear();

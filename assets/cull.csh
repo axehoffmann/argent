@@ -24,9 +24,9 @@ layout (std430, binding = 10) readonly buffer sceneCullingData
 struct idata 
 {
 	mat4 model;
+    vec4 boundingSphere;
 	uint mat;
     uint residentMeshID;
-    vec4 boundingSphere;
 };
 layout (std430, binding = 1) readonly buffer instanceData 
 {
@@ -67,11 +67,11 @@ bool isVisibleFrustum(uint objectID)
     // Translate sphere to view space
     center = (sceneInfo.view * vec4(center, 1.0)).xyz;
 
-    float radius = boundingSphere.w;
+    float radius = 1.0;
 
     bool visible = true;
-    visible = visible && center.z * sceneInfo.frustum[1] - abs(center.x) * sceneInfo.frustum[0] > -radius;
-    visible = visible && center.z * sceneInfo.frustum[3] - abs(center.y) * sceneInfo.frustum[2] > -radius;
+    visible = visible && center.x * sceneInfo.frustum[1] - abs(center.z) * sceneInfo.frustum[0] > -radius;
+    visible = visible && center.x * sceneInfo.frustum[3] - abs(center.y) * sceneInfo.frustum[2] > -radius;
 
     /// TODO: missing forward/back culling?
 
@@ -90,7 +90,7 @@ void main()
 
     if (!isVisibleFrustum(objectID))
     {
-        // return;
+        return;
     }
 
     uint residentMeshID = instances[objectID].residentMeshID;

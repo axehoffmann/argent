@@ -69,14 +69,14 @@ renderer::renderer() :
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_CULL_FACE);
 
-	auto view = view_matrix({{0, 0, 2}});
+	auto view = view_matrix({{0, 0, 20}, {0, 0, -1, 0}});
 	auto proj = projection_matrix(glm::radians(90.0f), 1280.0f / 720.0f, 0.01f, 200.0f);
 
 	// Prepare shader
 	standardShader.bind();
 	standardShader.uniform("view", view);
 	standardShader.uniform("proj", proj);
-	standardShader.uniform("viewPos", {0, 0, 2});
+	standardShader.uniform("viewPos", {0, 0, 5});
 
 	vert.bind();
 }
