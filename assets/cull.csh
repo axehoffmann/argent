@@ -6,9 +6,9 @@ layout(local_size_x = 256) in;
 
 struct SceneInfo
 {
+    mat4 view;
     uint totalObjects;
 
-    mat4 view;
     // Frustum culling data
     float frustum[4];
 };
@@ -67,11 +67,11 @@ bool isVisibleFrustum(uint objectID)
     // Translate sphere to view space
     center = (sceneInfo.view * vec4(center, 1.0)).xyz;
 
-    float radius = 1.0;
+    float radius = boundingSphere.w;
 
     bool visible = true;
-    visible = visible && center.x * sceneInfo.frustum[1] - abs(center.z) * sceneInfo.frustum[0] > -radius;
-    visible = visible && center.x * sceneInfo.frustum[3] - abs(center.y) * sceneInfo.frustum[2] > -radius;
+    visible = visible && center.z * sceneInfo.frustum[1] - abs(center.x) * sceneInfo.frustum[0] > -radius;
+    visible = visible && center.z * sceneInfo.frustum[3] - abs(center.y) * sceneInfo.frustum[2] > -radius;
 
     /// TODO: missing forward/back culling?
 

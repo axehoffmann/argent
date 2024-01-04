@@ -1,4 +1,4 @@
-add_library(renderer   "transform.h" "transform.cpp" "glm.h" "scene_builder.h" "render_object.h" "render_object.cpp" "scene_graph.h" "scene_builder.cpp")
+add_library(renderer   "transform.h" "transform.cpp" "glm.h" "scene_builder.h" "render_object.h" "render_object.cpp" "scene_graph.h" "scene_builder.cpp" "mesh_handler.h")
 
 add_subdirectory(ogl)
 

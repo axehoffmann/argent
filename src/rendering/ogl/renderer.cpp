@@ -10,7 +10,8 @@
 
 #include "grass.h"
 
-renderer::renderer() :
+renderer::renderer(mesh_handler& mh) :
+	mesh_info(mh),
 	vbo(buffer_access_type::StaticDraw, buffer_type::VertexData),
 	ebo(buffer_access_type::StaticDraw, buffer_type::IndexArray),
 	vboOffset(0),
@@ -69,7 +70,7 @@ renderer::renderer() :
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_CULL_FACE);
 
-	auto view = view_matrix({{0, 0, 20}, {0, 0, -1, 0}});
+	auto view = view_matrix({0, 0, 2}, 0, 0);
 	auto proj = projection_matrix(glm::radians(90.0f), 1280.0f / 720.0f, 0.01f, 200.0f);
 
 	// Prepare shader
@@ -137,6 +138,8 @@ u32 renderer::createRenderable(u32 meshID)
 	renderables.push_back({eboOffset, vboOffset, u32(m->mesh.indices.size())});
 	vboOffset += u32(m->mesh.vertices.size());
 	eboOffset += u32(m->mesh.indices.size());
+
+	mesh_info.baseBoundingSpheres.push_back(m->mesh.boundingSphere);
 
 	return u32(renderables.size()) - 1;
 }

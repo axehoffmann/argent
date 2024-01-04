@@ -7,9 +7,15 @@ glm::mat4 model_matrix(const transform& t)
 	return glm::scale(mat, t.scale);
 }
 
-glm::mat4 view_matrix(const transform& t)
+glm::mat4 view_matrix(const glm::vec3& pos, f32 yaw, f32 pitch)
 {
-	return glm::lookAt(t.pos, glm::vec3(0,0,0), glm::vec3(0, 1, 0));
+    glm::mat4 rot = glm::rotate(
+        glm::rotate(glm::mat4{ 1 }, yaw, { 0, -1, 0}),
+        pitch, { -1, 0, 0});
+    
+    glm::mat4 view = glm::translate(glm::mat4{ 1 }, pos) * rot;
+
+	return glm::inverse(view);
 }
 
 glm::mat4 projection_matrix(f32 fov, f32 aspectRatio, f32 nearPlane, f32 farPlane)

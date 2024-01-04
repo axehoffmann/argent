@@ -66,6 +66,6 @@ struct transform
 
 glm::mat4 model_matrix(const transform& t);
 
-glm::mat4 view_matrix(const transform& t);
+glm::mat4 view_matrix(const glm::vec3& pos, f32 yaw, f32 pitch);
 
 glm::mat4 projection_matrix(f32 fov, f32 aspectRatio, f32 nearPlane, f32 farPlane);

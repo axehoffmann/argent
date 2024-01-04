@@ -1,5 +1,6 @@
 #pragma once
 
+#include "mesh_handler.h"
 #include "render_object.h"
 #include "scene_graph.h"
 #include "transform.h"
@@ -23,7 +24,7 @@ namespace ag
     class scene_builder
     {
     public:
-        scene_builder(std::shared_ptr<ag::World> w);
+        scene_builder(std::shared_ptr<ag::World> w, mesh_handler& m);
 
         /**
          * Generates a new graph at the end of each gametick
@@ -54,6 +55,8 @@ namespace ag
         // Next graph for the Renderer to read
         atomic<int> graphReady;
         vector<scene_graph> graphs;
+
+        mesh_handler& mesh_info;
 
         std::shared_ptr<ag::World> world;
     };

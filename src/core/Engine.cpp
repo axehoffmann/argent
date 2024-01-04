@@ -36,8 +36,8 @@ ag::Engine::Engine()
 	active = true;
 
 	ecsWorld = std::make_shared<ag::World>();
-	sceneBuilder = std::make_shared<ag::scene_builder>(ecsWorld);
-	render = std::make_unique<renderer>();
+	sceneBuilder = std::make_shared<ag::scene_builder>(ecsWorld, meshInfo);
+	render = std::make_unique<renderer>(meshInfo);
 
 	auto t = stc::steady_clock::now();
 	render->createRenderable(AssetManager::Load<Mesh>("assets/pillar/pillar.agmesh"));

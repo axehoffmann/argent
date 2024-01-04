@@ -16,9 +16,9 @@ struct alignas(16) instance_data
 
 struct scene_info
 {
+	glm::mat4 view;
 	u32 totalObjects;
 
-	glm::mat4 view;
 	f32 frustum[4];
 };
 

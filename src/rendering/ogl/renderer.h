@@ -31,7 +31,7 @@ struct point_light
 class renderer
 {
 public:
-	renderer();
+	renderer(mesh_handler& mh);
 	void render(scene_graph& scene);
 
 	u32 createRenderable(u32 meshID);
@@ -39,6 +39,7 @@ public:
 	void loadMaterial(u32 materialID, arr<u32, 3> texID);
 
 private:
+	mesh_handler& mesh_info;
 
 	material_allocator matAllocator;
 

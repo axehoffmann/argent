@@ -35,6 +35,7 @@ namespace ag
 		void FrameUpdate(double dt);
 
 		std::unique_ptr<renderer> render;
+		mesh_handler meshInfo;
 
 		std::shared_ptr<ag::scene_builder> sceneBuilder;
 		std::shared_ptr<ag::World> ecsWorld;
