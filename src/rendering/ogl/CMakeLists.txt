@@ -16,8 +16,12 @@ target_sources(renderer PRIVATE
     "structures/command_buffer.h" 
 	"structures/command_buffer.cpp"
 	"structures/texture.h"
-	"structures/texture.cpp"
+	"structures/texture.cpp" 
 	"structures/timer.h"
 	"structures/timer.cpp"
+	"structures/hierarchical_zbuffer.h"
+	"structures/hierarchical_zbuffer.cpp"
+	"structures/framebuffer.h"
+	"structures/framebuffer.cpp"
 	"material_allocator.h"
 )

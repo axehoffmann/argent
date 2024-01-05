@@ -1,6 +1,7 @@
 #include "texture.h"
 #include "texture.h"
 #include "texture.h"
+#include "texture.h"
 
 texture::texture()
 {
@@ -26,17 +27,23 @@ texture::texture(glhandle glID)
 	glGenerateTextureMipmap(id);
 }
 
-void texture::bind(u32 slot)
+void texture::allocate(u32 w, u32 h, u32 mips, tex_format fmt)
 {
-	glBindTextureUnit(slot, id);
+	checkError();
+	glTextureStorage2D(id, mips, static_cast<GLenum>(fmt), w, h);
+	checkError();
 }
 
-void texture::setData(u32 w, u32 h, void* data)
+void texture::setData(u32 w, u32 h, void* data, tex_format fmt)
 {
 	glTextureStorage2D(id, 1, GL_RGBA8, w, h);
 	glTextureSubImage2D(id, 0, 0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	glGenerateTextureMipmap(id);
+}
 
+void texture::bind(u32 slot)
+{
+	glBindTextureUnit(slot, id);
 }
 
 u64 texture::makeBindless()

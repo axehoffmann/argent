@@ -32,6 +32,12 @@ public:
 		glUniform1f(location, val);
 	}
 
+	void uniform(const string& name, glm::vec2 val)
+	{
+		int location = uniformLocation(name);
+		glUniform2f(location, val.x, val.y);
+	}
+
 	void uniform(const string& name, glm::vec3 val)
 	{
 		int location = uniformLocation(name);

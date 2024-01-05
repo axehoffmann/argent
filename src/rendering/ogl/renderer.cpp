@@ -10,6 +10,11 @@
 
 #include "grass.h"
 
+void message_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)
+{
+	std::cout << message << '\n';
+}
+
 renderer::renderer(mesh_handler& mh) :
 	mesh_info(mh),
 	vbo(buffer_access_type::StaticDraw, buffer_type::VertexData),
@@ -19,18 +24,23 @@ renderer::renderer(mesh_handler& mh) :
 	vert(),
 	standardShader("assets/basic.vs", "assets/basic.fs"),
 	cullShader("assets/cull.csh"),
+	screenShader("assets/screenQuad.vs", "assets/singleTex.fs"),
 
 	instanceData(buffer_access_type::DynamicDraw, buffer_type::Storage),
 	pointLights(buffer_access_type::DynamicDraw, buffer_type::Storage),
 	grassPos(generateGrassBuffer()),
 
 	sceneInfo(buffer_access_type::DynamicDraw, buffer_type::Storage),
-	instanceMap(buffer_access_type::StreamDraw, buffer_type::Storage),
-
-	cullTimer([](f32 ms) {
-		ag::Log::Trace(ag::sfmt("cull time: {}ms", ms));
-	})
+	instanceMap(buffer_access_type::StreamDraw, buffer_type::Storage)
 {
+	// hierarchical_zbuffer hzb{ shader("assets/buildHzb.csh") };
+
+	// Initialise a framebuffer to render to
+	colourLayer.allocate(2560, 1440, 1, tex_format::RGBA8);
+	fb.attach(colourLayer, attachment::Colour, 0);
+	depthLayer.allocate(2560, 1440, 1, tex_format::Depth);
+	fb.attach(depthLayer, attachment::Depth, 0);
+
 	// Initialise mesh buffers
 	vert.bind();
 	prepareVAOStandard(vert, vbo, ebo);
@@ -64,14 +74,22 @@ renderer::renderer(mesh_handler& mh) :
 	u32 plc = u32(pls.size());
 	pointLights.set(&plc, sizeof(u32), 0);
 	pointLights.set(pls.data(), sizeof(point_light) * pls.size(), 16);
+	checkError();
 
 	glClearColor(0.0f, 0.5f, 0.5f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_CULL_FACE);
 
+	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	glDebugMessageCallback(message_callback, nullptr);
+	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
+
+
 	auto view = view_matrix({0, 0, 2}, 0, 0);
 	auto proj = projection_matrix(glm::radians(90.0f), 1280.0f / 720.0f, 0.01f, 200.0f);
+	checkError();
 
 	// Prepare shader
 	standardShader.bind();
@@ -82,11 +100,15 @@ renderer::renderer(mesh_handler& mh) :
 	vert.bind();
 }
 
+f32 clearCol[] { 0.0f, 0.5f, 0.5f };
+f32 clearDepth { 1.0f };
+
 void renderer::render(scene_graph& sg)
 {
-	checkError();
-	glDepthMask(1);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glDepthMask(1);
+	glClearNamedFramebufferfv(fb.getID(), GL_COLOR, 0, clearCol);
+	glClearNamedFramebufferfv(fb.getID(), GL_DEPTH, 0, &clearDepth);
+	glClear(GL_COLOR_BUFFER_BIT);
 
 	// Update some scene data
 	instanceData.set(sg.scene.data(), sizeof(instance_data) * sg.scene.size(), 0);
@@ -103,14 +125,15 @@ void renderer::render(scene_graph& sg)
 	}
 	u32 cmds = drawCmds.submit();
 
-	cullTimer.start();
 	// Perform GPU culling and population of the draw commands
 	cullShader.bind();
 	glDispatchCompute(u32(std::ceil(f32(sg.scene.size()) / 256)), 1, 1);
-	glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
-	cullTimer.stop();
-	
+	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, fb.getID());
 	standardShader.bind();
+	glEnable(GL_DEPTH_TEST);
+	glMultiDrawElementsIndirect(GL_TRIANGLES, static_cast<GLenum>(gltype::U32), (void*)0, cmds, 20);
 	/*
 	// Depth prepass
 	glColorMask(0, 0, 0, 0);
@@ -123,7 +146,15 @@ void renderer::render(scene_graph& sg)
 	glColorMask(1, 1, 1, 1);
 	glDepthFunc(GL_EQUAL);
 	*/
-	glMultiDrawElementsIndirect(GL_TRIANGLES, static_cast<GLenum>(gltype::U32), (void*)0, cmds, 20);
+
+	// Draw framebuffer results to screen (on a full-screen triangle)
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	screenShader.bind();
+	colourLayer.bind(0);
+	screenShader.uniform("screenTex", 0);
+	glDisable(GL_DEPTH_TEST);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glBindTextureUnit(0, 0);
 }
 
 u32 renderer::createRenderable(u32 meshID)

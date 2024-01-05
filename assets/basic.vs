@@ -13,7 +13,7 @@ struct idata
 	uint mesh;
 };
 
-layout(std430, binding = 1) readonly buffer data 
+layout (std430, binding = 1) readonly buffer data 
 {
 	idata instance[]; 
 };

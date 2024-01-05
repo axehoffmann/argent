@@ -46,7 +46,7 @@ flat in uint materialID;
 uniform vec3 viewPos;
 uniform vec3 lightPos;
 
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
 
 vec3 Fresnel(vec3 V, vec3 H, vec3 F0);
 float NDF(float a, vec3 N, vec3 H);
@@ -75,7 +75,6 @@ void main()
 	vec3 Lo = vec3(0.0);
 
 	for (int i = 0; i < lightCount; i++) {
-
 		Lo += pointLightContribution(colour, F0, r, m, ao, N, V, pointLights[i]);
 	}
 	
@@ -96,7 +95,7 @@ vec3 pointLightContribution(vec3 colour, vec3 F0, float r, float m, float ao, ve
 	// Approximate self-shadowing via AO + normal
 	float occlusion = NdL - (1.0 - ao);
 	irradiance *= occlusion;
-	
+
 	// Outgoing light
 	return BRDF(light, colour, r, m, NdL, N, L, V, F0) * irradiance;
 }

@@ -1,12 +1,15 @@
 #pragma once
 
-#include "rendering/transform.h"
 #include "rendering/scene_builder.h"
+#include "rendering/transform.h"
 
 #include "material_allocator.h"
 #include "window.h"
+
 #include "structures/buffer.h"
 #include "structures/command_buffer.h"
+#include "structures/framebuffer.h"
+#include "structures/hierarchical_zbuffer.h"
 #include "structures/shader.h"
 #include "structures/texture.h"
 #include "structures/timer.h"
@@ -27,7 +30,6 @@ struct point_light
 	glm::vec4 colour;
 };
 
-
 class renderer
 {
 public:
@@ -43,7 +45,9 @@ private:
 
 	material_allocator matAllocator;
 
-	gltimer cullTimer;
+	framebuffer fb;
+	texture colourLayer;
+	texture depthLayer;
 
 	buffer vbo;
 	buffer ebo;
@@ -64,6 +68,7 @@ private:
 	vao vert;
 	shader standardShader;
 	shader cullShader;
+	shader screenShader;
 
 	vector<renderable> renderables;
 };
