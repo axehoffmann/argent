@@ -4,6 +4,8 @@
 
 layout(local_size_x = 256) in;
 
+layout(binding = 0) uniform sampler2D hzb;
+
 struct SceneInfo
 {
     mat4 view;
@@ -11,6 +13,11 @@ struct SceneInfo
 
     // Frustum culling data
     float frustum[4];
+
+    // Occlusion culling data
+    float proj_00, proj_11;
+    float zNear, zFar;
+    float hzbWidth, hzbHeight;
 };
 
 layout (std430, binding = 10) readonly buffer sceneCullingData 
@@ -59,8 +66,31 @@ layout (std430, binding = 12) buffer drawCmds
     IndirectDrawCommand drawCommands[];
 };
 
-bool isVisibleFrustum(uint objectID)
+// 2D Polyhedral Bounds of a Clipped, Perspective-Projected 3D Sphere. Michael Mara, Morgan McGuire. 2013
+bool projectSphereToScreenSpace(vec3 C, float r, out vec4 aabb)
 {
+    if (C.z < r + sceneInfo.zNear)
+        return false;
+
+    vec2 cx = -C.xz;
+    vec2 vx = vec2(sqrt(dot(cx, cx) - r * r), r);
+    vec2 minX = mat2(vx.x, -vx.y, vx.y, vx.x) * cx;
+    vec2 maxX = mat2(vx.x, vx.y, -vx.y, vx.x) * cx;
+
+    vec2 cy = -C.yz;
+    vec2 vy = vec2(sqrt(dot(cy, cy) - r * r), r);
+    vec2 minY = mat2(vy.x, vy.y, -vy.y, vy.x) * cy;
+    vec2 maxY = mat2(vy.x, -vy.y, vy.y, vy.x) * cy;
+
+    aabb = vec4(minX.x / minX.y * sceneInfo.proj_00, minY.x / minY.y * sceneInfo.proj_11, maxX.x / maxX.y * sceneInfo.proj_00, maxY.x / maxY.y * sceneInfo.proj_11);
+    aabb = aabb.xwzy * vec4(0.5, -0.5, 0.5, -0.5) + vec4(0.5);
+
+    return true;
+}
+
+bool isVisible(uint objectID)
+{
+    // Cull against camera frustum
     vec4 boundingSphere = instances[objectID].boundingSphere;
 
     vec3 center = boundingSphere.xyz;
@@ -75,6 +105,25 @@ bool isVisibleFrustum(uint objectID)
 
     /// TODO: missing forward/back culling?
 
+    // Cull against last frame's depth buffer
+    center.y *= -1;
+    if (visible)
+    {
+        vec4 aabb;
+        if (projectSphereToScreenSpace(center, radius, aabb))
+        {
+            float w = (aabb.z - aabb.x) * sceneInfo.hzbWidth;
+            float h = (aabb.w - aabb.y) * sceneInfo.hzbHeight;
+
+            float hzbLod = floor(log2(max(w, h)));
+
+            float depth = textureLod(hzb, (aabb.xy + aabb.zw) * 0.5, hzbLod).x;
+            float depthSphere = sceneInfo.zNear / (center.z - radius);
+
+            visible = visible && depthSphere >= depth;
+        }
+    }
+
     return visible;
 }
 
@@ -88,7 +137,7 @@ void main()
         return;
     }
 
-    if (!isVisibleFrustum(objectID))
+    if (!isVisible(objectID))
     {
         return;
     }

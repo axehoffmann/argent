@@ -48,6 +48,7 @@ private:
 	framebuffer fb;
 	texture colourLayer;
 	texture depthLayer;
+	hierarchical_zbuffer hzb;
 
 	buffer vbo;
 	buffer ebo;

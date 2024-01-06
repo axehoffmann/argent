@@ -3,15 +3,14 @@
 #include "texture.h"
 #include "texture.h"
 
-texture::texture()
+texture::texture(tex_filter minFilter)
 {
 	glCreateTextures(GL_TEXTURE_2D, 1, &id);
 
-	glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, static_cast<GLenum>(minFilter));
 	glTextureParameteri(id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTextureParameteri(id, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTextureParameteri(id, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
 }
 
 texture::texture(glhandle glID)
@@ -29,9 +28,7 @@ texture::texture(glhandle glID)
 
 void texture::allocate(u32 w, u32 h, u32 mips, tex_format fmt)
 {
-	checkError();
 	glTextureStorage2D(id, mips, static_cast<GLenum>(fmt), w, h);
-	checkError();
 }
 
 void texture::setData(u32 w, u32 h, void* data, tex_format fmt)

@@ -18,6 +18,10 @@ public:
 	shader(const string& vpath, const string& fpath);
 	shader(const string& cpath);
 
+	shader(shader&) = delete;
+
+	shader(shader&& other);
+
 	~shader();
 
 	void uniform(const string& name, i32 val)

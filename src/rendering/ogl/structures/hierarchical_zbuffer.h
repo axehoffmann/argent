@@ -8,11 +8,12 @@
 class hierarchical_zbuffer
 {
 public:
-	hierarchical_zbuffer(shader&& cs);
+	hierarchical_zbuffer(shader&& cs, glhandle depthTex);
 	~hierarchical_zbuffer();
 
-	void bindHzb();
-	void bindDepthTarget();
+	void bind(u32 unit);
+	void unbind(u32 unit);
+
 	void generate();
 
 private:
@@ -24,5 +25,5 @@ private:
 	texture depthPyramid;
 
 	glhandle depthSampler; // Used to sample the previous level in the pyramid
-	glhandle depthImage; // Used to write to a mip level
+	glhandle depthTexture; // The depth texture rendered to when rasterising
 };

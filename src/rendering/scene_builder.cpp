@@ -61,6 +61,12 @@ void ag::scene_builder::Update()
     graph.info.frustum[1] = fX.z;
     graph.info.frustum[2] = fY.y;
     graph.info.frustum[3] = fY.z;
+    graph.info.proj_00 = proj[0][0];
+    graph.info.proj_11 = proj[1][1];
+    graph.info.zNear = 0.01f;
+    graph.info.zFar = 200.0f;
+    graph.info.hzbWidth = 2560;
+    graph.info.hzbHeight = 1440;
 
     static bool once = false;
     if (not once)

@@ -54,6 +54,12 @@ shader::shader(const string& vpath, const string& fpath)
 	glDeleteShader(frag);
 }
 
+shader::shader(shader&& other) :
+	id(other.id)
+{
+	other.id = 0;
+}
+
 shader::shader(const string& cpath)
 {
 	glhandle csh = glCreateShader(GL_COMPUTE_SHADER);
@@ -83,5 +89,8 @@ shader::shader(const string& cpath)
 
 shader::~shader()
 {
-	glDeleteProgram(id);
+	if (id != 0)
+	{
+		glDeleteProgram(id);
+	}
 }

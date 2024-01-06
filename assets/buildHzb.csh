@@ -4,8 +4,8 @@ layout(local_size_x = 32, local_size_y = 32, local_size_z = 1) in;
 
 uniform vec2 texSize;
 
-layout (binding = 0, r32f) uniform writeonly image2D outTex;
-layout (binding = 1) uniform sampler2D inTex;
+layout (binding = 0) uniform sampler2D inTex;
+layout (binding = 1, r32f) uniform writeonly image2D outTex;
 
 void main()
 {

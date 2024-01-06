@@ -10,6 +10,10 @@ enum class tex_type : GLenum
 enum class tex_format : GLenum
 {
 	Depth = GL_DEPTH24_STENCIL8,
+	Depth24 = GL_DEPTH_COMPONENT24,
+	
+	
+	R32 = GL_R32F,
 
 	RGBA8 = GL_RGBA8,
 	RGB8 = GL_RGB8,
@@ -17,10 +21,16 @@ enum class tex_format : GLenum
 	RGBA = GL_RGBA
 };
 
+enum class tex_filter : GLenum
+{
+	Linear = GL_LINEAR,
+	NearestMip = GL_NEAREST_MIPMAP_NEAREST
+};
+
 class texture
 {
 public:
-	texture();
+	texture(tex_filter minFilter = tex_filter::Linear);
 	texture(glhandle h);
 
 	void allocate(u32 w, u32 h, u32 mips, tex_format fmt);

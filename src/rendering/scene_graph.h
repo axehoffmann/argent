@@ -20,6 +20,9 @@ struct scene_info
 	u32 totalObjects;
 
 	f32 frustum[4];
+	f32 proj_00, proj_11;
+	f32 zNear, zFar;
+	f32 hzbWidth, hzbHeight;
 };
 
 struct scene_graph

@@ -90,6 +90,15 @@ ag::Engine::Engine()
 		l->Instantiate(init);
 		cb->Instantiate(init);
 	}
+
+	function<transform*> i2 = [](transform* tp)
+	{
+		transform& t = *tp;
+		t.scale = { 7, 25, 7 };
+		t.pos = { 10, -10, 3};
+		t.rot = { 0, 1, 0, 0};
+	};
+	// cb->Instantiate(i2);
 	// r->Instantiate();
 
 
