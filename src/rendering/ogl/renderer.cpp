@@ -67,7 +67,10 @@ renderer::renderer(mesh_handler& mh) :
 		{ { 2.5, 0, -2, 0 }, { 0.8, 0.4, 0.2, 30.0 } },
 		{ { -4.5, 0, -2, 0 }, { 0.1, 0.4, 1.0, 40.0 } },
 		{ { -3.5, 0, -12, 0 }, { 0.4, 0.9, 0.2, 20.0 } },
-		{ { 3.5, 0, -12, 0 }, { 0.8, 0.2, 0.9, 20.0 } }
+		{ { 3.5, 0, -12, 0 }, { 0.8, 0.2, 0.9, 20.0 } },
+		{ { 0, 50, -50, 0 }, { 0.8, 0.5, 0.5, 50000} },
+		{ { 0, -20, -50, 0 }, { 0.2, 0.2, 0.5, 10000} }
+
 	};
 	u32 plc = u32(pls.size());
 	pointLights.set(&plc, sizeof(u32), 0);
@@ -75,7 +78,7 @@ renderer::renderer(mesh_handler& mh) :
 
 	glClearColor(0.0f, 0.5f, 0.5f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);

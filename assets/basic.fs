@@ -72,7 +72,7 @@ void main()
 	vec3 V = viewPos - fragPos;
 	vec3 N = normalize(TBN * (texture(sampler2D(mat.norm), a_UV).rgb * 2.0 - 1.0));
 
-	vec3 Lo = vec3(0.0);
+	vec3 Lo = vec3(0.2) * colour * ao;
 
 	for (int i = 0; i < lightCount; i++) {
 		Lo += pointLightContribution(colour, F0, r, m, ao, N, V, pointLights[i]);

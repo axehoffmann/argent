@@ -22,7 +22,7 @@ public:
 
 			if (t.scale.x > 5) continue;
 
-			t.rot *= glm::quat({0, 0.01, 0});
+			t.rot *= glm::quat({0, 0.001, 0});
 		}
 	}
 
@@ -42,7 +42,7 @@ ag::Engine::Engine()
 	auto t = stc::steady_clock::now();
 	render->createRenderable(AssetManager::Load<Mesh>("assets/pillar/pillar.agmesh"));
 	render->createRenderable(AssetManager::Load<Mesh>("assets/cube/cube2.agmesh"));
-	render->createRenderable(AssetManager::Load<Mesh>("assets/cube/cube.agmesh"));
+	render->createRenderable(AssetManager::Load<Mesh>("assets/cliff/cliff.agmesh"));
 
 	render->loadMaterial(0, { 
 		AssetManager::Load<Texture>("assets/pillar/pillar1.png"), 
@@ -54,10 +54,15 @@ ag::Engine::Engine()
 		AssetManager::Load<Texture>("assets/cube/pepe_norm.png"),
 		AssetManager::Load<Texture>("assets/cube/pepe_detail.png") 
 	});
+	render->loadMaterial(2, {
+		AssetManager::Load<Texture>("assets/cliff/cliff_alb.png"),
+		AssetManager::Load<Texture>("assets/cliff/cliff_norm.png"),
+		AssetManager::Load<Texture>("assets/cliff/cliff_detail.png")
+	});
 
 	u32 cube = AssetManager::Load<Blueprint>("assets/entities/cube.json");
 	u32 pilar = AssetManager::Load<Blueprint>("assets/entities/pillar.json");
-	u32 room = AssetManager::Load<Blueprint>("assets/entities/room.json");
+	u32 cliff = AssetManager::Load<Blueprint>("assets/entities/cliff.json");
 
 	auto cb = AssetManager::Fetch<Blueprint>(cube).lock();
 	cb->SetWorld(ecsWorld);
@@ -65,7 +70,7 @@ ag::Engine::Engine()
 	auto l = AssetManager::Fetch<Blueprint>(pilar).lock();
 	l->SetWorld(ecsWorld);
 
-	auto r = AssetManager::Fetch<Blueprint>(room).lock();
+	auto r = AssetManager::Fetch<Blueprint>(cliff).lock();
 	r->SetWorld(ecsWorld);
 
 	Log::Trace(sfmt("Loading: {}ms", (stc::steady_clock::now() - t).count() / 1e6));
@@ -85,7 +90,7 @@ ag::Engine::Engine()
 
 		state += 2;
 	};
-	for (size_t i = 0; i < 2000; i++)
+	for (size_t i = 0; i < 10; i++)
 	{
 		l->Instantiate(init);
 		cb->Instantiate(init);
@@ -94,12 +99,12 @@ ag::Engine::Engine()
 	function<transform*> i2 = [](transform* tp)
 	{
 		transform& t = *tp;
-		t.scale = { 7, 25, 7 };
-		t.pos = { 10, -10, 3};
-		t.rot = { 0, 1, 0, 0};
+		t.scale = { 5, -5, 5};
+		t.pos = { 0, -20, -60};
+		t.rot = { 0, -1, 0, 0};
 	};
 	// cb->Instantiate(i2);
-	// r->Instantiate();
+	r->Instantiate(i2);
 
 
 	Log::Trace(sfmt("Initialisation: {}ms", (stc::steady_clock::now() - t).count() / 1e6));
