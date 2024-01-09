@@ -59,7 +59,7 @@ vec3 pointLightContribution(vec3 colour, vec3 F0, float r, float m, float ao, ve
 void main()
 {
 	Material mat = materials[materialTable[materialID] - 1];
-	vec3 colour = texture(sampler2D(mat.colour), a_UV).rgb;
+	vec3 colour = pow(texture(sampler2D(mat.colour), a_UV), vec4(2.2)).rgb;
 
 	vec4 detail = texture(sampler2D(mat.detail), a_UV);
 	float r = detail.r;
@@ -72,14 +72,14 @@ void main()
 	vec3 V = viewPos - fragPos;
 	vec3 N = normalize(TBN * (texture(sampler2D(mat.norm), a_UV).rgb * 2.0 - 1.0));
 
-	vec3 Lo = vec3(0.2) * colour * ao;
+	vec3 Lo = vec3(0.03) * colour * ao;
 
 	for (int i = 0; i < lightCount; i++) {
 		Lo += pointLightContribution(colour, F0, r, m, ao, N, V, pointLights[i]);
 	}
 	
 	FragColor = vec4(Lo, 1.0);
-	// FragColor.rgb = pow(FragColor.rgb, vec3(1.0/2.2));
+	FragColor.rgb = pow(FragColor.rgb, vec3(1.0/2.2));
 }
 
 vec3 pointLightContribution(vec3 colour, vec3 F0, float r, float m, float ao, vec3 N, vec3 V, PointLight light)

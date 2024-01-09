@@ -18,10 +18,14 @@ texture::texture(glhandle glID)
 {
 	glCreateTextures(GL_TEXTURE_2D, 1, &id);
 
-	glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTextureParameteri(id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTextureParameteri(id, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTextureParameteri(id, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	f32 aniso;
+	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &aniso);
+	glTextureParameterf(id, GL_TEXTURE_MAX_ANISOTROPY, aniso);
 }
 
 void texture::allocate(u32 w, u32 h, u32 mips, tex_format fmt)

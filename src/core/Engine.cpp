@@ -82,15 +82,15 @@ ag::Engine::Engine()
 	{
 		transform& t = *tp;
 		t.pos.y = state % 4 == 0 ? -16 : -15;
-		t.pos.x = ((state % 1040) % 96) - 50;
-		t.pos.z = -5 -  2 * ((state % 1040) / 96);
-		t.pos.y += (state / 1040) * 4.5f;
+		t.pos.x = 3 * ((state % 1040) % 96) - 150;
+		t.pos.z = -40 -  2 * ((state % 1040) / 96);
+		t.pos.y += (state / 1040) * 10.0f;
 			
 		t.rot *= glm::quat({ 0, 0.013 * state, 0 });
 
 		state += 2;
 	};
-	for (size_t i = 0; i < 10; i++)
+	for (size_t i = 0; i < 2000; i++)
 	{
 		l->Instantiate(init);
 		cb->Instantiate(init);
