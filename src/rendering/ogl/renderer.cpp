@@ -28,10 +28,13 @@ renderer::renderer(mesh_handler& mh) :
 
 	instanceData(buffer_access_type::DynamicDraw, buffer_type::Storage),
 	pointLights(buffer_access_type::DynamicDraw, buffer_type::Storage),
-	grassPos(generateGrassBuffer()),
 
 	sceneInfo(buffer_access_type::DynamicDraw, buffer_type::Storage),
 	instanceMap(buffer_access_type::StreamDraw, buffer_type::Storage),
+
+	grassShader("assets/grass.vs", "assets/grass.fs"),
+	grassPos(generateGrassBuffer()),
+	grassIndices(buffer_access_type::StaticDraw, buffer_type::IndexArray),
 
 	hzb(shader("assets/buildHzb.csh"), depthLayer.getID())
 {
@@ -76,6 +79,16 @@ renderer::renderer(mesh_handler& mh) :
 	pointLights.set(&plc, sizeof(u32), 0);
 	pointLights.set(pls.data(), sizeof(point_light) * pls.size(), 16);
 
+	// Grass mesh indices
+	vector<u32> grs{
+		0, 1, 2,	 1, 2, 3,	  2, 3, 4,
+		3, 4, 5,	 4, 5, 6,	  5, 6, 7,
+		6, 7, 8,	 7, 8, 9,	  8, 9, 10,
+		9, 10, 11,	 10, 11, 12,  11, 12, 13,  
+		12, 13, 14
+	};
+	grassIndices.setData(grs.data(), grs.size() * sizeof(u32));
+
 	glClearColor(0.0f, 0.5f, 0.5f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);
@@ -85,16 +98,18 @@ renderer::renderer(mesh_handler& mh) :
 	glDebugMessageCallback(message_callback, nullptr);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
 
-	auto view = view_matrix({0, 0, 2}, 0, 0);
+	auto view = view_matrix({0, 2, 3}, 0, 0.4);
 	auto proj = projection_matrix(glm::radians(90.0f), 1280.0f / 720.0f, 0.01f, 200.0f);
 
 	// Prepare shader
-	standardShader.bind();
-	standardShader.uniform("view", view);
-	standardShader.uniform("proj", proj);
-	standardShader.uniform("viewPos", {0, 0, 5});
+
+	grassShader.bind();
+	grassShader.uniform("view", view);
+	grassShader.uniform("proj", proj);
+	//grassShader.uniform("viewPos", {0, 0, 5});
 
 	vert.bind();
+	ebo.bind();
 }
 
 f32 clearCol[] { 0.0f, 0.5f, 0.5f };
@@ -103,12 +118,13 @@ f32 clearDepth { 1.0f };
 void renderer::render(scene_graph& sg)
 {
 	//glDepthMask(1);
-	hzb.generate();
+	//hzb.generate();
 
 	glClearNamedFramebufferfv(fb.getID(), GL_COLOR, 0, clearCol);
 	glClearNamedFramebufferfv(fb.getID(), GL_DEPTH, 0, &clearDepth);
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	/*
 	// Update some scene data
 	instanceData.set(sg.scene.data(), sizeof(instance_data) * sg.scene.size(), 0);
 	sceneInfo.set(&sg.info, sizeof(scene_info), 0);
@@ -130,11 +146,17 @@ void renderer::render(scene_graph& sg)
 	glDispatchCompute(u32(std::ceil(f32(sg.scene.size()) / 256)), 1, 1);
 	hzb.unbind(0);
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+	*/
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fb.getID());
-	standardShader.bind();
+	grassShader.bind();
+	grassIndices.bind();
+	grassPos.bind(12);
 	glEnable(GL_DEPTH_TEST);
-	glMultiDrawElementsIndirect(GL_TRIANGLES, static_cast<GLenum>(gltype::U32), (void*)0, cmds, 20);
+	glDrawElementsInstanced(GL_TRIANGLES, 39, static_cast<GLenum>(gltype::U32), 0, 25 * 25);
+
+	// glMultiDrawElementsIndirect(GL_TRIANGLES, static_cast<GLenum>(gltype::U32), (void*)0, cmds, 20);
+
 	/*
 	// Depth prepass
 	glColorMask(0, 0, 0, 0);

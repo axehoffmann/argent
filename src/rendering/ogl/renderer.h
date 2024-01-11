@@ -59,6 +59,7 @@ private:
 	buffer pointLights;
 
 	buffer grassPos;
+	buffer grassIndices;
 
 	buffer sceneInfo;
 	command_buffer drawCmds;
@@ -70,6 +71,7 @@ private:
 	shader standardShader;
 	shader cullShader;
 	shader screenShader;
+	shader grassShader;
 
 	vector<renderable> renderables;
 };

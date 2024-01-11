@@ -10,20 +10,23 @@ struct grass_info
 
 buffer generateGrassBuffer()
 {
-	const f32 dist = 3;
+	const f32 dist = 10;
 	const f32 begin = -dist / 2.0f;
-	const f32 density = 1.0f;
+	const f32 density = 3.0f;
 
 	const f32 spacing = 1.0f / density;
 
 	buffer bf{ buffer_access_type::DynamicDraw, buffer_type::Storage };
 
-	const u32 bladeCount = u32((dist / spacing) * (dist / spacing));
+	const u32 perUnit = u32((dist / spacing));
+	const u32 bladeCount = perUnit * perUnit;
 	vector<grass_info> grass(bladeCount);
 
 	for (u32 i = 0; i < bladeCount; i++)
 	{
-		glm::vec4 pos{ begin + (i / u32(dist / spacing)) * spacing, 0.0f, begin + (i % u32(dist / spacing)) * spacing, 0.0f };
+		f32 row = (i % perUnit);
+		f32 col = (i / perUnit);
+		glm::vec4 pos{ begin + row * spacing, 0.0f, begin + col * spacing, 0.0f };
 
 		grass[i] = grass_info{ pos };
 	}

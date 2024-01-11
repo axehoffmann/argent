@@ -18,9 +18,14 @@ window::window()
 
 	glewInit();
 
-	if (not GLEW_NV_gpu_shader5 or not GLEW_ARB_bindless_texture)
+	if (not GLEW_ARB_bindless_texture)
 	{
-		ag::Log::Trace("GPU extentions not supported!");
+		ag::Log::Warn("GPU bindless textures not supported!");
+	}
+
+	if (not GLEW_NV_gpu_shader5)
+	{
+		ag::Log::Warn("NV GPU5 extension not supported");
 	}
 
 	glViewport(0, 0, 2560, 1440);
