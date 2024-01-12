@@ -10,9 +10,9 @@ struct grass_info
 
 buffer generateGrassBuffer()
 {
-	const f32 dist = 10;
+	const f32 dist = 15;
 	const f32 begin = -dist / 2.0f;
-	const f32 density = 3.0f;
+	const f32 density = 10.0f;
 
 	const f32 spacing = 1.0f / density;
 

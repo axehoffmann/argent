@@ -40,9 +40,10 @@ ag::Engine::Engine()
 	render = std::make_unique<renderer>(meshInfo);
 
 	auto t = stc::steady_clock::now();
-	render->createRenderable(AssetManager::Load<Mesh>("assets/pillar/pillar.agmesh"));
+	/*
 	render->createRenderable(AssetManager::Load<Mesh>("assets/cube/cube2.agmesh"));
 	render->createRenderable(AssetManager::Load<Mesh>("assets/cliff/cliff.agmesh"));
+	render->createRenderable(AssetManager::Load<Mesh>("assets/pillar/pillar.agmesh"));
 
 	render->loadMaterial(0, { 
 		AssetManager::Load<Texture>("assets/pillar/pillar1.png"), 
@@ -72,11 +73,11 @@ ag::Engine::Engine()
 
 	auto r = AssetManager::Fetch<Blueprint>(cliff).lock();
 	r->SetWorld(ecsWorld);
-
+	*/
 	Log::Trace(sfmt("Loading: {}ms", (stc::steady_clock::now() - t).count() / 1e6));
 
 	t = stc::steady_clock::now();
-
+	/*
 	i32 state = 0;
 	function<transform*> init = [&](transform* tp) 
 	{
@@ -106,7 +107,7 @@ ag::Engine::Engine()
 	// cb->Instantiate(i2);
 	r->Instantiate(i2);
 
-
+	*/
 	Log::Trace(sfmt("Initialisation: {}ms", (stc::steady_clock::now() - t).count() / 1e6));
 
 	RegisterSystem(new test_system);
@@ -199,7 +200,7 @@ void ag::Engine::Update(double dt)
 
 void ag::Engine::FrameUpdate(double dt)
 {
-	render->render(sceneBuilder->StartGraphRead());
+	render->render(sceneBuilder->StartGraphRead(), dt);
 	sceneBuilder->EndGraphRead();
 	w.swapBuffers();
 }

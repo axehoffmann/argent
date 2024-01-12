@@ -35,6 +35,7 @@ renderer::renderer(mesh_handler& mh) :
 	grassShader("assets/grass.vs", "assets/grass.fs"),
 	grassPos(generateGrassBuffer()),
 	grassIndices(buffer_access_type::StaticDraw, buffer_type::IndexArray),
+	clock(0),
 
 	hzb(shader("assets/buildHzb.csh"), depthLayer.getID())
 {
@@ -115,7 +116,7 @@ renderer::renderer(mesh_handler& mh) :
 f32 clearCol[] { 0.0f, 0.5f, 0.5f };
 f32 clearDepth { 1.0f };
 
-void renderer::render(scene_graph& sg)
+void renderer::render(scene_graph& sg, f64 dt)
 {
 	//glDepthMask(1);
 	//hzb.generate();
@@ -150,10 +151,14 @@ void renderer::render(scene_graph& sg)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fb.getID());
 	grassShader.bind();
+
+	clock += dt;
+
+	grassShader.uniform("clock", clock);
 	grassIndices.bind();
 	grassPos.bind(12);
 	glEnable(GL_DEPTH_TEST);
-	glDrawElementsInstanced(GL_TRIANGLES, 39, static_cast<GLenum>(gltype::U32), 0, 25 * 25);
+	glDrawElementsInstanced(GL_TRIANGLES, 39, static_cast<GLenum>(gltype::U32), 0, 15 * 15 * 10 * 10);
 
 	// glMultiDrawElementsIndirect(GL_TRIANGLES, static_cast<GLenum>(gltype::U32), (void*)0, cmds, 20);
 

@@ -34,7 +34,7 @@ class renderer
 {
 public:
 	renderer(mesh_handler& mh);
-	void render(scene_graph& scene);
+	void render(scene_graph& scene, f64 dt);
 
 	u32 createRenderable(u32 meshID);
 
@@ -54,6 +54,8 @@ private:
 	buffer ebo;
 	u32 vboOffset;
 	u32 eboOffset;
+
+	f32 clock;
 
 	buffer instanceData;
 	buffer pointLights;
