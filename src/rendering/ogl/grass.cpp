@@ -26,7 +26,7 @@ buffer generateGrassBuffer()
 	{
 		f32 row = (i % perUnit);
 		f32 col = (i / perUnit);
-		glm::vec4 pos{ begin + row * spacing, 0.0f, begin + col * spacing, 0.0f };
+		glm::vec4 pos{ begin + row * spacing, -2.0f, begin + col * spacing, 0.0f };
 
 		grass[i] = grass_info{ pos };
 	}

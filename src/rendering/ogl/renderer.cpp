@@ -82,10 +82,10 @@ renderer::renderer(mesh_handler& mh) :
 
 	// Grass mesh indices
 	vector<u32> grs{
-		0, 1, 2,	 1, 2, 3,	  2, 3, 4,
-		3, 4, 5,	 4, 5, 6,	  5, 6, 7,
-		6, 7, 8,	 7, 8, 9,	  8, 9, 10,
-		9, 10, 11,	 10, 11, 12,  11, 12, 13,  
+		0, 1, 2,	 2, 1, 3,	  2, 3, 4,
+		4, 3, 5,	 4, 5, 6,	  6, 5, 7,
+		6, 7, 8,	 8, 7, 9,	  8, 9, 10,
+		10, 9, 11,	 10, 11, 12,  12, 11, 13,  
 		12, 13, 14
 	};
 	grassIndices.setData(grs.data(), grs.size() * sizeof(u32));
@@ -99,7 +99,7 @@ renderer::renderer(mesh_handler& mh) :
 	glDebugMessageCallback(message_callback, nullptr);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
 
-	auto view = view_matrix({0, 2, 3}, 0, 0.4);
+	auto view = view_matrix({0, 2, 0}, 0, 0.4);
 	auto proj = projection_matrix(glm::radians(90.0f), 1280.0f / 720.0f, 0.01f, 200.0f);
 
 	// Prepare shader
@@ -107,7 +107,7 @@ renderer::renderer(mesh_handler& mh) :
 	grassShader.bind();
 	grassShader.uniform("view", view);
 	grassShader.uniform("proj", proj);
-	//grassShader.uniform("viewPos", {0, 0, 5});
+	grassShader.uniform("viewPos", {0, 2, 0});
 
 	vert.bind();
 	ebo.bind();
