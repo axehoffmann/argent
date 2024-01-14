@@ -60,12 +60,10 @@ float iqnoise(in vec2 x, float u, float v)
     return va/wt;
 }
 
-/*
 vec3 rotateVbyQ(vec3 v, vec4 q)
 {
     return 2.0 * dot(v, q.xyz) * q.xyz + (q.w * q.w - dot(q.xyz, q.xyz)) * v + 2.0 * q.w * cross(v, q.xyz);
 }
-*/
 
 vec2 sampleWind(vec2 pos)
 {
@@ -107,7 +105,7 @@ void main()
 	vec3 facing = vec3(cos(rot), 0.0, sin(rot));
 
 	// Randomize blade flexibility
-	// float flex = 0.8 + (bladeHash % 45 / 160.0);
+	float flex = 0.7 + (bladeHash % 45 / 100.0);
 
 	// Jitter the blade position slightly
 	blade.pos.xz += vec2(bladeHash % 50 / 250.0, bladeHash % 33 / 165.0);
@@ -130,25 +128,25 @@ void main()
 		facing.z * horizontal
 	);
 
-	float horizontalWindSample = sampleWind(blade.pos.xz + vec2(2.0 * clock, 0.0)).x * (sin(-adjustedClock * PI * 2) * 0.1 + 0.5);
+	float horizontalWindSample = sampleWind(blade.pos.xz - vec2(2.0 * clock, 0.0)).x * (sin(-adjustedClock * PI * 2) * 0.1 + 0.5);
 
 	// Bend the blade via wind direction
 	vec3 bentPos = basePos + vec3(
-		posAlongBlade * posAlongBlade * horizontalWindSample,
-		-(posAlongBlade * posAlongBlade * horizontalWindSample),	
+		posAlongBlade * posAlongBlade * horizontalWindSample * flex,
+		-(posAlongBlade * posAlongBlade * horizontalWindSample * flex),	
 		0
 	);
 	
 	// Partial derivatives with respect to posAlongBlade
-	float dx = 2 * posAlongBlade * horizontalWindSample;
-	float dy = bladeHeight - posAlongBlade * horizontalWindSample;
+	float dx = 2 * posAlongBlade * horizontalWindSample * flex;
+	float dy = bladeHeight - posAlongBlade * horizontalWindSample * flex;
 	
 	// A vector tangent to the curve of the blade at posAlongBlade
 	vec3 tangent = normalize(vec3(dx, dy, 0.0));
 	
 	normal = cross(tangent, facing).zyx;
 	// Bend the normal outwards slightly for the saddle shape of a grass blade
-	// normal = rotateVbyQ(normal, vec4(tangent, horizontalDir * 0.));
+	// normal = rotateVbyQ(normal, vec4(tangent, horizontalDir * 0.1));
 
 	worldPos = blade.pos.xyz + bentPos;
 

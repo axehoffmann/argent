@@ -4,7 +4,8 @@
 
 enum class tex_type : GLenum
 {
-	Tex2D = GL_TEXTURE_2D
+	Tex2D = GL_TEXTURE_2D,
+	Tex2DMS = GL_TEXTURE_2D_MULTISAMPLE,
 };
 
 enum class tex_format : GLenum
@@ -30,10 +31,11 @@ enum class tex_filter : GLenum
 class texture
 {
 public:
-	texture(tex_filter minFilter = tex_filter::Linear);
+	texture(tex_filter minFilter = tex_filter::Linear, tex_type texType = tex_type::Tex2D);
 	texture(glhandle h);
 
 	void allocate(u32 w, u32 h, u32 mips, tex_format fmt);
+	void allocate(u32 w, u32 h, tex_format fmt, u32 samples);
 
 	void bind(u32 slot);
 

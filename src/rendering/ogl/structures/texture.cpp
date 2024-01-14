@@ -3,9 +3,8 @@
 #include "texture.h"
 #include "texture.h"
 
-texture::texture(tex_filter minFilter)
-{
-	glCreateTextures(GL_TEXTURE_2D, 1, &id);
+texture::texture(tex_filter minFilter, tex_type texType) {
+	glCreateTextures(static_cast<GLenum>(texType), 1, &id);
 
 	glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, static_cast<GLenum>(minFilter));
 	glTextureParameteri(id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -31,6 +30,11 @@ texture::texture(glhandle glID)
 void texture::allocate(u32 w, u32 h, u32 mips, tex_format fmt)
 {
 	glTextureStorage2D(id, mips, static_cast<GLenum>(fmt), w, h);
+}
+
+void texture::allocate(u32 w, u32 h, tex_format fmt, u32 samples)
+{
+	glTextureStorage2DMultisample(id, samples, static_cast<GLenum>(fmt), w, h, GL_TRUE);
 }
 
 void texture::setData(u32 w, u32 h, void* data, tex_format fmt)

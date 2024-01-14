@@ -10,6 +10,9 @@
 
 #include "grass.h"
 
+constexpr u32 SCREEN_WIDTH = 2560;
+constexpr i32 SCREEN_HEIGHT = 1440;
+
 void message_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)
 {
 	std::cout << message << '\n';
@@ -37,13 +40,16 @@ renderer::renderer(mesh_handler& mh) :
 	grassIndices(buffer_access_type::StaticDraw, buffer_type::IndexArray),
 	clock(0),
 
+	colourLayer(tex_filter::Linear, tex_type::Tex2DMS),
+	depthLayer(tex_filter::Linear, tex_type::Tex2DMS),
+
 	hzb(shader("assets/buildHzb.csh"), depthLayer.getID())
 {
 
 	// Initialise a framebuffer to render to
-	colourLayer.allocate(2560, 1440, 1, tex_format::RGBA8);
+	colourLayer.allocate(2560, 1440, tex_format::RGBA8, 4);
 	fb.attach(colourLayer, attachment::Colour, 0);
-	depthLayer.allocate(2560, 1440, 1, tex_format::Depth24);
+	depthLayer.allocate(2560, 1440, tex_format::Depth24, 4);
 	fb.attach(depthLayer, attachment::Depth, 0);
 
 	// Initialise mesh buffers
@@ -92,6 +98,7 @@ renderer::renderer(mesh_handler& mh) :
 
 	glClearColor(0.0f, 0.5f, 0.5f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_MULTISAMPLE);
 	//glEnable(GL_CULL_FACE);
 
 	glEnable(GL_DEBUG_OUTPUT);
@@ -158,7 +165,7 @@ void renderer::render(scene_graph& sg, f64 dt)
 	grassIndices.bind();
 	grassPos.bind(12);
 	glEnable(GL_DEPTH_TEST);
-	glDrawElementsInstanced(GL_TRIANGLES, 39, static_cast<GLenum>(gltype::U32), 0, 45 * 45 * 10 * 10);
+	glDrawElementsInstanced(GL_TRIANGLES, 39, static_cast<GLenum>(gltype::U32), 0, 80 * 80 * 10 * 10);
 
 	// glMultiDrawElementsIndirect(GL_TRIANGLES, static_cast<GLenum>(gltype::U32), (void*)0, cmds, 20);
 
@@ -177,11 +184,15 @@ void renderer::render(scene_graph& sg, f64 dt)
 
 	// Draw framebuffer results to screen (on a full-screen triangle)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	/*
 	colourLayer.bind(0);
 	screenShader.bind();
 	screenShader.uniform("screenTex", 0);
 	glDisable(GL_DEPTH_TEST);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
+	*/
+	glBlitNamedFramebuffer(fb.getID(), 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 }
 
 u32 renderer::createRenderable(u32 meshID)
