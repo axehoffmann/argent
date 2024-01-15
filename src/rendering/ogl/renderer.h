@@ -15,6 +15,8 @@
 #include "structures/timer.h"
 #include "structures/vao.h"
 
+#include "atmosphere.h"
+
 #include "lib/basic.h"
 
 struct renderable
@@ -74,6 +76,8 @@ private:
 	shader cullShader;
 	shader screenShader;
 	shader grassShader;
+
+	atmosphere atmo;
 
 	vector<renderable> renderables;
 };

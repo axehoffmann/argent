@@ -118,6 +118,9 @@ renderer::renderer(mesh_handler& mh) :
 
 	vert.bind();
 	ebo.bind();
+
+	atmo.runTransmittance();
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
 
 f32 clearCol[] { 0.0f, 0.5f, 0.5f };
@@ -155,7 +158,10 @@ void renderer::render(scene_graph& sg, f64 dt)
 	hzb.unbind(0);
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	*/
+	
 
+	/*
+	* RENDER GRASS ######
 	glBindFramebuffer(GL_FRAMEBUFFER, fb.getID());
 	grassShader.bind();
 
@@ -166,6 +172,7 @@ void renderer::render(scene_graph& sg, f64 dt)
 	grassPos.bind(12);
 	glEnable(GL_DEPTH_TEST);
 	glDrawElementsInstanced(GL_TRIANGLES, 39, static_cast<GLenum>(gltype::U32), 0, 80 * 80 * 10 * 10);
+	*/
 
 	// glMultiDrawElementsIndirect(GL_TRIANGLES, static_cast<GLenum>(gltype::U32), (void*)0, cmds, 20);
 
@@ -183,16 +190,18 @@ void renderer::render(scene_graph& sg, f64 dt)
 	*/
 
 	// Draw framebuffer results to screen (on a full-screen triangle)
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	/*
-	colourLayer.bind(0);
+	
+	// colourLayer.bind(0);
 	screenShader.bind();
 	screenShader.uniform("screenTex", 0);
 	glDisable(GL_DEPTH_TEST);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
-	*/
-	glBlitNamedFramebuffer(fb.getID(), 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	
+
+	// BLIT FRAMEBUFFER
+	//glBlitNamedFramebuffer(fb.getID(), 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 }
 
 u32 renderer::createRenderable(u32 meshID)

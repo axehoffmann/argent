@@ -24,4 +24,4 @@ target_sources(renderer PRIVATE
 	"structures/framebuffer.h"
 	"structures/framebuffer.cpp"
 	"material_allocator.h" 
-)
+ "atmosphere.h")
