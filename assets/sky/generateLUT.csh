@@ -3,6 +3,8 @@
 layout (local_size_x = 32, local_size_y = 32, local_size_z = 32) in;
 
 layout (binding = 0) uniform writeonly image3D lut;
+layout (binding = 1) uniform sampler2D transmittanceLUT;
+
 uniform vec3 lutSize;
 
 const float PI = 3.14159265359;
@@ -78,6 +80,15 @@ vec2 raySphere(vec3 P, vec3 dir)
 	return vec2(1e20, 0);
 }
 
+// h: height above sea in m
+// azimuth: 1 = ray is vertical, 0 = horizontal
+vec3 sampleTransmittance(float h, vec3 dir)
+{
+	float u = h / (Ha - Hp);
+	float v = 1.0 - dot(dir, vec3(0.0, 1.0, 0.0);
+
+	return texture(transmittanceLUT, vec2(u, v));
+}
 
 
 // Single-scattering intensity
@@ -104,7 +115,7 @@ vec3 intensity(vec3 V, vec3 L, vec3 Pa, vec3 Pb)
 		float pR = particleDensity(P.y, 8000.0);
 		float pM = particleDensity(P.y, 1200.0);
 
-		float expR(
+		float powR = 
 
 	}
 }

@@ -17,7 +17,7 @@ public:
 	void runTransmittance()
 	{
 		transmittanceBuilder.bind();
-		glBindImageTexture(0, lut.getID(), 0, GL_FALSE, 0, GL_WRITE_ONLY, static_cast<GLenum>(tex_format::RGBA8));
+		glBindImageTexture(2, lut.getID(), 0, GL_FALSE, 0, GL_WRITE_ONLY, static_cast<GLenum>(tex_format::RGBA8));
 		glDispatchCompute(256 / 32, 64 / 32, 1);
 		lut.bind(0);
 	}
@@ -25,4 +25,7 @@ public:
 private:
 	texture lut;
 	shader transmittanceBuilder;
+
+	//shader initialLUT;
+	//shader iterateLUT;
 };
