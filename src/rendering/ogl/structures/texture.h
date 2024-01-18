@@ -6,6 +6,8 @@ enum class tex_type : GLenum
 {
 	Tex2D = GL_TEXTURE_2D,
 	Tex2DMS = GL_TEXTURE_2D_MULTISAMPLE,
+
+	Tex3D = GL_TEXTURE_3D,
 };
 
 enum class tex_format : GLenum
@@ -28,14 +30,21 @@ enum class tex_filter : GLenum
 	NearestMip = GL_NEAREST_MIPMAP_NEAREST
 };
 
+enum class tex_wrap : GLenum
+{
+	Clamp = GL_CLAMP,
+	Repeat = GL_REPEAT,
+};
+
 class texture
 {
 public:
-	texture(tex_filter minFilter = tex_filter::Linear, tex_type texType = tex_type::Tex2D);
+	texture(tex_filter minFilter = tex_filter::Linear, tex_type texType = tex_type::Tex2D, tex_wrap wrap = tex_wrap::Repeat);
 	texture(glhandle h);
 
 	void allocate(u32 w, u32 h, u32 mips, tex_format fmt);
 	void allocate(u32 w, u32 h, tex_format fmt, u32 samples);
+	void allocate3D(u32 w, u32 h, u32 d, u32 mips, tex_format fmt);
 
 	void bind(u32 slot);
 
