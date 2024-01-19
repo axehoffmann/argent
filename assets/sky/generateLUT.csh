@@ -10,15 +10,29 @@ uniform vec3 lutSize;
 const float PI = 3.14159265359;
 
 
-const float Rp = 6360.0;
-const float Ra = 6420.0;
+const float Rp = 6360000.0;
+const float Ra = 6420000.0;
 
 const float g = -0.8;
 
-const vec3 rayleighCoeff = vec3(5.47e-6, 1.28e-5, 3.12e-5);
-const float mieCoeff	 = 2e-6;
 
-const float sunAngularRadius = 0.1;
+const float rayleighDensity = 8000.0;
+const vec3 rayleighCoeff = vec3(5.47e-6, 1.28e-5, 3.12e-5);
+
+const float mieDensity = 1200.0;
+const float mieCoeff = 2e-6;
+
+// Sun angular radius (in radians)
+const float sunRadius = 0.1;
+
+const vec3 solarIrradiance = vec3(1000.0, 1.0, 0.9);
+
+
+float safeSqrt(float a)
+{
+    return sqrt(max(a, 0.0));
+}
+
 
 // Schlick approximation of Henyey-Greenstein phase function
 //	cosTheta: angle between light direction + out scatter direction
@@ -51,126 +65,131 @@ float particleDensity(float h, float H)
     return exp(-h / H);
 }
 
-// Intersect ray with the atmosphere, returning distance to entry and exit
-vec2 raySphere(vec3 P, vec3 dir)
-{
-    float a = 1.0;
-    float b = 2 * dot(P, dir);
-    float c = dot(P, P) - Ra * Ra;
-    float d = b * b - 4 * a * c;
-
-    if (d > 0) // ray intersected sphere
-    {
-        float s = sqrt(d);
-        float near = max(0, (-b - s) / (2 * a));
-        float far = (-b + s) / (2 * a);
-
-        if (far >= 0)
-        {
-            return vec2(near, far - near);
-        }
-    }
-
-    // no intersection
-    return vec2(1e20, 0);
-}
 
 float unitRangeToUV(float x, float pixs)
 {
     return 0.5 / pixs + x * (1.0 - 1.0 / pixs);
 }
 
-
-
-vec4 sampleTransmittance(vec3 pos, vec3 dir)
+float clampAtmos(float a)
 {
-    float h = distance(vec3(0.0), pos) - Rp;
+    return clamp(a, Rp, Ra);
+}
 
+
+float distToEdgeOfAtmos(float r, float mu)
+{
+    float disc = r * r * (mu * mu - 1.0) + Ra * Ra;
+    return max(-r * mu + safeSqrt(disc), 0.0);
+}
+
+// Calculates the distance to the planet surface, assuming (r, mu) hits the ground 
+float distToSurface(float r, float mu)
+{
+    float disc = r * r * (mu * mu - 1.0) + Rp * Rp;
+    return max(-r * mu + safeSqrt(disc), 0.0);
+}
+
+float distToBoundary(float r, float mu, bool rayHitsGround)
+{
+    return rayHitsGround ? distToSurface(r, mu) : distToEdgeOfAtmos(r, mu);
+}
+
+
+// E Bruneton's 2017 mapping
+vec2 RMuToUV(float r, float mu)
+{
     float H = sqrt(Ra * Ra - Rp * Rp);
-    // Dist to hrzn
-    float rho = sqrt(h * h - Rp * Rp);
-
-    float d = raySphere(pos, dir).y;
-    float dMin = Ra - h;
+    float rho = safeSqrt(r * r - Rp * Rp);
+    float d = distToEdgeOfAtmos(r, mu);
+    float dMin = Ra - r;
     float dMax = rho + H;
-    float mu = (d - dMin) / (dMax - dMin);
-    float r = rho / H;
-    vec2 uv = vec2(unitRangeToUV(mu, 256.0), unitRangeToUV(r, 64.0));
-    return texture(transmittanceLUT, uv);
+    float muX = (d - dMin) / (dMax - dMin);
+    float rX = rho / H;
+    return vec2(unitRangeToUV(muX, 256.0), unitRangeToUV(rX, 64.0)); 
 }
 
-// Calculate the transmittance between two points in atmosphere
-// via 2 samples of the transmittance LUT
-vec4 calcTransmittance(vec3 Pa, vec3 Pb)
+
+// Samples transmittance to the edge of atmosphere along ray (r, mu)
+vec3 sampleTransmittance(float r, float mu)
 {
-    vec4 tPa = sampleTransmittance(
-        Pa, normalize(Pb - Pa)
-    );
-    vec4 tPb = sampleTransmittance(
-        Pb, normalize(Pb - Pa)
-    );
-
-    return min(tPa / tPb, vec4(1.0));
+    return texture(transmittanceLUT, RMuToUV(r, mu)).rgb;
 }
+
+
+// Samples transmittance through ray (r, mu) over distance d 
+vec3 calcTransmittance(float r, float mu, float d, bool rayHitsGround)
+{
+    // define Q as point d units away along ray (r, mu)
+    // length O -> Q 
+    float rQ = clampAtmos(sqrt(d * d + 2.0 * r * mu * d + r * r));
+    // azimuth angle at point Q (dot(mu, |Q|))
+    float muQ = clamp((r * mu + d) / rQ, -1.0, 1.0);
+
+    if (rayHitsGround)
+    {
+        return min(
+            sampleTransmittance(rQ, -muQ) / sampleTransmittance(r, -mu),
+            vec3(1.0)
+        );
+    }
+    
+    return min(
+        sampleTransmittance(r, mu) / sampleTransmittance(rQ, muQ),
+        vec3(1.0)
+    );
+}
+
 
 // Transmittance to sun - depends on how much sun is above the horizon
-vec4 sunTransmittance(vec3 pos, vec3 dir)
+// r: length O -> P      muS: cosine angle between sun and vertical
+vec3 sunTransmittance(float r, float muS)
 {
-    float r = distance(vec3(0.0), pos);
-    float mu = dot(normalize(pos), dir);
+    float sinThetaH = Rp / r;
+    float cosThetaH = -sqrt(max(1.0 - sinThetaH * sinThetaH, 0.0));
 
-    float sinThetah = Rp / r;
-    float cosThetah = -sqrt(max(1.0 - sinThetah * sinThetah, 0.0));
-    // Assumes sun is point-like, yet a fraction represented by smoothstep term
-    // can be above/below the horizon
-    return sampleTransmittance(pos, dir) * smoothstep(
-        -sinThetah * sunAngularRadius, // / rad,
-        sinThetah * sunAngularRadius, // / rad,
-        mu - cosThetah
-    );
+    return sampleTransmittance(r, muS)
+        * smoothstep(-sinThetaH * sunRadius, sinThetaH * sunRadius, muS - cosThetaH);
 }
 
 // Single-scattering intensity
-vec4 intensity(float delta, vec3 Pa, vec3 Pb)
+void singleScatteringSample(float r, float mu, float muS, float nu, float d, bool rayHitsGround,
+                            out vec3 rayleigh, out vec3 mie)
 {
-    vec3 incidentIntensity = vec3(1.0, 1.0, 0.9);
+    float rQ = clampAtmos(sqrt(d * d + 2.0 * r * mu * d + r * r));
+    float muSQ = clamp((r * muS + d * nu) / rQ, -1.0, 1.0);
 
-    vec3 coeffR = rayleighCoeff / (4 * PI);
-    float coeffM = mieCoeff / (4 * PI);
+    vec3 transmittance = calcTransmittance(r, mu, d, rayHitsGround)
+        * sunTransmittance(rQ, muSQ);
 
-    vec3 L = vec3(cos(delta), sin(delta), 0.0);
-    // Discretely sample integral part
-    vec3 integR = vec3(0.0);
-    float integM = 0.0;
+    rayleigh = transmittance * particleDensity(rQ - Rp, rayleighDensity);
+    mie = transmittance * particleDensity(rQ - Rp, mieDensity);
+}
 
+void singleScattering(float r, float mu, float muS, float nu, bool rayHitsGround,
+                      out vec3 rayleigh, out vec3 mie)
+{
     const int samples = 50;
+
+    // Discretely sample integral
+    float dx = distToBoundary(r, mu, rayHitsGround) / float(samples);
+    vec3 rayleighSum = vec3(0.0);
+    vec3 mieSum = vec3(0.0);
     for (int i = 0; i < samples; i++)
     {
-        // Sample point
-        vec3 P = mix(Pa, Pb, float(i) / float(samples));
-        // Point towards sun at edge of atmosphere from sample
-        vec3 Pc = raySphere(P, L).y * L + P;
-
-        float pR = particleDensity(P.y, 8000.0);
-        float pM = particleDensity(P.y, 1200.0);
-
-        // transmittance of sunlight through atmosphere to P
-        vec4 scatteredT = sunTransmittance(P, L);
-
-        // manually calculate transmittance based on distance here
-        // transmittance LUT doesn't accomodate between two points
-        // in atmosphere
-        vec4 directT = calcTransmittance(Pa, P);
-        
-        integR += pR * exp(-scatteredT.rgb - directT.rgb) * 1.0 / 50.0;
-        integM += pM * exp(-scatteredT.a - directT.a)     * 1.0 / 50.0;
+        float di = float(i) * dx;
+        vec3 rayleighi, miei;
+        singleScatteringSample(r, mu, muS, nu, di, rayHitsGround, rayleighi, miei);
+        // First/last samples have less weight
+        float w = (i == 0 || i == samples - 1) ? 0.5 : 1.0;
+        rayleighSum += rayleighi * w;
+        mieSum += miei * w;
     }
-    
-    vec3 IsR = incidentIntensity * coeffR * integR;
-    vec3 IsM = incidentIntensity * coeffM * integM;
-
-    return vec4(IsR + IsM, 1.0);
+    rayleigh = rayleighSum * dx * solarIrradiance * rayleighCoeff;
+    mie = mieSum * dx * solarIrradiance * mieCoeff;
+    rayleigh = rayleighSum;
 }
+
 
 // LUT dimensions:
 //	h: altitude (0, H)
@@ -182,23 +201,22 @@ vec4 intensity(float delta, vec3 Pa, vec3 Pb)
 //		where Rp is planet radius, Ra is atmosphere radius
 //	V = (1 + cos(theta)) / 2
 //	W = (1 - exp(-2.8 * cos(delta) - 0.8)) / (1 - exp(-3.6)
-void UVWtoHThetaDelta(vec3 uvw, out float h, out float theta, out float delta)
+void UVWtoHThetaDelta(vec3 uvw, out float h, out float cosTheta, out float cosDelta)
 {
     h = sqrt(uvw.x * uvw.x * (Ra * Ra - Rp * Rp) + Rp * Rp);
-    theta = acos(2 * uvw.y - 1.0);
-    delta = acos((-1.8 + uvw.z * (1.0 - exp(-3.6))) / 2.8);
+    cosTheta = (2 * uvw.y - 1.0);
+    cosDelta = (-(0.8 + log(uvw.z * (1.0 - exp(-3.6)))) / 2.8);
 }
+
 
 void main()
 {
-    // Compute single-scattering to generate the initial LUT
-    float h, theta, delta;
-    UVWtoHThetaDelta(vec3(gl_GlobalInvocationID.xyz) / vec3(64, 256, 256), h, theta, delta);
+    // Compute single-scattering to generate the initial LUT 
+    float h, cosTheta, cosDelta;
+    UVWtoHThetaDelta(vec3(gl_GlobalInvocationID.xyz) / vec3(64, 256, 256), h, cosTheta, cosDelta);
 
-    vec3 pos = vec3(0.0, h, 0.0);
-    vec3 V = vec3(cos(theta), sin(theta), 0.0);
-    vec2 dists = raySphere(pos, V);
-    vec4 o = intensity(delta, pos + V * dists.x, pos + V * dists.y);
-
-    imageStore(lut, ivec3(gl_GlobalInvocationID.xyz), vec4(dists.y * 100.0, 0.0, 1.0)); 
+    vec3 rayleigh, mie;
+    singleScattering(h, cosTheta, cosDelta, 0.0, false, rayleigh, mie);
+    singleScatteringSample(h, cosTheta, cosDelta, -1.0, distToEdgeOfAtmos(h, cosTheta), false, rayleigh, mie);
+    imageStore(lut, ivec3(gl_GlobalInvocationID.xyz), vec4(rayleigh, 1.0)); 
 }

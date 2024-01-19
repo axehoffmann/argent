@@ -11,7 +11,8 @@ public:
 	atmosphere() :
 		transmittanceBuilder("assets/sky/transmittanceLUT.csh"),
 		singleScattering("assets/sky/generateLUT.csh"),
-		scatterLut(tex_filter::Linear, tex_type::Tex3D, tex_wrap::Clamp)
+		scatterLut(tex_filter::Linear, tex_type::Tex3D, tex_wrap::Clamp),
+		tLut(tex_filter::Linear, tex_type::Tex2D, tex_wrap::Clamp)
 	{
 		tLut.allocate(256, 64, 1, tex_format::RGBA8);
 		scatterLut.allocate3D(64, 256, 256, 1, tex_format::RGBA8);

@@ -8,5 +8,5 @@ layout (binding = 0) uniform sampler3D screenTex;
 
 void main()
 {
-    fragColour = vec4(texture(screenTex, vec3(v_UV, 0.2)).xyz, 1.0);
+    fragColour = vec4(texture(screenTex, vec3(v_UV, 0.45)).xyz, 1.0);
 }
