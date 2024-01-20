@@ -5,66 +5,72 @@ layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 layout (binding = 0) uniform writeonly image3D lut;
 layout (binding = 1) uniform sampler2D transmittanceLUT;
 
-uniform vec3 lutSize;
-
 const float PI = 3.14159265359;
 
 
-const float Rp = 6360000.0;
-const float Ra = 6420000.0;
+struct AtmosphereLayer
+{
+    float w;
+    float exp;
+    float expScale;
+    float lin;
+    float cons;
+};
 
-const float g = -0.8;
+struct AtmosphereProfile
+{
+    AtmosphereLayer layers[2];
+};
+
+const vec3 lutSize = vec3(128, 512, 512);
+
+const vec3 solarIrradiance = vec3(1.474000, 1.850400, 1.911980);
+const float sunAngularRadius = 0.004675;
+const float Rp = 6360.000000;
+const float Ra = 6420.000000;
+const AtmosphereProfile rayleighDensity = AtmosphereProfile(AtmosphereLayer[2](
+    AtmosphereLayer(0.000000, 0.000000, 0.000000, 0.000000, 0.000000), 
+    AtmosphereLayer(0.000000, 1.000000, -0.125000, 0.000000, 0.000000))
+);
+const vec3 rayleighScattering = vec3(0.005802, 0.013558, 0.033100);
+const AtmosphereProfile mieDensity = AtmosphereProfile(AtmosphereLayer[2](
+    AtmosphereLayer(0.000000, 0.000000, 0.000000, 0.000000, 0.000000), 
+    AtmosphereLayer(0.000000, 1.000000, -0.833333, 0.000000, 0.000000))
+);
+const vec3 mieScattering = vec3(0.003996, 0.003996, 0.003996);
+const vec3 mieExtinction = vec3(0.004440, 0.004440, 0.004440);
+const float g = 0.800000;
+const AtmosphereProfile absorpDensity = AtmosphereProfile(AtmosphereLayer[2](
+    AtmosphereLayer(25.000000, 0.000000, 0.000000, 0.066667, -0.666667), 
+    AtmosphereLayer(0.000000, 0.000000, 0.000000, -0.066667, 2.666667))
+);
+const vec3 absorpExtinction = vec3(0.000000, 0.000000, 0.000000);
+const vec3 groundAlbedo = vec3(0.100000, 0.100000, 0.100000);
+const float muSMin = -0.500000;
+
+const vec3 SKY_SPECTRAL_RADIANCE_TO_LUMINANCE = vec3(114974.916437, 71305.954816, 65310.548555);
+const vec3 SUN_SPECTRAL_RADIANCE_TO_LUMINANCE = vec3(98242.786222, 69954.398112, 66475.012354);
 
 
-const float rayleighDensity = 8000.0;
-const vec3 rayleighCoeff = vec3(5.47e-6, 1.28e-5, 3.12e-5);
-
-const float mieDensity = 1200.0;
-const float mieCoeff = 2e-6;
-
-// Sun angular radius (in radians)
-const float sunRadius = 0.1;
-
-const vec3 solarIrradiance = vec3(1000.0, 1.0, 0.9);
-
+// const float g = -0.8;
 
 float safeSqrt(float a)
 {
     return sqrt(max(a, 0.0));
 }
 
-
-// Schlick approximation of Henyey-Greenstein phase function
-//	cosTheta: angle between light direction + out scatter direction
-//	g: strength of forward-backward scatter (-1, 1)
-float phaseMie(float cosTheta)
+float getLayerDensity(AtmosphereLayer layer, float h)
 {
-    float k = 1.55 * g - 0.55 * g * g * g;
-
-    float term = 1 + k * cosTheta;
-
-    return (1.0 - k * k) /
-    (4 * PI * term * term);
+    float dens = layer.exp * exp(layer.expScale * h) + layer.lin * h + layer.cons;
+    return clamp(dens, 0.0, 1.0);
 }
 
-float phaseRayleigh(float cosTheta)
+float getProfileDensity(AtmosphereProfile profile, float h)
 {
-    return 0.75 * (1 + cosTheta * cosTheta);
+    return h < profile.layers[0].w
+        ? getLayerDensity(profile.layers[0], h)
+        : getLayerDensity(profile.layers[1], h);
 }
-
-// Adjusted F_R(theta) from Elek (2009)
-float phaseRayleigh2(float cosTheta)
-{
-    return 0.8 * (1.4 + 0.5 * cosTheta);
-}
-
-//	h: sample altitude
-//	H: scattering scale height (HR ~8000m, HM ~1200m)
-float particleDensity(float h, float H)
-{
-    return exp(-h / H);
-}
-
 
 float unitRangeToUV(float x, float pixs)
 {
@@ -149,7 +155,7 @@ vec3 sunTransmittance(float r, float muS)
     float cosThetaH = -sqrt(max(1.0 - sinThetaH * sinThetaH, 0.0));
 
     return sampleTransmittance(r, muS)
-        * smoothstep(-sinThetaH * sunRadius, sinThetaH * sunRadius, muS - cosThetaH);
+        * smoothstep(-sinThetaH * sunAngularRadius, sinThetaH * sunAngularRadius, muS - cosThetaH);
 }
 
 // Single-scattering intensity
@@ -162,14 +168,14 @@ void singleScatteringSample(float r, float mu, float muS, float nu, float d, boo
     vec3 transmittance = calcTransmittance(r, mu, d, rayHitsGround)
         * sunTransmittance(rQ, muSQ);
 
-    rayleigh = transmittance * particleDensity(rQ - Rp, rayleighDensity);
-    mie = transmittance * particleDensity(rQ - Rp, mieDensity);
+    rayleigh = transmittance * getProfileDensity(rayleighDensity, rQ - Rp);
+    mie = transmittance * getProfileDensity(mieDensity, rQ - Rp);    
 }
 
 void singleScattering(float r, float mu, float muS, float nu, bool rayHitsGround,
                       out vec3 rayleigh, out vec3 mie)
 {
-    const int samples = 50;
+    const int samples = 500;
 
     // Discretely sample integral
     float dx = distToBoundary(r, mu, rayHitsGround) / float(samples);
@@ -185,9 +191,8 @@ void singleScattering(float r, float mu, float muS, float nu, bool rayHitsGround
         rayleighSum += rayleighi * w;
         mieSum += miei * w;
     }
-    rayleigh = rayleighSum * dx * solarIrradiance * rayleighCoeff;
-    mie = mieSum * dx * solarIrradiance * mieCoeff;
-    rayleigh = rayleighSum;
+    rayleigh = rayleighSum * dx * solarIrradiance * rayleighScattering;
+    mie = mieSum * dx * solarIrradiance * mieScattering;
 }
 
 
@@ -205,18 +210,24 @@ void UVWtoHThetaDelta(vec3 uvw, out float h, out float cosTheta, out float cosDe
 {
     h = sqrt(uvw.x * uvw.x * (Ra * Ra - Rp * Rp) + Rp * Rp);
     cosTheta = (2 * uvw.y - 1.0);
-    cosDelta = (-(0.8 + log(uvw.z * (1.0 - exp(-3.6)))) / 2.8);
+    cosDelta = (2 * uvw.z - 1.0);
+
+    // cosDelta = (-(0.8 + log(uvw.z * (1.0 - exp(-3.6)))) / 2.8);
 }
 
+
+bool rayRMuHitsGround(float r, float mu)
+{
+    return mu < 0.0 && r*r * (mu*mu - 1.0) + Rp*Rp >= 0.0;
+}
 
 void main()
 {
     // Compute single-scattering to generate the initial LUT 
     float h, cosTheta, cosDelta;
-    UVWtoHThetaDelta(vec3(gl_GlobalInvocationID.xyz) / vec3(64, 256, 256), h, cosTheta, cosDelta);
+    UVWtoHThetaDelta(vec3(gl_GlobalInvocationID.xyz) / lutSize, h, cosTheta, cosDelta);
 
     vec3 rayleigh, mie;
-    singleScattering(h, cosTheta, cosDelta, 0.0, false, rayleigh, mie);
-    singleScatteringSample(h, cosTheta, cosDelta, -1.0, distToEdgeOfAtmos(h, cosTheta), false, rayleigh, mie);
-    imageStore(lut, ivec3(gl_GlobalInvocationID.xyz), vec4(rayleigh, 1.0)); 
+    singleScattering(h, cosTheta, cosDelta, 0.0, rayRMuHitsGround(h, cosTheta), rayleigh, mie);
+    imageStore(lut, ivec3(gl_GlobalInvocationID.xyz), vec4(rayleigh, mie.r)); 
 }

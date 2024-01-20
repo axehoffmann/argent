@@ -9,7 +9,6 @@
 
 i32 main()
 {
-
 	ag::Engine e;
 	try
 	{

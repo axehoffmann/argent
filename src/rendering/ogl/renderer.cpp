@@ -131,7 +131,7 @@ void renderer::render(scene_graph& sg, f64 dt)
 	//glDepthMask(1);
 	//hzb.generate();
 
-	glClearNamedFramebufferfv(fb.getID(), GL_COLOR, 0, clearCol);
+	// glClearNamedFramebufferfv(fb.getID(), GL_COLOR, 0, clearCol);
 	glClearNamedFramebufferfv(fb.getID(), GL_DEPTH, 0, &clearDepth);
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -159,20 +159,7 @@ void renderer::render(scene_graph& sg, f64 dt)
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	*/
 	
-
-	/*
-	* RENDER GRASS ######
 	glBindFramebuffer(GL_FRAMEBUFFER, fb.getID());
-	grassShader.bind();
-
-	clock += dt;
-
-	grassShader.uniform("clock", clock);
-	grassIndices.bind();
-	grassPos.bind(12);
-	glEnable(GL_DEPTH_TEST);
-	glDrawElementsInstanced(GL_TRIANGLES, 39, static_cast<GLenum>(gltype::U32), 0, 80 * 80 * 10 * 10);
-	*/
 
 	// glMultiDrawElementsIndirect(GL_TRIANGLES, static_cast<GLenum>(gltype::U32), (void*)0, cmds, 20);
 
@@ -189,19 +176,34 @@ void renderer::render(scene_graph& sg, f64 dt)
 	glDepthFunc(GL_EQUAL);
 	*/
 
-	// Draw framebuffer results to screen (on a full-screen triangle)
-	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	atmo.render(clock);
+
+	// RENDER GRASS ######
+	grassShader.bind();
+
+	clock += dt;
+
+	grassShader.uniform("clock", clock);
+	grassIndices.bind();
+	grassPos.bind(12);
+	glEnable(GL_DEPTH_TEST);
+	// glDrawElementsInstanced(GL_TRIANGLES, 39, static_cast<GLenum>(gltype::U32), 0, 80 * 80 * 10 * 10);
+
 
 	
-	// colourLayer.bind(0);
+	// Draw framebuffer results to screen (on a full-screen triangle)
+	/*
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	screenShader.bind();
+	colourLayer.bind(0);
 	screenShader.uniform("screenTex", 0);
+	//screenShader.uniform("clock", clock);
 	glDisable(GL_DEPTH_TEST);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
-	
+	*/
 
 	// BLIT FRAMEBUFFER
-	//glBlitNamedFramebuffer(fb.getID(), 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	glBlitNamedFramebuffer(fb.getID(), 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 }
 
 u32 renderer::createRenderable(u32 meshID)
