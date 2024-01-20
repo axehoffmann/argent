@@ -11,6 +11,8 @@ in vec3 viewRay;
 
 const float PI = 3.14159265359;
 
+const vec3 lutSize = vec3(128, 512, 512);
+
 const vec3 rayleighScattering = vec3(0.005802, 0.013558, 0.033100);
 const vec3 mieScattering = vec3(0.003996, 0.003996, 0.003996);
 
@@ -71,12 +73,32 @@ vec3 extrapolateMieScatter(vec4 scattering)
 //	W = (1 - exp(-2.8 * cos(delta) - 0.8)) / (1 - exp(-3.6)
 vec3 RMuMusToUVW(float r, float mu, float muS)
 {
-    return vec3(
-        sqrt((r*r - Rp*Rp) / (Ra*Ra - Rp*Rp)),
-        (1 + mu) / 2.0,
-        (1 + muS) / 2.0
-        // (1.0 - exp(-2.8 * muS - 0.8)) / (1.0 - exp(-3.6))
-    );
+    float u = clamp(r, 0.0, Ra - Rp);
+    u = pow(clamp(u / (Ra - Rp), 0.0, 1.0), 0.5);
+
+    float v;
+    r = max(r, 0.0);
+    float cosH = -sqrt(r * (2.0 * Rp + r)) / (Rp + r);
+    if (mu > cosH)
+    {
+        mu = max(mu, cosH + 1e-4);
+        v = clamp((mu - cosH) / (1.0 - cosH), 0.0, 1.0);
+        v = pow(v, 0.2);
+        v = 0.5 + 0.5 / lutSize.y + v * (lutSize.y / 2.0 - 1.0) / lutSize.y;
+    }
+    else
+    {
+        mu = min(mu, cosH - 1e-4);
+        v = clamp((cosH - mu) / (cosH + 1.0), 0.0, 1.0);
+        v = pow(v, 0.2);
+        v = 0.5 / lutSize.y + v * (lutSize.y / 2.0 - 1.0) / lutSize.y;
+    }
+
+    float w = 0.5 * (atan(max(muS, -0.45f) * tan(1.26 * 0.75)) / 0.75 + (1.0 - 0.26));
+
+    vec3 uvw = vec3(u, v, w);
+    uvw.xz = ((uvw * (lutSize - 1.0) + 0.5) / lutSize).xz;
+    return uvw;
 }
 
 vec3 getScattering(float r, float mu, float muS, float nu, bool rayHitsGround, out vec3 mieScatter)

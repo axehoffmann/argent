@@ -2,7 +2,7 @@
 
 layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 
-layout (binding = 0) uniform writeonly image3D lut;
+layout (binding = 0, rgba16) uniform writeonly image3D lut;
 layout (binding = 1) uniform sampler2D transmittanceLUT;
 
 const float PI = 3.14159265359;
@@ -51,8 +51,6 @@ const float muSMin = -0.500000;
 const vec3 SKY_SPECTRAL_RADIANCE_TO_LUMINANCE = vec3(114974.916437, 71305.954816, 65310.548555);
 const vec3 SUN_SPECTRAL_RADIANCE_TO_LUMINANCE = vec3(98242.786222, 69954.398112, 66475.012354);
 
-
-// const float g = -0.8;
 
 float safeSqrt(float a)
 {
@@ -195,7 +193,6 @@ void singleScattering(float r, float mu, float muS, float nu, bool rayHitsGround
     mie = mieSum * dx * solarIrradiance * mieScattering;
 }
 
-
 // LUT dimensions:
 //	h: altitude (0, H)
 //	theta: view-zenith angle (0, PI)
@@ -208,11 +205,29 @@ void singleScattering(float r, float mu, float muS, float nu, bool rayHitsGround
 //	W = (1 - exp(-2.8 * cos(delta) - 0.8)) / (1 - exp(-3.6)
 void UVWtoHThetaDelta(vec3 uvw, out float h, out float cosTheta, out float cosDelta)
 {
-    h = sqrt(uvw.x * uvw.x * (Ra * Ra - Rp * Rp) + Rp * Rp);
-    cosTheta = (2 * uvw.y - 1.0);
-    cosDelta = (2 * uvw.z - 1.0);
+    vec3 tc = clamp((uvw * lutSize - 0.5) / (lutSize - 1.0), 0.0, 1.0);
+    
+    h = max(tc.x*tc.x * (Ra - Rp), 0.0);
+    
+    // angle to horizon 
+    float cosH = -sqrt(h * (h + 2.0 * Rp)) / (Rp + h);
 
-    // cosDelta = (-(0.8 + log(uvw.z * (1.0 - exp(-3.6)))) / 2.8);
+    if (tc.y > 0.5)
+    {
+        tc.y = clamp((tc.y - (0.5 + 0.5 / lutSize.y)), 0.0, 1.0) * lutSize.y / (lutSize.y / 2.0 - 1.0);
+        tc.y = pow(tc.y, 5.0);
+        cosTheta = max((cosH + tc.y * (1 - cosH)), cosH + 1e-4);
+    }
+    else
+    {
+        tc.y = clamp((tc.y - 0.5 / lutSize.y), 0.0, 1.0) * lutSize.y / (lutSize.y / 2.0 - 1.0);
+        tc.y = pow(tc.y, 5.0);
+        cosTheta = min(cosH - tc.y * (cosH + 1), cosH - 1e-4);
+    }
+    cosTheta = clamp(cosTheta, -1.0, 1.0);
+    
+    cosDelta = tan((2.0 * tc.z - 1.0 + 0.26) * 0.75) / tan(1.26 * 0.75);
+    cosDelta = clamp(cosDelta, -1.0, 1.0);
 }
 
 
@@ -228,6 +243,6 @@ void main()
     UVWtoHThetaDelta(vec3(gl_GlobalInvocationID.xyz) / lutSize, h, cosTheta, cosDelta);
 
     vec3 rayleigh, mie;
-    singleScattering(h, cosTheta, cosDelta, 0.0, rayRMuHitsGround(h, cosTheta), rayleigh, mie);
+    singleScattering(h + Rp, cosTheta, cosDelta, 0.0, rayRMuHitsGround(h + Rp, cosTheta), rayleigh, mie);
     imageStore(lut, ivec3(gl_GlobalInvocationID.xyz), vec4(rayleigh, mie.r)); 
 }

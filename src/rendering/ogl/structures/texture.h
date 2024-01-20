@@ -18,6 +18,8 @@ enum class tex_format : GLenum
 	
 	R32 = GL_R32F,
 
+	RGBA32 = GL_RGBA32F,
+	RGBA16 = GL_RGBA16,
 	RGBA8 = GL_RGBA8,
 	RGB8 = GL_RGB8,
 
