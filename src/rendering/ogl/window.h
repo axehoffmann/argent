@@ -9,6 +9,8 @@
 class window
 {
 public:
+	inline static GLFWwindow* windo = nullptr;
+
 	void pollEvents();
 	void swapBuffers();
 

@@ -29,6 +29,8 @@ window::window()
 	}
 
 	glViewport(0, 0, 2560, 1440);
+
+	windo = screen;
 }
 
 void window::pollEvents()

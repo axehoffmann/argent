@@ -4,6 +4,7 @@ in vec2 v_UV;
 out vec4 fragColour;
 
 layout (binding = 0) uniform sampler3D scatterLUT;
+layout (binding = 1) uniform sampler2D transmittanceLUT;
 
 uniform vec3 camPos;
 
@@ -16,6 +17,10 @@ const vec3 lutSize = vec3(128, 512, 512);
 const vec3 rayleighScattering = vec3(0.005802, 0.013558, 0.033100);
 const vec3 mieScattering = vec3(0.003996, 0.003996, 0.003996);
 
+const vec2 sunSize = vec2(0.9, 0.9);
+const vec3 solarIrradiance = vec3(1.474000, 1.850400, 1.911980);
+const float sunAngularRadius = 0.004675;
+
 const float Rp = 6360.000000;
 const float Ra = 6420.000000;
 
@@ -24,6 +29,18 @@ const float g = 0.8;
 const float exposure = 0.5;
 const vec3 whitePoint = vec3(1.0);
 uniform vec3 sunDirection;
+
+
+float safeSqrt(float a)
+{
+    return sqrt(max(a, 0.0));
+}
+
+float distToEdgeOfAtmos(float r, float mu)
+{
+    float disc = r * r * (mu * mu - 1.0) + Ra * Ra;
+    return max(-r * mu + safeSqrt(disc), 0.0);
+}
 
 // Schlick approximation of Henyey-Greenstein phase function
 //	cosTheta: angle between light direction + out scatter direction
@@ -61,6 +78,32 @@ vec3 extrapolateMieScatter(vec4 scattering)
 }
 
 
+float unitRangeToUV(float x, float pixs)
+{
+    return 0.5 / pixs + x * (1.0 - 1.0 / pixs);
+}
+
+// E Bruneton's 2017 mapping
+vec2 RMuToUV(float r, float mu)
+{
+    float H = sqrt(Ra * Ra - Rp * Rp);
+    float rho = safeSqrt(r * r - Rp * Rp);
+    float d = distToEdgeOfAtmos(r, mu);
+    float dMin = Ra - r;
+    float dMax = rho + H;
+    float muX = (d - dMin) / (dMax - dMin);
+    float rX = rho / H;
+    return vec2(unitRangeToUV(muX, 256.0), unitRangeToUV(rX, 64.0)); 
+}
+
+
+// Samples transmittance to the edge of atmosphere along ray (r, mu)
+vec3 sampleTransmittance(float r, float mu)
+{
+    return texture(transmittanceLUT, RMuToUV(r, mu)).rgb;
+}
+
+
 // LUT dimensions:
 //	h: altitude (0, H)
 //	theta: view-zenith angle (0, PI)
@@ -73,6 +116,7 @@ vec3 extrapolateMieScatter(vec4 scattering)
 //	W = (1 - exp(-2.8 * cos(delta) - 0.8)) / (1 - exp(-3.6)
 vec3 RMuMusToUVW(float r, float mu, float muS)
 {
+    r = r - Rp;
     float u = clamp(r, 0.0, Ra - Rp);
     u = pow(clamp(u / (Ra - Rp), 0.0, 1.0), 0.5);
 
@@ -125,15 +169,21 @@ vec3 getSkyRadiance(vec3 position, vec3 ray, float shadowLen, vec3 sunDir, out v
     float muS = dot(position, sunDir) / r;
     float nu = dot(ray, sunDir);
     bool rayHitsGround = rayRMuHitsGround(r, mu);
+    transmittance = rayHitsGround ? vec3(0.0) : sampleTransmittance(r, mu);
 
     vec3 scattering, mieScatter;
     
     // Only handle unshadowed case for now
     scattering = getScattering(r, mu, muS, nu, rayHitsGround, mieScatter);
+    
 
     return scattering * phaseRayleigh(nu) + mieScatter * phaseMie(nu);
 }
 
+vec3 getSolarRadiance()
+{
+    return solarIrradiance / (PI * sunAngularRadius * sunAngularRadius);
+}
 
 void main()
 {
@@ -141,8 +191,15 @@ void main()
     float fragmentRadius = length(dFdx(viewRay) + dFdy(viewRay)) / length(viewRay);
     
     vec3 transmittance;
-    vec3 radiance = getSkyRadiance(camPos, viewDir, 0.0, sunDirection, transmittance);
+    vec3 radiance = getSkyRadiance(camPos + vec3(0.0, Rp, 0.0), viewRay, 0.0, sunDirection, transmittance);
+    
+    if (dot(viewRay, sunDirection)/length(viewRay) > sunSize.y)
+    {
+        //radiance = radiance + transmittance * getSolarRadiance();
+        //radiance = vec3(1.0, 0.0, 0.0);
+    }
 
     vec3 col = pow(vec3(1.0) - exp(-radiance / whitePoint * exposure), vec3(1.0 / 2.2));
     fragColour = vec4(col, 1.0);
+    // fragColour = vec4(viewDir * 0.5 + 0.5, 1.0);
 }

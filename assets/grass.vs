@@ -117,7 +117,7 @@ void main()
 	float vertsPerBlade = 15.0;
 	posAlongBlade = float(gl_VertexID / 2) / float(vertsPerBlade / 2);
 	
-	float width = (1.0 - posAlongBlade * posAlongBlade) * 0.08;
+	float width = (1.0 - posAlongBlade * posAlongBlade) * 0.12;
 
 	float horizontalDir = 2.0 * float(gl_VertexID % 2) - 1.0;	
 	float horizontal = width * horizontalDir / 2; 
@@ -157,5 +157,7 @@ void main()
 	
 	// posAlongBlade = abs(angle);
 	gl_Position = proj * view * vec4(worldPos, 1.0);
-	gl_Position.x += thickenFactor * 0.03;
+	
+        // VIEWSPACE ADJUSTMENT
+        //gl_Position.x += thickenFactor * 0.03;
 }

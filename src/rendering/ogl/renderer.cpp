@@ -126,8 +126,21 @@ renderer::renderer(mesh_handler& mh) :
 f32 clearCol[] { 0.0f, 0.5f, 0.5f };
 f32 clearDepth { 1.0f };
 
+float pitch = 0.0;
+float yaw = 0.0;
+
+glm::vec3 pos{ 0, 2, 0 };
+
 void renderer::render(scene_graph& sg, f64 dt)
 {
+	pitch += glfwGetKey(window::windo, GLFW_KEY_DOWN) * 0.01f;
+	pitch -= glfwGetKey(window::windo, GLFW_KEY_UP) * 0.01f;
+	yaw += glfwGetKey(window::windo, GLFW_KEY_RIGHT) * 0.01f;
+	yaw -= glfwGetKey(window::windo, GLFW_KEY_LEFT) * 0.01f;
+
+	pos.z -= glfwGetKey(window::windo, GLFW_KEY_W) * 0.02f - glfwGetKey(window::windo, GLFW_KEY_S) * 0.02f;
+	pos.x += glfwGetKey(window::windo, GLFW_KEY_D) * 0.02f - glfwGetKey(window::windo, GLFW_KEY_A) * 0.02f;
+
 	//glDepthMask(1);
 	//hzb.generate();
 
@@ -183,6 +196,8 @@ void renderer::render(scene_graph& sg, f64 dt)
 
 	clock += dt;
 
+	auto view = view_matrix(pos, yaw, pitch);
+	grassShader.uniform("view", view);
 	grassShader.uniform("clock", clock);
 	grassIndices.bind();
 	grassPos.bind(12);

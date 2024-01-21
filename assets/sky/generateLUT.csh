@@ -57,6 +57,13 @@ float safeSqrt(float a)
     return sqrt(max(a, 0.0));
 }
 
+
+float distToEdgeOfAtmos(float r, float mu)
+{
+    float disc = r * r * (mu * mu - 1.0) + Ra * Ra;
+    return max(-r * mu + safeSqrt(disc), 0.0);
+}
+
 float getLayerDensity(AtmosphereLayer layer, float h)
 {
     float dens = layer.exp * exp(layer.expScale * h) + layer.lin * h + layer.cons;
@@ -78,13 +85,6 @@ float unitRangeToUV(float x, float pixs)
 float clampAtmos(float a)
 {
     return clamp(a, Rp, Ra);
-}
-
-
-float distToEdgeOfAtmos(float r, float mu)
-{
-    float disc = r * r * (mu * mu - 1.0) + Ra * Ra;
-    return max(-r * mu + safeSqrt(disc), 0.0);
 }
 
 // Calculates the distance to the planet surface, assuming (r, mu) hits the ground 
