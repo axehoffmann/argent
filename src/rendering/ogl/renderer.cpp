@@ -202,7 +202,7 @@ void renderer::render(scene_graph& sg, f64 dt)
 	grassIndices.bind();
 	grassPos.bind(12);
 	glEnable(GL_DEPTH_TEST);
-	glDrawElementsInstanced(GL_TRIANGLES, 39, static_cast<GLenum>(gltype::U32), 0, 80 * 80 * 10 * 10);
+	// glDrawElementsInstanced(GL_TRIANGLES, 39, static_cast<GLenum>(gltype::U32), 0, 80 * 80 * 10 * 10);
 
 
 	

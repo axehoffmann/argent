@@ -7,6 +7,8 @@ layout (binding = 0) uniform sampler3D scatterLUT;
 layout (binding = 1) uniform sampler2D transmittanceLUT;
 
 uniform vec3 camPos;
+uniform vec3 camDir;
+uniform vec3 camUp;
 
 in vec3 viewRay;
 
@@ -191,9 +193,9 @@ void main()
     float fragmentRadius = length(dFdx(viewRay) + dFdy(viewRay)) / length(viewRay);
     
     vec3 transmittance;
-    vec3 radiance = getSkyRadiance(camPos + vec3(0.0, Rp, 0.0), viewRay, 0.0, sunDirection, transmittance);
+    vec3 radiance = getSkyRadiance(camPos + vec3(0.0, Rp, 0.0), viewDir, 0.0, sunDirection, transmittance);
     
-    if (dot(viewRay, sunDirection)/length(viewRay) > sunSize.y)
+    if (dot(viewDir, sunDirection)/length(viewDir) > sunSize.y)
     {
         //radiance = radiance + transmittance * getSolarRadiance();
         //radiance = vec3(1.0, 0.0, 0.0);
@@ -201,5 +203,5 @@ void main()
 
     vec3 col = pow(vec3(1.0) - exp(-radiance / whitePoint * exposure), vec3(1.0 / 2.2));
     fragColour = vec4(col, 1.0);
-    // fragColour = vec4(viewDir * 0.5 + 0.5, 1.0);
+    fragColour = vec4(abs(viewRay), 1.0);
 }
